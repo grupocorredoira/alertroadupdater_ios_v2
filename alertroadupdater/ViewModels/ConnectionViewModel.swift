@@ -5,16 +5,15 @@ import Network
 /// `ConnectionViewModel` maneja la lógica de conexión Wi-Fi y detección de dispositivos.
 class ConnectionViewModel: ObservableObject {
     private let connectionManager: ConnectionManager
-    private let documentsViewModel: DocumentsViewModel
     private var cancellables = Set<AnyCancellable>()
 
     @Published var matchedSSID: String? = nil
     @Published var isConnectedToDevice: Bool = false
     @Published var availableSSIDs: [String] = []
 
-    init(connectionManager: ConnectionManager, documentsViewModel: DocumentsViewModel) {
+    // Inicializador público que toma ConnectionManager como parámetro
+    public init(connectionManager: ConnectionManager) {
         self.connectionManager = connectionManager
-        self.documentsViewModel = documentsViewModel
     }
 
     /// Inicia la monitorización de la conexión a un SSID específico.
@@ -32,21 +31,6 @@ class ConnectionViewModel: ObservableObject {
     /// Abre la configuración de Wi-Fi en iOS.
     func openWifiSettings() {
         connectionManager.openWiFiSettings()
-    }
-
-    /// Detecta dispositivos compatibles según la lista de redes Wi-Fi disponibles.
-    func detectCompatibleDevices() {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            let availableSSIDs = self.connectionManager.getAvailableSSIDs()
-            let documentSSIDs = self.documentsViewModel.getAllSSIDs()
-            let matchedSSID = availableSSIDs.first { documentSSIDs.contains($0) }
-
-            DispatchQueue.main.async {
-                self.matchedSSID = matchedSSID
-                self.availableSSIDs = availableSSIDs
-            }
-        }
     }
 
     /// Conecta al dispositivo detectado.

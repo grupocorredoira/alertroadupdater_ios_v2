@@ -27,6 +27,7 @@ struct ConnectionScreen: View {
 
                         // Paso 3: Detectar el dispositivo
                         StepTitleComponent(text: "Paso 3: Detectar el dispositivo.")
+/*
                         DetectDeviceButton(
                             isWifiEnabled: networkStatusViewModel.isWifiEnabled,
                             matchedSSID: connectionViewModel.matchedSSID,
@@ -40,6 +41,7 @@ struct ConnectionScreen: View {
                                 connectionViewModel.detectCompatibleDevices()
                             }
                         )
+ */
 
                         // Dispositivo detectado
                         if let matchedSSID = connectionViewModel.matchedSSID {

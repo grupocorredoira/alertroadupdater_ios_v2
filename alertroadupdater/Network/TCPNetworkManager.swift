@@ -14,6 +14,7 @@ class TCPNetworkManager {
         self.progressCallback = progressCallback
     }
 
+/*
     func uploadFile(completion: @escaping (Result<Void, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
@@ -44,4 +45,5 @@ class TCPNetworkManager {
             }
         }
     }
+    */
 }

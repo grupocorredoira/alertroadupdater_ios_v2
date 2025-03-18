@@ -18,7 +18,7 @@ struct VerifyCodeInputComponent: View {
                             if newValue.count <= 1 && newValue.allSatisfy(\.isNumber) {
                                 codeDigits[index] = newValue
 
-                                if newValue.isNotEmpty, index < numDigits - 1 {
+                                if !newValue.isEmpty, index < numDigits - 1 {
                                     focusedIndex = index + 1 // Mover foco a la siguiente caja
                                 }
 

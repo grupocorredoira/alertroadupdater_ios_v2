@@ -4,7 +4,7 @@ struct PrivacyPolicyView: View {
     var onAccept: () -> Void
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 // Barra superior con logo
                 TopAppBarComponentWithLogo(showMenu: false)

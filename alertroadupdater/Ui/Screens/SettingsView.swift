@@ -9,7 +9,7 @@ struct SettingsView: View {
     let versionCode = "100" // Sustituye por el método adecuado para obtener el código de versión
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 // Barra superior
                 TopAppBarComponent(title: "Ajustes", onBackClick: {})
@@ -40,6 +40,7 @@ struct SettingsView: View {
                     disconnectDialog()
                 }
             }
+            /*
             .sheet(isPresented: $showPrivacyPolicyDialog) {
                 DialogReadTextComponent(
                     title: "Política de Privacidad",
@@ -54,6 +55,7 @@ struct SettingsView: View {
                     onDismiss: { showTermsDialog = false }
                 )
             }
+             */
         }
     }
 
