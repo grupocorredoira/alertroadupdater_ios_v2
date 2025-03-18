@@ -14,6 +14,7 @@
 		9BE9471A2D883C69002F18BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947192D883C69002F18BA /* FirebaseMessaging */; };
 		9BE947322D8854B6002F18BA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947312D8854B6002F18BA /* FirebaseStorage */; };
 		9BE947B02D88827F002F18BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947AF2D88827F002F18BA /* FirebaseCrashlytics */; };
+		AC295906B541A67109B59E21 /* Pods_alertroadupdater.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C2261754892E5695065DD3 /* Pods_alertroadupdater.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,24 +35,33 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		45BDE2DC71B8244197E04A41 /* Pods-alertroadupdater.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alertroadupdater.release.xcconfig"; path = "Target Support Files/Pods-alertroadupdater/Pods-alertroadupdater.release.xcconfig"; sourceTree = "<group>"; };
 		9B725FA32D882FEC008965AF /* alertroadupdater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = alertroadupdater.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B725FB32D882FEE008965AF /* alertroadupdaterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = alertroadupdaterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B725FBD2D882FEE008965AF /* alertroadupdaterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = alertroadupdaterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A63ED6F8AC50D6CA00AD3284 /* Pods-alertroadupdater.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-alertroadupdater.debug.xcconfig"; path = "Target Support Files/Pods-alertroadupdater/Pods-alertroadupdater.debug.xcconfig"; sourceTree = "<group>"; };
+		F0C2261754892E5695065DD3 /* Pods_alertroadupdater.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_alertroadupdater.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9B725FA52D882FEC008965AF /* alertroadupdater */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = alertroadupdater;
 			sourceTree = "<group>";
 		};
 		9B725FB62D882FEE008965AF /* alertroadupdaterTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = alertroadupdaterTests;
 			sourceTree = "<group>";
 		};
 		9B725FC02D882FEE008965AF /* alertroadupdaterUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = alertroadupdaterUITests;
 			sourceTree = "<group>";
 		};
@@ -69,6 +79,7 @@
 				9BE947122D883C69002F18BA /* FirebaseAnalytics in Frameworks */,
 				9BE947142D883C69002F18BA /* FirebaseAuth in Frameworks */,
 				9BE947322D8854B6002F18BA /* FirebaseStorage in Frameworks */,
+				AC295906B541A67109B59E21 /* Pods_alertroadupdater.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,14 +100,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A96A0302DF5EBE40BBDC70F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A63ED6F8AC50D6CA00AD3284 /* Pods-alertroadupdater.debug.xcconfig */,
+				45BDE2DC71B8244197E04A41 /* Pods-alertroadupdater.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		9B725F9A2D882FEC008965AF = {
 			isa = PBXGroup;
 			children = (
 				9B725FA52D882FEC008965AF /* alertroadupdater */,
 				9B725FB62D882FEE008965AF /* alertroadupdaterTests */,
 				9B725FC02D882FEE008965AF /* alertroadupdaterUITests */,
-				9BE947302D8854B6002F18BA /* Frameworks */,
 				9B725FA42D882FEC008965AF /* Products */,
+				9A96A0302DF5EBE40BBDC70F /* Pods */,
+				D9934DD6FE6D54F9386CF7D2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,9 +132,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9BE947302D8854B6002F18BA /* Frameworks */ = {
+		D9934DD6FE6D54F9386CF7D2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0C2261754892E5695065DD3 /* Pods_alertroadupdater.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -124,6 +147,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9B725FC72D882FEE008965AF /* Build configuration list for PBXNativeTarget "alertroadupdater" */;
 			buildPhases = (
+				B0C48A3720104C15B2467183 /* [CP] Check Pods Manifest.lock */,
 				9B725F9F2D882FEC008965AF /* Sources */,
 				9B725FA02D882FEC008965AF /* Frameworks */,
 				9B725FA12D882FEC008965AF /* Resources */,
@@ -166,8 +190,6 @@
 				9B725FB62D882FEE008965AF /* alertroadupdaterTests */,
 			);
 			name = alertroadupdaterTests;
-			packageProductDependencies = (
-			);
 			productName = alertroadupdaterTests;
 			productReference = 9B725FB32D882FEE008965AF /* alertroadupdaterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -189,8 +211,6 @@
 				9B725FC02D882FEE008965AF /* alertroadupdaterUITests */,
 			);
 			name = alertroadupdaterUITests;
-			packageProductDependencies = (
-			);
 			productName = alertroadupdaterUITests;
 			productReference = 9B725FBD2D882FEE008965AF /* alertroadupdaterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -265,6 +285,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B0C48A3720104C15B2467183 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-alertroadupdater-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9B725F9F2D882FEC008965AF /* Sources */ = {
@@ -425,6 +470,7 @@
 		};
 		9B725FC82D882FEE008965AF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A63ED6F8AC50D6CA00AD3284 /* Pods-alertroadupdater.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -455,6 +501,7 @@
 		};
 		9B725FC92D882FEE008965AF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 45BDE2DC71B8244197E04A41 /* Pods-alertroadupdater.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
