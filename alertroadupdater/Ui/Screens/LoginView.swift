@@ -1,19 +1,23 @@
-import SwiftUI
+/*import SwiftUI
 import FirebaseAuth
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @ObservedObject var loginViewModel: LoginViewModel
+    @ObservedObject var usersHandler: UsersHandler
+    @ObservedObject var networkStatusViewModel: NetworkStatusViewModel
+    var onLoginSuccess: () -> Void
 
     @State private var selectedPrefix: String = "+34"
     @State private var phoneNumber: String = ""
     @State private var isCheckingUser = false
+    @State private var showVerificationScreen = false
 
     var phoneNumberWithPrefix: String {
         return "\(selectedPrefix)\(phoneNumber)"
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack(spacing: 16) {
                 // Barra superior con logo
                 TopAppBarComponentWithLogo(showMenu: false)
@@ -44,25 +48,25 @@ struct LoginView: View {
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(10)
                     .onChange(of: phoneNumber) { _ in
-                        viewModel.validatePhoneNumber(selectedPrefix, phoneNumber)
+                        loginViewModel.validatePhoneNumber(prefix: selectedPrefix, phone: phoneNumber)
                     }
 
-                if let errorMessage = viewModel.errorMessage {
+                if let errorMessage = loginViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.footnote)
                 }
 
-                if viewModel.isInternetAvailable {
+                if networkStatusViewModel.hasInternet {
                     Button(action: handleLogin) {
                         Text("Iniciar sesión")
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(viewModel.isPhoneValid ? Color.blue : Color.gray)
+                            .background(loginViewModel.isPhoneValid ? Color.blue : Color.gray)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
-                    .disabled(!viewModel.isPhoneValid)
+                    .disabled(!loginViewModel.isPhoneValid)
                 } else {
                     Text("No tienes conexión a Internet.")
                         .foregroundColor(.red)
@@ -71,16 +75,26 @@ struct LoginView: View {
                 }
 
                 Spacer()
+
+                NavigationLink(destination: VerifyCodeView(loginViewModel: loginViewModel), isActive: $showVerificationScreen) {
+                    EmptyView()
+                }
             }
             .padding()
             .overlay {
                 if isCheckingUser {
-                    ProgressView("Verificando cuenta...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(10)
-                        .shadow(radius: 10)
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .overlay(
+                            VStack {
+                                ProgressView("Verificando cuenta...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 10)
+                            }
+                        )
                 }
             }
         }
@@ -92,18 +106,19 @@ struct LoginView: View {
 
         if let currentUser = currentUser, currentUser.phoneNumber == phoneNumberWithPrefix {
             // Usuario autenticado y número coincide
-            viewModel.savePhoneNumber(phoneNumberWithPrefix)
+            PreferencesManager.shared.savePhoneNumberWithPrefix(phoneNumberWithPrefix) // ✅ Guardar número en preferencias
             isCheckingUser = false
-            viewModel.navigateToWelcome()
+            onLoginSuccess()
         } else {
             // Si hay sesión pero el número no coincide, cerrar sesión
             if currentUser != nil {
-                viewModel.signOut()
+                loginViewModel.signOut()
             }
             // Proceder con verificación SMS
-            viewModel.sendVerificationCode(phoneNumberWithPrefix)
+            loginViewModel.sendVerificationCode(phoneNumber: phoneNumberWithPrefix)
             isCheckingUser = false
-            viewModel.navigateToVerification()
+            showVerificationScreen = true
         }
     }
 }
+*/

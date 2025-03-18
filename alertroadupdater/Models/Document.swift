@@ -1,8 +1,7 @@
 import Foundation
-import FirebaseFirestoreSwift
 
 struct Document: Identifiable, Codable {
-    @DocumentID var id: String?
+    var id: String
     var type: String
     var deviceName: String
     var version: String
@@ -14,20 +13,20 @@ struct Document: Identifiable, Codable {
     var createdAt: Date?
     var updatedAt: Date?
 
-    func toReadableString() -> String {
-        return """
-        Document:
-        ID: \(id ?? "N/A")
-        Type: \(type)
-        Device Name: \(deviceName)
-        Version: \(version)
-        SSID: \(ssid)
-        Password: \(password)
-        IP: \(ip)
-        Port: \(port)
-        URL: \(url)
-        Created At: \(createdAt?.description ?? "N/A")
-        Updated At: \(updatedAt?.description ?? "N/A")
-        """
+    /// Crea una copia del documento con un nuevo ID.
+    func copy(withID newID: String) -> Document {
+        return Document(
+            id: newID,
+            type: self.type,
+            deviceName: self.deviceName,
+            version: self.version,
+            ssid: self.ssid,
+            password: self.password,
+            ip: self.ip,
+            port: self.port,
+            url: self.url,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
     }
 }

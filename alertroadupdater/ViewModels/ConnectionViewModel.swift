@@ -1,91 +1,67 @@
 import Foundation
 import Combine
+import Network
 
-/// ConnectionViewModel se encarga de manejar la lógica relacionada con la conexión Wi-Fi.
-/// Se apoya en DocumentsViewModel para obtener los datos necesarios (SSID y contraseñas).
+/// `ConnectionViewModel` maneja la lógica de conexión Wi-Fi y detección de dispositivos.
 class ConnectionViewModel: ObservableObject {
-
     private let connectionManager: ConnectionManager
     private let documentsViewModel: DocumentsViewModel
     private var cancellables = Set<AnyCancellable>()
 
     @Published var matchedSSID: String? = nil
     @Published var isConnectedToDevice: Bool = false
+    @Published var availableSSIDs: [String] = []
 
     init(connectionManager: ConnectionManager, documentsViewModel: DocumentsViewModel) {
         self.connectionManager = connectionManager
         self.documentsViewModel = documentsViewModel
     }
 
-    /// Verifica si está conectado al SSID del dispositivo en cuestión.
+    /// Inicia la monitorización de la conexión a un SSID específico.
     func startMonitoringConnection(ssid: String?) {
         Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                do {
-                    let currentSSID = self.connectionManager.getCurrentSSID()
-                    self.isConnectedToDevice = (currentSSID == ssid)
-                } catch {
-                    print("Error while monitoring connection: \(error.localizedDescription)")
-                    self.isConnectedToDevice = false
-                }
+                let currentSSID = self.connectionManager.getCurrentSSID()
+                self.isConnectedToDevice = (currentSSID == ssid)
             }
             .store(in: &cancellables)
     }
 
-    /// Abre la configuración de Wi-Fi.
+    /// Abre la configuración de Wi-Fi en iOS.
     func openWifiSettings() {
-        connectionManager.openWifiSettings()
+        connectionManager.openWiFiSettings()
     }
 
-    /// Detecta un dispositivo coincidente buscando entre los SSIDs disponibles y los datos del DocumentsViewModel.
+    /// Detecta dispositivos compatibles según la lista de redes Wi-Fi disponibles.
     func detectCompatibleDevices() {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
-            do {
-                let availableSSIDs = self.connectionManager.getAvailableSSIDs().map { $0.trimmingCharacters(in: .whitespaces) }
-                print("Available SSIDs: \(availableSSIDs)")
+            let availableSSIDs = self.connectionManager.getAvailableSSIDs()
+            let documentSSIDs = self.documentsViewModel.getAllSSIDs()
+            let matchedSSID = availableSSIDs.first { documentSSIDs.contains($0) }
 
-                let documentSSIDs = self.documentsViewModel.getAllSSIDs().map { $0.trimmingCharacters(in: .whitespaces) }
-                print("Document SSIDs: \(documentSSIDs)")
-
-                let matchedSSID = availableSSIDs.first { documentSSIDs.contains($0) }
-
-                DispatchQueue.main.async {
-                    self.matchedSSID = matchedSSID
-                    print("Matched SSID: \(String(describing: matchedSSID))")
-                }
-            } catch {
-                print("Error detectando dispositivo: \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                self.matchedSSID = matchedSSID
+                self.availableSSIDs = availableSSIDs
             }
         }
     }
 
     /// Conecta al dispositivo detectado.
-    func connectToDevice(ssid: String, password: String) {
-        connectionManager.connectToExistingWifi(ssid: ssid, password: password) { [weak self] isConnected in
-            guard let self = self else { return }
-            print("Connected to SSID: \(ssid), Status: \(isConnected)")
+    func connectToDevice(ssid: String) {
+        connectionManager.connectToSSID(ssid: ssid) { [weak self] isConnected in
             DispatchQueue.main.async {
-                self.isConnectedToDevice = isConnected
+                self?.isConnectedToDevice = isConnected
             }
         }
-    }
-
-    /// Devuelve la contraseña de un SSID utilizando DocumentsViewModel.
-    func getPasswordForSSID(ssid: String) -> String? {
-        return documentsViewModel.getPasswordForSSID(ssid: ssid)
     }
 
     /// Resetea el estado de detección.
     func resetDetectionState() {
         matchedSSID = nil
         isConnectedToDevice = false
-    }
-
-    /// Obtiene los SSIDs disponibles en el entorno.
-    func getAvailableSSIDs() -> [String] {
-        return connectionManager.getAvailableSSIDs()
+        availableSSIDs = []
     }
 }

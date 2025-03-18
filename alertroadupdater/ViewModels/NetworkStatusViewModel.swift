@@ -1,28 +1,26 @@
 import Foundation
 import Combine
+import Network
 
+/// `NetworkStatusViewModel` gestiona el estado de la red, como conexión a Wi-Fi e Internet.
 class NetworkStatusViewModel: ObservableObject {
     private let networkStatusRepository: NetworkStatusRepository
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue.global(qos: .background)
 
     @Published var isWifiEnabled: Bool = false
     @Published var hasInternet: Bool = false
 
-    private var cancellables = Set<AnyCancellable>()
-
     init(networkStatusRepository: NetworkStatusRepository) {
         self.networkStatusRepository = networkStatusRepository
 
-        networkStatusRepository.isWifiEnabled
-            .combineLatest(networkStatusRepository.hasInternet)
-            .sink { [weak self] isWifiEnabled, hasInternet in
-                self?.isWifiEnabled = isWifiEnabled
-                self?.hasInternet = isWifiEnabled && hasInternet
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                self?.isWifiEnabled = path.usesInterfaceType(.wifi)
+                self?.hasInternet = path.status == .satisfied
             }
-            .store(in: &cancellables)
+        }
+        monitor.start(queue: queue)
     }
 }
 
-struct NetworkStatus {
-    let isWifiEnabled: Bool
-    let hasInternet: Bool
-}

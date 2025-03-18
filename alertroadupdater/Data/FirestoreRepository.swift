@@ -1,9 +1,8 @@
 import Foundation
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import Combine
 
-class FirestoreRepository {
+class FirestoreRepository: ObservableObject {
     static private var _allDocuments: [Document]?
     private let db = Firestore.firestore()
     private let collectionName = "documents" // FIREBASE_DOCUMENTS_COLLECTION_NAME
@@ -21,7 +20,11 @@ class FirestoreRepository {
                     promise(.failure(error))
                 } else {
                     let documents = snapshot?.documents.compactMap { doc -> Document? in
-                        try? doc.data(as: Document.self).copy(withID: doc.documentID)
+                        guard let data = try? JSONSerialization.data(withJSONObject: doc.data()),
+                              let document = try? JSONDecoder().decode(Document.self, from: data) else {
+                            return nil
+                        }
+                        return document.copy(withID: doc.documentID)
                     } ?? []
                     FirestoreRepository._allDocuments = documents
                     promise(.success(documents))

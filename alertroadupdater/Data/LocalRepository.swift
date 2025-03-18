@@ -1,6 +1,6 @@
 import Foundation
 
-class LocalRepository {
+class LocalRepository: ObservableObject {
     private let documentsFolder: URL
 
     init() {

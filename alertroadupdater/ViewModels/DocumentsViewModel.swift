@@ -1,12 +1,17 @@
 import Foundation
 import Combine
+import SwiftUI
 
+/// `DocumentsViewModel` gestiona los documentos y su estado de descarga en iOS.
+/// Se encarga de obtener documentos desde Firestore y sincronizarlos con almacenamiento local.
 class DocumentsViewModel: ObservableObject {
+
     private let firestoreRepository: FirestoreRepository
     private let localRepository: LocalRepository
 
     @Published var documents: [Document] = []
     @Published var documentDownloadStates: [String: DocumentDownloadStatus] = [:]
+    @Published var downloadError: String? = nil // ✅ Se define explícitamente como opcional
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -16,55 +21,150 @@ class DocumentsViewModel: ObservableObject {
         loadDocumentsFromExternalDatabase()
     }
 
+    /// Carga documentos desde Firestore y sincroniza con almacenamiento local.
     private func loadDocumentsFromExternalDatabase() {
         firestoreRepository.loadDocumentsFromFirestore()
-            .sink(receiveCompletion: { completion in
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
                 if case .failure(let error) = completion {
-                    print("Error loading documents: \(error.localizedDescription)")
+                    print("Error cargando documentos: \(error.localizedDescription)")
                 }
-            }, receiveValue: { [weak self] fetchedDocuments in
-                self?.documents = fetchedDocuments
-                self?.initializeDocumentDownloadStates(fetchedDocuments)
-            })
+            } receiveValue: { fetchedDocuments in
+                self.documents = fetchedDocuments
+                self.initializeDocumentDownloadStates(fetchedDocuments)
+            }
             .store(in: &cancellables)
     }
 
+    /// Inicializa el estado de descarga de los documentos.
     private func initializeDocumentDownloadStates(_ documents: [Document]) {
-        var updatedStates: [String: DocumentDownloadStatus] = [:]
-        for document in documents {
-            let isStored = localRepository.isDocumentStored(document.id)
-            updatedStates[document.id] = isStored ? .downloaded : .available
+        let updatedStates = documents.reduce(into: [String: DocumentDownloadStatus]()) { result, document in
+            let isStored = localRepository.isDocumentStored(documentId: document.id) // ✅ Corrección de argumento
+            result[document.id] = isStored ? .downloaded : .available
         }
-        documentDownloadStates = updatedStates
+        DispatchQueue.main.async {
+            self.documentDownloadStates = updatedStates
+        }
     }
 
+    /// Obtiene una lista de SSIDs almacenados en los documentos.
     func getAllSSIDs() -> [String] {
         return documents.map { $0.ssid }
     }
 
-    func getPasswordForSSID(ssid: String) -> String? {
-        return documents.first { $0.ssid == ssid }?.password
+    /// Busca la contraseña asociada a un SSID.
+    func getPasswordForSSID(_ ssid: String) -> String? {
+        return documents.first(where: { $0.ssid == ssid })?.password
     }
 
-    func downloadFile(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        documentDownloadStates[documentId] = .downloading(progress: 0)
+    /// Descarga un archivo desde Firestore y lo guarda localmente.
+    func downloadFileAndWait(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        updateDownloadState(documentId, newState: .downloading(progress: 0))
 
-        FileDownloadManager.downloadFileFromFirebaseStorage(fileName: documentId) { result in
-            switch result {
-            case .success(let fileUrl):
-                FileDownloadManager.downloadFile(fileUrl: fileUrl, fileName: documentId)
-                self.documentDownloadStates[documentId] = .downloaded
-                completion(.success(()))
-            case .failure(let error):
-                self.documentDownloadStates[documentId] = .available
-                completion(.failure(error))
+        FileDownloadManager.downloadFileFromFirebaseStorage(
+            fileName: documentId,
+            onSuccess: { fileURL in
+                DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
+                    FileDownloadManager.downloadFileWithURL(
+                        fileName: documentId,
+                        fileUrl: fileURL
+                    ) { result in
+                        switch result {
+                        case .success:
+                            self.updateDownloadState(documentId, newState: .downloaded)
+                            print("Documento \(documentId) descargado exitosamente.")
+                            completion(.success(()))
+                        case .failure(let error):
+                            print("Error al descargar \(documentId): \(error.localizedDescription)")
+                            self.updateDownloadState(documentId, newState: .available)
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            },
+            onError: { error in
+                DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
+                    print("Error obteniendo URL de \(documentId): \(error.localizedDescription)")
+                    self.updateDownloadState(documentId, newState: .available)
+                    completion(.failure(error))
+                }
             }
+        )
+    }
+
+    /// Descarga todos los documentos asociados a un SSID.
+    func downloadAllDocumentsBySSID(ssid: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        let documentsToDownload = documents.filter { $0.ssid == ssid }
+        let dispatchGroup = DispatchGroup()
+        var errors: [Error] = []
+
+        for document in documentsToDownload {
+            dispatchGroup.enter()
+            downloadFileAndWait(documentId: document.id) { result in
+                if case .failure(let error) = result {
+                    errors.append(error)
+                }
+                dispatchGroup.leave()
+            }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            if errors.isEmpty {
+                self.downloadError = nil // ✅ Si todo salió bien, no hay error.
+                completion(.success(()))
+            } else {
+                self.downloadError = "Error al descargar algunos archivos. Inténtalo de nuevo." // ✅ Mensaje de error
+                completion(.failure(errors.first!))
+            }
+        }
+    }
+
+    /// Actualiza el estado de descarga de un documento.
+    private func updateDownloadState(_ documentId: String, newState: DocumentDownloadStatus) {
+        DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
+            self.documentDownloadStates[documentId] = newState
+        }
+    }
+
+    /// Obtiene el nombre del dispositivo asociado a un SSID.
+    func getDeviceNameForSSID(_ ssid: String) -> String? {
+        return documents.first(where: { $0.ssid == ssid })?.deviceName
+    }
+
+    /// Obtiene el SSID asociado a un nombre de dispositivo.
+    func getSSIDForDeviceName(_ deviceName: String?) -> String? {
+        guard let deviceName = deviceName?.trimmingCharacters(in: .whitespaces) else { return nil }
+        return documents.first(where: { $0.deviceName.trimmingCharacters(in: .whitespaces) == deviceName })?.ssid
+    }
+
+    /// Elimina todos los archivos locales almacenados.
+    func deleteAllLocalFiles() -> String {
+        switch localRepository.deleteAllDocuments() {
+        case .noFiles:
+            return "No hay archivos para eliminar."
+        case .success:
+            return "Archivos eliminados con éxito."
+        case .error(let failedFiles):
+            return "Error eliminando archivos:\n" + failedFiles.joined(separator: "\n")
         }
     }
 }
 
+/// Representa los estados de descarga de un documento.
 enum DocumentDownloadStatus {
     case available
     case downloaded
     case downloading(progress: Int)
+
+    /// Convierte el estado en una cadena legible.
+    func toReadableString() -> String {
+        switch self {
+        case .available:
+            return "Disponible para descargar"
+        case .downloaded:
+            return "Descargado"
+        case .downloading(let progress):
+            return "Descargando... \(progress)%"
+        }
+    }
 }

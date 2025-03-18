@@ -17,11 +17,32 @@ class UploadDocumentsViewModel: ObservableObject {
     }
 
     func updateUploadStatus(documentId: String, newStatus: DocumentUploadStatus) {
-        uploadStates[documentId] = newStatus
+        DispatchQueue.main.async {
+            self.uploadStates[documentId] = newStatus
+        }
     }
 
     func getDocumentsStoredLocallyForDevice(deviceName: String?) -> [Document] {
-        return documents.filter { $0.deviceName == deviceName && localRepository.isDocumentStored($0.id) }
+        return documents.filter { $0.deviceName == deviceName && localRepository.isDocumentStored(documentId: $0.id) }
+    }
+
+    func uploadDocument(_ document: Document, completion: @escaping (Result<Void, Error>) -> Void) {
+        updateUploadStatus(documentId: document.id, newStatus: .uploading(progress: 0))
+
+        DispatchQueue.global(qos: .background).async {
+            // Simulación de subida
+            for i in stride(from: 0, to: 100, by: 10) {
+                sleep(1)
+                DispatchQueue.main.async {
+                    self.updateUploadStatus(documentId: document.id, newStatus: .uploading(progress: i))
+                }
+            }
+
+            DispatchQueue.main.async {
+                self.updateUploadStatus(documentId: document.id, newStatus: .uploaded)
+                completion(.success(()))
+            }
+        }
     }
 }
 

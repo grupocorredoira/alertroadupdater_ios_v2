@@ -8,7 +8,7 @@ struct WelcomeView: View {
     @State private var snackbarMessage: String?
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 TopAppBarComponentWithLogo(
                     showMenu: true,
@@ -28,6 +28,7 @@ struct WelcomeView: View {
 
                 Button(action: {
                     isCheckingUser = true
+                    /*
                     Task {
                         let userIsAuthenticated = await usersHandler.checkUserIsAuthenticated(
                             phoneNumber: PreferencesManager.shared.getPhoneNumberWithPrefix()
@@ -53,6 +54,7 @@ struct WelcomeView: View {
                             snackbarMessage = "Error de autenticación"
                         }
                     }
+                     */
                 }) {
                     Text("Empezar")
                         .frame(maxWidth: .infinity)
@@ -66,7 +68,8 @@ struct WelcomeView: View {
                 Spacer()
             }
             .padding()
-            .alert(item: $snackbarMessage) { message in
+            // TODO: revisar pagos y paso a siguiente pantalla
+            /*.alert(item: $snackbarMessage) { message in
                 Alert(title: Text("Error"), message: Text(message), dismissButton: .default(Text("Aceptar")))
             }
             .sheet(isPresented: $showPaymentDialog) {
@@ -76,10 +79,15 @@ struct WelcomeView: View {
                 if isCheckingUser {
                     LoadingDialog()
                 }
-            }
-            .navigationDestination(isPresented: $loginViewModel.isAuthenticated) {
-                ConnectionView()
-            }
+            }*/
+
+            /*.navigationDestination(isPresented: $loginViewModel.isAuthenticated) {
+                ConnectionView(
+                    connectionViewModel: connectionViewModel,
+                    documentsViewModel: documentsViewModel,
+                    networkStatusViewModel: networkStatusViewModel
+                )
+            }*/
         }
     }
 }

@@ -21,6 +21,7 @@ class LoginViewModel: ObservableObject {
         self.isAuthenticated = prefs.getIsAuthenticated()
     }
 
+    /// Valida el número de teléfono según el prefijo del país.
     func validatePhoneNumber(prefix: String, phone: String) {
         switch prefix {
         case "+351", "+33":
@@ -32,25 +33,59 @@ class LoginViewModel: ObservableObject {
         }
     }
 
+    /// Envía un código de verificación por SMS al número de teléfono dado.
     func sendVerificationCode(phoneNumber: String) {
         isLoading = true
-        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
+        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { [weak self] verificationID, error in
             DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.isLoading = false
+
                 if let error = error {
                     self.errorMessage = error.localizedDescription
-                    self.isLoading = false
-                } else {
+                } else if let verificationID = verificationID {
                     self.verificationID = verificationID
-                    self.prefs.saveTokenLogin(verificationID ?? "")
-                    self.isLoading = false
+                    self.prefs.saveTokenLogin(verificationID)  // Solo guarda si no es `nil`
                 }
             }
         }
     }
 
+    /// Verifica el código ingresado por el usuario y autentica en Firebase.
     func verifyCode(code: String) {
         guard let verificationID = verificationID else {
-            errorMessage = "No verification ID available."
+            errorMessage = "No hay un código de verificación disponible."
             return
         }
-        let
+
+        let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationID, verificationCode: code)
+
+        auth.signIn(with: credential) { [weak self] authResult, error in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+
+                if let error = error {
+                    self.errorMessage = error.localizedDescription
+                } else {
+                    self.isAuthenticated = true
+                    self.prefs.saveIsAuthenticated(true)
+                }
+            }
+        }
+    }
+
+    /// Cierra la sesión del usuario actual.
+    func signOut() {
+        do {
+            try auth.signOut()
+            DispatchQueue.main.async {
+                self.isAuthenticated = false
+                self.prefs.saveIsAuthenticated(false)
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.errorMessage = "Error cerrando sesión: \(error.localizedDescription)"
+            }
+        }
+    }
+}

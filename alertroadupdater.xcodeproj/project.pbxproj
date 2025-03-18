@@ -13,6 +13,7 @@
 		9BE947182D883C69002F18BA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947172D883C69002F18BA /* FirebaseFirestore */; };
 		9BE9471A2D883C69002F18BA /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947192D883C69002F18BA /* FirebaseMessaging */; };
 		9BE947322D8854B6002F18BA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947312D8854B6002F18BA /* FirebaseStorage */; };
+		9BE947B02D88827F002F18BA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE947AF2D88827F002F18BA /* FirebaseCrashlytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 				9BE947162D883C69002F18BA /* FirebaseDatabase in Frameworks */,
 				9BE947182D883C69002F18BA /* FirebaseFirestore in Frameworks */,
 				9BE9471A2D883C69002F18BA /* FirebaseMessaging in Frameworks */,
+				9BE947B02D88827F002F18BA /* FirebaseCrashlytics in Frameworks */,
 				9BE947122D883C69002F18BA /* FirebaseAnalytics in Frameworks */,
 				9BE947142D883C69002F18BA /* FirebaseAuth in Frameworks */,
 				9BE947322D8854B6002F18BA /* FirebaseStorage in Frameworks */,
@@ -141,6 +143,7 @@
 				9BE947172D883C69002F18BA /* FirebaseFirestore */,
 				9BE947192D883C69002F18BA /* FirebaseMessaging */,
 				9BE947312D8854B6002F18BA /* FirebaseStorage */,
+				9BE947AF2D88827F002F18BA /* FirebaseCrashlytics */,
 			);
 			productName = alertroadupdater;
 			productReference = 9B725FA32D882FEC008965AF /* alertroadupdater.app */;
@@ -634,6 +637,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9BE947102D883C69002F18BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9BE947AF2D88827F002F18BA /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9BE947102D883C69002F18BA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

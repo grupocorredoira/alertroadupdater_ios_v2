@@ -1,6 +1,8 @@
 import Foundation
 
-class PreferencesManager {
+class PreferencesManager: ObservableObject {
+    static let shared = PreferencesManager() // Singleton
+
     private let userDefaults = UserDefaults.standard
 
     private enum Keys {

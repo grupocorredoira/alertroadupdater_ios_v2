@@ -13,7 +13,7 @@ struct UploadView: View {
     @State private var uploadError: String?
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 TopAppBarComponent(title: "Subir archivos") {
                     // Acción para retroceder
@@ -33,7 +33,7 @@ struct UploadView: View {
                         .font(.headline)
 
                     List {
-                        ForEach(documentsViewModel.documents) { document in
+                        ForEach(uploadDocumentsViewModel.getDocumentsStoredLocallyForDevice(deviceName: deviceName)) { document in
                             UploadDocumentRow(
                                 document: document,
                                 uploadDocumentsViewModel: uploadDocumentsViewModel,
@@ -47,7 +47,6 @@ struct UploadView: View {
                             )
                         }
                     }
-
                 } else {
                     Text("No conectado al dispositivo")
                         .foregroundColor(.red)
@@ -85,7 +84,7 @@ struct UploadView: View {
     }
 }
 
-// 📌 Componente para cada archivo en la lista
+// 📌 **Componente para cada archivo en la lista**
 struct UploadDocumentRow: View {
     let document: Document
     @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel

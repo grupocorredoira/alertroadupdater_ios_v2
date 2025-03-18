@@ -1,5 +1,5 @@
 import SwiftUI
-
+/*
 struct VerifyCodeView: View {
     @ObservedObject var loginViewModel: LoginViewModel
     @Environment(\.presentationMode) var presentationMode
@@ -78,3 +78,4 @@ struct VerifyCodeView: View {
         }
     }
 }
+*/

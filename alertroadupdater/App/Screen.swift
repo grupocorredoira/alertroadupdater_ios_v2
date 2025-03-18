@@ -1,14 +1,23 @@
 import Foundation
 
-enum Screen: String, CaseIterable, Identifiable {
+enum Screen: Hashable, Identifiable {
+/*
     case terms
     case privacyPolicies
     case login
     case verificationCode
+*/
     case welcome
     case settings
     case connection
-    case upload
+    case upload(deviceName: String) // ✅ Ahora acepta un valor asociado
 
-    var id: String { self.rawValue }
+    var id: String {
+        switch self {
+        case .upload(let deviceName):
+            return "upload_\(deviceName)" // Genera un ID único por dispositivo
+        default:
+            return "\(self)"
+        }
+    }
 }
