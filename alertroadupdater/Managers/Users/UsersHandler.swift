@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
-
+/*
 class UsersHandler: ObservableObject {
     static let shared = UsersHandler()
     private let db = Firestore.firestore()
@@ -24,10 +24,10 @@ class UsersHandler: ObservableObject {
             } else {
                 let userData: [String: Any] = [
                     "fullPhoneNumber": user.fullPhoneNumber,
-                    "creationDate": user.creationDate,
-                    "expirationDate": user.expirationDate,
+                    "creationDate": Timestamp(date: user.creationDate), // 🔹 Convertir Date a Timestamp
+                    "expirationDate": Timestamp(date: user.expirationDate), // 🔹 Convertir Date a Timestamp
                     "trialPeriodDays": user.trialPeriodDays,
-                    "purchaseDate": user.purchaseDate ?? NSNull(),
+                    "purchaseDate": user.purchaseDate != nil ? Timestamp(date: user.purchaseDate!) : NSNull(),
                     "purchaseToken": user.purchaseToken,
                     "forcePurchase": user.forcePurchase
                 ]
@@ -104,3 +104,4 @@ class UsersHandler: ObservableObject {
         }
     }
 }
+*/

@@ -46,22 +46,16 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9B725FA52D882FEC008965AF /* alertroadupdater */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = alertroadupdater;
 			sourceTree = "<group>";
 		};
 		9B725FB62D882FEE008965AF /* alertroadupdaterTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = alertroadupdaterTests;
 			sourceTree = "<group>";
 		};
 		9B725FC02D882FEE008965AF /* alertroadupdaterUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = alertroadupdaterUITests;
 			sourceTree = "<group>";
 		};
@@ -106,7 +100,6 @@
 				A63ED6F8AC50D6CA00AD3284 /* Pods-alertroadupdater.debug.xcconfig */,
 				45BDE2DC71B8244197E04A41 /* Pods-alertroadupdater.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

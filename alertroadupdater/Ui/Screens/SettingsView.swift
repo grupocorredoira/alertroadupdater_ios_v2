@@ -11,8 +11,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Barra superior
-                TopAppBarComponent(title: "Ajustes", onBackClick: {})
+                
 
                 List {
                     Section(header: Text("Preferencias de usuario").font(.headline)) {

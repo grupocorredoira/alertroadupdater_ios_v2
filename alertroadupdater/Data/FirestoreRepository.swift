@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseFirestore
 import Combine
-
+/*
 class FirestoreRepository: ObservableObject {
     static private var _allDocuments: [Document]?
     private let db = Firestore.firestore()
@@ -34,3 +34,4 @@ class FirestoreRepository: ObservableObject {
         .eraseToAnyPublisher()
     }
 }
+*/

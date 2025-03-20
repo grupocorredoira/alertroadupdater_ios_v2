@@ -4,6 +4,7 @@ import SwiftUI
 
 /// `DocumentsViewModel` gestiona los documentos y su estado de descarga en iOS.
 /// Se encarga de obtener documentos desde Firestore y sincronizarlos con almacenamiento local.
+/*
 class DocumentsViewModel: ObservableObject {
 
     private let firestoreRepository: FirestoreRepository
@@ -168,3 +169,4 @@ enum DocumentDownloadStatus {
         }
     }
 }
+*/

@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseAuth
 import Combine
-
+/*
 class LoginViewModel: ObservableObject {
     private let usersHandler: UsersHandler
     private let prefs: PreferencesManager
@@ -89,3 +89,4 @@ class LoginViewModel: ObservableObject {
         }
     }
 }
+*/

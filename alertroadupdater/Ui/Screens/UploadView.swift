@@ -1,5 +1,6 @@
 import SwiftUI
 
+/*
 struct UploadView: View {
     @ObservedObject var connectionViewModel: ConnectionViewModel
     @ObservedObject var documentsViewModel: DocumentsViewModel
@@ -131,3 +132,4 @@ struct UploadDocumentRow: View {
         .padding()
     }
 }
+*/

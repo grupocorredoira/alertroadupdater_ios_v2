@@ -1,6 +1,6 @@
 import Foundation
 import UIKit
-import FirebaseCrashlytics
+//import FirebaseCrashlytics
 
 class Utils {
 
@@ -38,7 +38,7 @@ class Utils {
     static func getVersionCode() -> Int {
         return Int(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "-1") ?? -1
     }
-
+/*
     /// Reporta errores en `Firebase Crashlytics`.
     static func reportCrash(className: String, errorMessage: String) {
         let errorInfo = "Clase: \(className) - Error: \(errorMessage)"
@@ -50,6 +50,7 @@ class Utils {
         Crashlytics.crashlytics().setCustomValue(errorMessage, forKey: "Mensaje de error")
         Crashlytics.crashlytics().record(error: exception)
     }
+    */
 }
 
 /// Enum para la duración del Toast
