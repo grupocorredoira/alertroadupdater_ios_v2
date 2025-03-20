@@ -5,17 +5,21 @@ struct NavGraph: View {
 
     // Inicializar con los parámetros requeridos
     @StateObject private var prefs = PreferencesManager()
-    @StateObject private var usersHandler = UsersHandler()
-    @StateObject private var loginViewModel = LoginViewModel(usersHandler: UsersHandler(), prefs: PreferencesManager())
-
+    /*
+     @StateObject private var usersHandler = UsersHandler()
+     @StateObject private var loginViewModel = LoginViewModel(usersHandler: UsersHandler(), prefs: PreferencesManager())
+     */
     // Crear una instancia de ConnectionManager
     @StateObject private var connectionManager = ConnectionManager()
 
     // Repositorios y gestores requeridos
-    @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
-    @StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
+    /*
+     @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
+     @StateObject private var firestoreRepository = FirestoreRepository()
+     */
+    //@StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
     @StateObject private var networkStatusRepository = NetworkStatusRepository()
-    @StateObject private var firestoreRepository = FirestoreRepository()
+
     @StateObject private var localRepository = LocalRepository()
     @StateObject private var networkStatusViewModel = NetworkStatusViewModel(networkStatusRepository: NetworkStatusRepository())
 
@@ -25,20 +29,20 @@ struct NavGraph: View {
         NavigationView {
             VStack {
                 getStartView()
-                    .background(
-                        NavigationLink(
-                            destination: getDestinationView(for: currentScreen),
-                            isActive: Binding(
-                                get: { currentScreen != nil },
-                                set: { if !$0 { currentScreen = nil } }
-                            )
-                        ) {
-                            EmptyView()
-                        }
-                    )
+
+                if let screen = currentScreen {
+                    NavigationLink(destination: getDestinationView(for: screen),
+                                   isActive: Binding(
+                                    get: { currentScreen != nil },
+                                    set: { if !$0 { currentScreen = nil } }
+                                   )) {
+                                       EmptyView()
+                                   }
+                }
             }
+            .navigationTitle("Atrás") // ✅ Agrega un título para evitar conflictos
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                // Inicializa connectionViewModel aquí
                 if connectionViewModel == nil {
                     connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
                 }
@@ -48,42 +52,42 @@ struct NavGraph: View {
 
     @ViewBuilder
     private func getStartView() -> some View {
-        // 🔹 Directamente empezamos en la pantalla de Welcome
         WelcomeView(
-            loginViewModel: loginViewModel,
-            usersHandler: usersHandler
+            //loginViewModel: loginViewModel,
+            //usersHandler: usersHandler,
+            currentScreen: $currentScreen // Pasa la navegación a WelcomeView
         )
     }
 
     @ViewBuilder
-    private func getDestinationView(for screen: Screen?) -> some View {
+    private func getDestinationView(for screen: Screen) -> some View {
         switch screen {
         case .welcome:
-            WelcomeView(
-                loginViewModel: loginViewModel,
-                usersHandler: usersHandler
-            )
+            WelcomeView(currentScreen: $currentScreen)
         case .settings:
             SettingsView()
         case .connection:
             if let connectionViewModel = connectionViewModel {
-                ConnectionScreen(
+                ConnectionView(
+                    title: "Conexión", // ✅ Se pasa el título dinámico
                     connectionViewModel: connectionViewModel,
-                    documentsViewModel: documentsViewModel,
                     networkStatusViewModel: networkStatusViewModel
                 )
             }
-        case .upload(let deviceName):
-            UploadView(
-                connectionViewModel: connectionViewModel!,
-                documentsViewModel: documentsViewModel,
-                uploadDocumentsViewModel: uploadDocumentsViewModel,
-                deviceName: deviceName
-            )
+            /*
+             case .upload(let deviceName):
+             UploadView(
+             connectionViewModel: connectionViewModel!,
+             //documentsViewModel: documentsViewModel,
+             uploadDocumentsViewModel: uploadDocumentsViewModel,
+             deviceName: deviceName
+             )
+
         case .none:
-            EmptyView()
+            EmptyView()*/
         }
     }
+
 
     private func navigateTo(_ screen: Screen) {
         currentScreen = screen

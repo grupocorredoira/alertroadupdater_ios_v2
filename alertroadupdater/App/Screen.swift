@@ -1,6 +1,6 @@
 import Foundation
 
-enum Screen: Hashable, Identifiable {
+enum Screen: Hashable/*, Identifiable*/ {
 /*
     case terms
     case privacyPolicies
@@ -10,8 +10,9 @@ enum Screen: Hashable, Identifiable {
     case welcome
     case settings
     case connection
-    case upload(deviceName: String) // ✅ Ahora acepta un valor asociado
+    //case upload(deviceName: String) // ✅ Ahora acepta un valor asociado
 
+    /*
     var id: String {
         switch self {
         case .upload(let deviceName):
@@ -20,4 +21,5 @@ enum Screen: Hashable, Identifiable {
             return "\(self)"
         }
     }
+     */
 }
