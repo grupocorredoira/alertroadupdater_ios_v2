@@ -7,9 +7,10 @@ struct ConnectionView: View {
     @ObservedObject var networkStatusViewModel: NetworkStatusViewModel
     //@ObservedObject var permissionsViewModel: PermissionsViewModel
 
-    @State private var isDetecting = false
-    @State private var detectionError: String? = nil
-    @State private var triggerDetection = false
+    @State private var selectedNetwork: String? = nil
+    @State private var showDialog = false
+    @State private var isLoading = false
+    @State private var navigateToUploadView = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -24,7 +25,7 @@ struct ConnectionView: View {
                 .font(.headline)
                 .padding(.bottom, 4)
 
-            WifiNetworksView()
+            WifiNetworksView(selectedNetwork: $selectedNetwork, showDialog: $showDialog)
 
             WifiSettingsButton()
             //EnableWifiButton(isWifiEnabled: networkStatusViewModel.isWifiEnabled)
@@ -33,10 +34,34 @@ struct ConnectionView: View {
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .fullScreenCover(isPresented: $navigateToUploadView) {
+            UploadView()
+        }
+        .alert(isPresented: $showDialog) {
+            if isLoading {
+                return Alert(title: Text("Cargando..."),
+                             message: Text("Por favor, espera"),
+                             dismissButton: nil)
+            } else {
+                return Alert(
+                    title: Text("Hola"),
+                    message: Text("Esto es un texto largo"),
+                    primaryButton: .default(Text("Aceptar"), action: startLoading),
+                    secondaryButton: .cancel()
+                )
+            }
+        }
     }
 
+    private func startLoading() {
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            isLoading = false
+            showDialog = false
+            navigateToUploadView = true
+        }
+    }
 }
-
 struct HelpButton: View {
     var body: some View {
         Button(action: {
@@ -58,6 +83,9 @@ struct HelpButton: View {
 struct WifiNetworksView: View {
     let wifiNetworks = ["red1", "red2"/*, "red3", "red4", "red5"*/]
 
+    @Binding var selectedNetwork: String?
+    @Binding var showDialog: Bool
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
@@ -77,6 +105,10 @@ struct WifiNetworksView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(8)
+                        .onTapGesture {
+                            selectedNetwork = network // ✅ Ahora actualiza el valor en `ConnectionView`
+                            showDialog = true // ✅ Activa el diálogo correctamente
+                        }
                     }
                 }
                 .padding()
@@ -93,6 +125,8 @@ struct WifiNetworksView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
+
 
 struct WifiSettingsButton: View {
     var body: some View {
@@ -113,156 +147,3 @@ struct WifiSettingsButton: View {
         }
     }
 }
-
-/*
- struct EnableWifiButton: View {
- var isWifiEnabled: Bool
-
- var body: some View {
- Button(action: {
- if let url = URL(string: "App-Prefs:root=WIFI") {
- UIApplication.shared.open(url)
- }
- }) {
- Text(isWifiEnabled ? "Wi-Fi Activado" : "Activar Wi-Fi")
- .frame(maxWidth: .infinity)
- .padding()
- .background(isWifiEnabled ? Color.gray : Color.green)
- .foregroundColor(.white)
- .cornerRadius(10)
- }
- .disabled(isWifiEnabled)
- .padding(.horizontal, 16) // Márgenes laterales
- }
- }
-
- struct DetectDeviceButton: View {
- var isWifiEnabled: Bool
- var matchedSSID: String?
- //var allPermissionsGranted: Bool
- //var onRequestPermissions: () -> Void
- var onStartDetection: () -> Void
-
- var body: some View {
- Button(action: {
- //if allPermissionsGranted {
- onStartDetection()
- /*} else {
-  onRequestPermissions()
-  }*/
- }) {
- Text(matchedSSID == nil ? "Detectar dispositivo" : "Dispositivo detectado")
- .frame(maxWidth: .infinity)
- .padding()
- .background(isWifiEnabled && matchedSSID == nil ? Color.green : Color.gray)
- .foregroundColor(.white)
- .cornerRadius(10)
- }
- .disabled(!isWifiEnabled || matchedSSID != nil)
- .padding(.horizontal, 16) // Márgenes laterales
- }
- }
-
- struct DeviceInfoCard: View {
- var deviceName: String
- var ssid: String
-
- var body: some View {
- VStack {
- Text("Dispositivo: \(deviceName)")
- .font(.headline)
- .padding(.bottom, 2)
- Text("Red Wi-Fi: \(ssid)")
- .font(.subheadline)
- .foregroundColor(.gray)
- }
- .frame(maxWidth: .infinity)
- .padding()
- .background(Color.white)
- .cornerRadius(10)
- .shadow(radius: 5)
- .padding(.horizontal, 16) // Márgenes laterales
- }
- }
-
- struct NextButton: View {
- var matchedSSID: String?
- var documentsViewModel: DocumentsViewModel
-
- @State private var isProcessing = false
-
- var body: some View {
- Button(action: {
- guard let ssid = matchedSSID else { return }
- isProcessing = true
- documentsViewModel.downloadError = nil // ✅ Se asigna explícitamente a `nil`
-
- DispatchQueue.global(qos: .background).async {
- documentsViewModel.deleteAllLocalFiles()
-
- documentsViewModel.downloadAllDocumentsBySSID(ssid: ssid) { result in
- DispatchQueue.main.async {
- isProcessing = false
- }
- }
- }
- }) {
- Text("Siguiente")
- .frame(maxWidth: .infinity)
- .padding()
- .background(matchedSSID != nil ? Color.blue : Color.gray)
- .foregroundColor(.white)
- .cornerRadius(10)
- }
- .disabled(matchedSSID == nil)
- .overlay {
- if isProcessing {
- ProgressView("Descargando documentos...")
- }
- }
- .padding(.horizontal, 16) // Márgenes laterales
- }
- }
-
-
- struct DetectionDialog: View {
- var onTimeout: () -> Void
- var onDismiss: () -> Void
-
- @State private var timer: Int = 5
-
- var body: some View {
- VStack {
- Text("Detectando dispositivos...")
- .font(.title2)
- .bold()
- .padding(.bottom, 10)
-
- ProgressView()
- .padding()
-
- Text("Espere \(timer) segundos")
- .font(.subheadline)
-
- Button(action: onDismiss) {
- Text("Cancelar")
- .foregroundColor(.red)
- }
- }
- .padding()
- .background(Color.white)
- .cornerRadius(10)
- .shadow(radius: 5)
- .onAppear {
- Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { t in
- if timer > 0 {
- timer -= 1
- } else {
- t.invalidate()
- onTimeout()
- }
- }
- }
- }
- }
-*/

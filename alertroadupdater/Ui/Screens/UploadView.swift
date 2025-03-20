@@ -1,5 +1,15 @@
 import SwiftUI
 
+struct UploadView: View {
+    var body: some View {
+        VStack {
+            Text("Hola mundo")
+                .font(.title)
+                .padding()
+        }
+    }
+}
+
 /*
 struct UploadView: View {
     @ObservedObject var connectionViewModel: ConnectionViewModel
