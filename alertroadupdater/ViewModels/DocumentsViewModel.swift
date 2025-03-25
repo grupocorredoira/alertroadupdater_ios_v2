@@ -4,7 +4,7 @@ import SwiftUI
 
 /// `DocumentsViewModel` gestiona los documentos y su estado de descarga en iOS.
 /// Se encarga de obtener documentos desde Firestore y sincronizarlos con almacenamiento local.
-/*
+
 class DocumentsViewModel: ObservableObject {
 
     private let firestoreRepository: FirestoreRepository
@@ -48,16 +48,29 @@ class DocumentsViewModel: ObservableObject {
         }
     }
 
-    /// Obtiene una lista de SSIDs almacenados en los documentos.
+    /// Obtiene una lista de SSIDs únicos, manteniendo el orden original.
     func getAllSSIDs() -> [String] {
-        return documents.map { $0.ssid }
+        var seen = Set<String>()
+        var uniqueSSIDs: [String] = []
+
+        for document in documents {
+            let ssid = document.ssid
+            if !seen.contains(ssid) {
+                seen.insert(ssid)
+                uniqueSSIDs.append(ssid)
+            }
+        }
+
+        return uniqueSSIDs
     }
+
+
 
     /// Busca la contraseña asociada a un SSID.
     func getPasswordForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.password
     }
-
+/*
     /// Descarga un archivo desde Firestore y lo guarda localmente.
     func downloadFileAndWait(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         updateDownloadState(documentId, newState: .downloading(progress: 0))
@@ -92,7 +105,8 @@ class DocumentsViewModel: ObservableObject {
             }
         )
     }
-
+    */
+/*
     /// Descarga todos los documentos asociados a un SSID.
     func downloadAllDocumentsBySSID(ssid: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let documentsToDownload = documents.filter { $0.ssid == ssid }
@@ -119,7 +133,7 @@ class DocumentsViewModel: ObservableObject {
             }
         }
     }
-
+*/
     /// Actualiza el estado de descarga de un documento.
     private func updateDownloadState(_ documentId: String, newState: DocumentDownloadStatus) {
         DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
@@ -169,4 +183,4 @@ enum DocumentDownloadStatus {
         }
     }
 }
-*/
+

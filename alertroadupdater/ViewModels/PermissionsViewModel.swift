@@ -1,32 +1,27 @@
-import Foundation
-import Combine
 import CoreLocation
+import SwiftUI
 
-class PermissionsViewModel: NSObject, ObservableObject {
-    @Published var locationGranted = false
-    @Published var showPermissionSheet = false
+class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    private var locationManager = CLLocationManager()
 
-    private let locationManager = CLLocationManager()
+    @Published var hasLocationPermission = false
 
     override init() {
         super.init()
         locationManager.delegate = self
-        checkPermissions()
     }
 
     func checkPermissions() {
         let status = CLLocationManager.authorizationStatus()
-        locationGranted = (status == .authorizedWhenInUse || status == .authorizedAlways)
-        showPermissionSheet = !locationGranted
+        if status == .notDetermined {
+            locationManager.requestWhenInUseAuthorization()
+        } else {
+            hasLocationPermission = (status == .authorizedWhenInUse || status == .authorizedAlways)
+        }
     }
 
-    func requestPermission() {
-        locationManager.requestWhenInUseAuthorization()
-    }
-}
-
-extension PermissionsViewModel: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        checkPermissions()
+        hasLocationPermission = (status == .authorizedWhenInUse || status == .authorizedAlways)
     }
 }
+

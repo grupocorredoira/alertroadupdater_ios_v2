@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 struct WelcomeView: View {
     //@ObservedObject var loginViewModel: LoginViewModel
@@ -7,6 +8,10 @@ struct WelcomeView: View {
     @State private var showPaymentDialog: Bool = false
     @State private var isCheckingUser: Bool = false
     @State private var snackbarMessage: String?
+    @ObservedObject var wifiSSIDManager: WiFiSSIDManager
+    @State private var showPermissionDenied = false
+    @ObservedObject var permissionsViewModel: PermissionsViewModel // ✅ ESTA ES LA BUENA
+
 
     var body: some View {
         VStack(spacing: 16) {
@@ -28,6 +33,7 @@ struct WelcomeView: View {
                 .padding(.bottom, 16)
 
             Button(action: {
+                handleStartButtonTap()
                 isCheckingUser = true
                 currentScreen = .connection
 /*
@@ -72,5 +78,36 @@ struct WelcomeView: View {
         }
         .padding(.top, 0) // Elimina cualquier margen superior
         .ignoresSafeArea(edges: .top) // Se asegura que la barra esté pegada arriba
+        .padding(.top, 0)
+                .ignoresSafeArea(edges: .top)
+                .alert(isPresented: $showPermissionDenied) {
+                    Alert(title: Text("Permisos requeridos"),
+                          message: Text("Debes permitir acceso a la localización para detectar la red Wi-Fi."),
+                          dismissButton: .default(Text("Aceptar")))
+                }
+                .onAppear {
+                    wifiSSIDManager.requestLocationPermission()
+                }
     }
+
+    private func handleStartButtonTap() {
+            let status = CLLocationManager.authorizationStatus()
+
+            if status == .authorizedWhenInUse || status == .authorizedAlways {
+                currentScreen = .connection
+            } else if status == .notDetermined {
+                permissionsViewModel.checkPermissions()
+
+                // Escucha el cambio de permisos en segundo plano
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    if permissionsViewModel.hasLocationPermission {
+                        currentScreen = .connection
+                    } else {
+                        snackbarMessage = "Se necesitan permisos de ubicación para continuar"
+                    }
+                }
+            } else {
+                snackbarMessage = "Se necesitan permisos de ubicación para continuar"
+            }
+        }
 }

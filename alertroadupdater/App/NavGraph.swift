@@ -13,8 +13,9 @@ struct NavGraph: View {
     @StateObject private var connectionManager = ConnectionManager()
 
     // Repositorios y gestores requeridos
-    /*
+
      @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
+    /*
      @StateObject private var firestoreRepository = FirestoreRepository()
      */
     //@StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
@@ -24,6 +25,11 @@ struct NavGraph: View {
     @StateObject private var networkStatusViewModel = NetworkStatusViewModel(networkStatusRepository: NetworkStatusRepository())
 
     @State private var connectionViewModel: ConnectionViewModel?
+
+    // 👇 Añadimos estos dos
+    @StateObject private var wifiSSIDManager = WiFiSSIDManager()
+    @StateObject private var permissionsViewModel = PermissionsViewModel()
+
 
     var body: some View {
         NavigationView {
@@ -53,9 +59,9 @@ struct NavGraph: View {
     @ViewBuilder
     private func getStartView() -> some View {
         WelcomeView(
-            //loginViewModel: loginViewModel,
-            //usersHandler: usersHandler,
-            currentScreen: $currentScreen // Pasa la navegación a WelcomeView
+            currentScreen: $currentScreen,
+            wifiSSIDManager: wifiSSIDManager,
+            permissionsViewModel: permissionsViewModel
         )
     }
 
@@ -63,28 +69,27 @@ struct NavGraph: View {
     private func getDestinationView(for screen: Screen) -> some View {
         switch screen {
         case .welcome:
-            WelcomeView(currentScreen: $currentScreen)
+            WelcomeView(
+                currentScreen: $currentScreen,
+                wifiSSIDManager: wifiSSIDManager,
+                permissionsViewModel: permissionsViewModel
+            )
         case .settings:
             SettingsView()
         case .connection:
             if let connectionViewModel = connectionViewModel {
                 ConnectionView(
-                    title: "Conexión", // ✅ Se pasa el título dinámico
+                    title: "Conexión",
+                    documentsViewModel: documentsViewModel,
                     connectionViewModel: connectionViewModel,
                     networkStatusViewModel: networkStatusViewModel
-                )
+                ) { ssid in
+                    // ✅ Cuando se selecciona una red, se navega a UploadView con el SSID
+                    currentScreen = .upload(deviceName: ssid)
+                }
             }
-            /*
-             case .upload(let deviceName):
-             UploadView(
-             connectionViewModel: connectionViewModel!,
-             //documentsViewModel: documentsViewModel,
-             uploadDocumentsViewModel: uploadDocumentsViewModel,
-             deviceName: deviceName
-             )
-
-        case .none:
-            EmptyView()*/
+        case .upload(let deviceName):
+            UploadView(deviceName: deviceName)
         }
     }
 

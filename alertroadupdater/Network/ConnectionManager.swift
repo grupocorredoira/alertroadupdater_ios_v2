@@ -3,6 +3,7 @@ import Network
 import SystemConfiguration.CaptiveNetwork
 import UIKit
 
+
 /// `ConnectionManager` maneja la obtención del SSID y la apertura de ajustes de Wi-Fi en iOS.
 class ConnectionManager: ObservableObject {
     private let monitor = NWPathMonitor()
@@ -48,3 +49,4 @@ class ConnectionManager: ObservableObject {
         completion(false) // No hay forma de conectar automáticamente en iOS sin abrir ajustes.
     }
 }
+

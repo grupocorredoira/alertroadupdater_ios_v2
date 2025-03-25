@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseFirestore
 import Combine
-/*
+
 class FirestoreRepository: ObservableObject {
     static private var _allDocuments: [Document]?
     private let db = Firestore.firestore()
@@ -19,13 +19,10 @@ class FirestoreRepository: ObservableObject {
                     print("Error loading documents: \(error.localizedDescription)")
                     promise(.failure(error))
                 } else {
-                    let documents = snapshot?.documents.compactMap { doc -> Document? in
-                        guard let data = try? JSONSerialization.data(withJSONObject: doc.data()),
-                              let document = try? JSONDecoder().decode(Document.self, from: data) else {
-                            return nil
-                        }
-                        return document.copy(withID: doc.documentID)
+                    let documents = snapshot?.documents.compactMap { doc in
+                        Document(from: doc)
                     } ?? []
+
                     FirestoreRepository._allDocuments = documents
                     promise(.success(documents))
                 }
@@ -34,4 +31,3 @@ class FirestoreRepository: ObservableObject {
         .eraseToAnyPublisher()
     }
 }
-*/

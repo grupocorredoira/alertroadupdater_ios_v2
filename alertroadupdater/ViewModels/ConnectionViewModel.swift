@@ -49,3 +49,4 @@ class ConnectionViewModel: ObservableObject {
         availableSSIDs = []
     }
 }
+
