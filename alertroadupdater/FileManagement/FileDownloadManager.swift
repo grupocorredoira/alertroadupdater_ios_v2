@@ -1,6 +1,6 @@
 import Foundation
 import FirebaseStorage
-/*
+
 /// `FileDownloadManager` gestiona la descarga de archivos desde Firebase Storage
 /// y su almacenamiento local en el dispositivo.
 class FileDownloadManager {
@@ -88,4 +88,3 @@ class FileDownloadManager {
         task.resume()
     }
 }
-*/

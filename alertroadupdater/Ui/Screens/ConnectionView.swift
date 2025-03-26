@@ -13,6 +13,10 @@ struct ConnectionView: View {
     @State private var showLoadingDialog = false
     @State private var navigateToUploadView = false
 
+    var deviceName: String? {
+        documentsViewModel.getDeviceNameForSSID(selectedNetwork!)!
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Spacer()
@@ -22,7 +26,7 @@ struct ConnectionView: View {
                 .padding(.bottom, 4)
             HelpButton()
 
-            Text("Paso 2: ¿Alguna de estas redes aparece en tus ajustes de Wi-Fi?")
+            Text("Paso 2: ¿Alguna de estas redes aparece en tus ajustes de Wi-Fi? Seleccionala")
                 .font(.headline)
                 .padding(.bottom, 4)
 
@@ -30,6 +34,23 @@ struct ConnectionView: View {
             WifiNetworksView(documentsViewModel: documentsViewModel, selectedNetwork: $selectedNetwork, showDialog: $showDialog)
 
             WifiSettingsButton()
+
+            HStack(alignment: .center, spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.yellow)
+                    .font(.title2) // Ajusta el tamaño si quieres que sea más visible
+
+                Text("Si no aparece ninguna de estas redes, por favor, revisa el paso 1")
+                    .font(.headline)
+                    .foregroundColor(.black)
+                    .multilineTextAlignment(.leading)
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.yellow.opacity(0.2))
+            .cornerRadius(12)
+            .padding(.horizontal)
+            .padding(.bottom, 4)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -38,7 +59,7 @@ struct ConnectionView: View {
         .alert(isPresented: $showDialog) {
             Alert(
                 title: Text("Descargar"),
-                message: Text("¿Deseas descargar los documentos asociados a la red \(selectedNetwork ?? "")"),
+                message: Text("La red \(selectedNetwork ?? "") pertenece al dispositivo \(deviceName ?? ""). ¿Deseas descargar los documentos asociados a este dispositivo?"),
                 primaryButton: .default(Text("Aceptar"), action: startLoading),
                 secondaryButton: .cancel()
             )
@@ -72,17 +93,56 @@ struct ConnectionView: View {
     }
 
     private func startLoading() {
-        showLoadingDialog = true // ✅ Abre el diálogo de carga antes de cerrar el anterior
-        showDialog = false // ✅ Cierra el primer diálogo inmediatamente
+        showLoadingDialog = true
+        showDialog = false
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            showLoadingDialog = false // ✅ Cierra la carga
-            if let ssid = selectedNetwork {
-                            onNetworkSelected(ssid) // ✅ Llama a NavGraph para cambiar de pantalla
-                        }
+        guard networkStatusViewModel.hasInternet else {
+            showLoadingDialog = false
+            // Muestra una alerta si no hay conexión
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                showNetworkErrorAlert()
+            }
+            return
         }
+
+        guard let ssid = selectedNetwork,
+              let deviceName = documentsViewModel.getDeviceNameForSSID(ssid) else {
+            showLoadingDialog = false
+            showDownloadErrorAlert()
+            return
+        }
+
+        let deleteMessage = documentsViewModel.deleteAllLocalFiles()
+        print(deleteMessage)
+
+        documentsViewModel.downloadAllDocumentsBySSID(ssid: ssid) { result in
+            DispatchQueue.main.async {
+                showLoadingDialog = false
+
+                switch result {
+                case .success:
+                    onNetworkSelected(deviceName) // ✅ ahora sí solo se llama una vez
+                case .failure:
+                    showDownloadErrorAlert()
+                }
+            }
+        }
+
+    }
+
+    private func showNetworkErrorAlert() {
+        let alert = UIAlertController(title: "Sin conexión", message: "No hay conexión a Internet. Por favor, vuelve a conectarte antes de continuar.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+    }
+
+    private func showDownloadErrorAlert() {
+        let alert = UIAlertController(title: "Error de descarga", message: "No se han podido descargar los documentos. Verifica tu conexión y vuelve a intentarlo.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
     }
 }
+
 
 struct HelpButton: View {
     var body: some View {

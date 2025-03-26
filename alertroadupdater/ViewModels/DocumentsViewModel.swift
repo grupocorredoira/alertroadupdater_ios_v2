@@ -10,7 +10,7 @@ class DocumentsViewModel: ObservableObject {
     private let firestoreRepository: FirestoreRepository
     private let localRepository: LocalRepository
 
-    @Published var documents: [Document] = []
+    private var documents: [Document] = []
     @Published var documentDownloadStates: [String: DocumentDownloadStatus] = [:]
     @Published var downloadError: String? = nil // ✅ Se define explícitamente como opcional
 
@@ -70,7 +70,7 @@ class DocumentsViewModel: ObservableObject {
     func getPasswordForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.password
     }
-/*
+    
     /// Descarga un archivo desde Firestore y lo guarda localmente.
     func downloadFileAndWait(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         updateDownloadState(documentId, newState: .downloading(progress: 0))
@@ -105,8 +105,7 @@ class DocumentsViewModel: ObservableObject {
             }
         )
     }
-    */
-/*
+
     /// Descarga todos los documentos asociados a un SSID.
     func downloadAllDocumentsBySSID(ssid: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let documentsToDownload = documents.filter { $0.ssid == ssid }
@@ -133,7 +132,7 @@ class DocumentsViewModel: ObservableObject {
             }
         }
     }
-*/
+
     /// Actualiza el estado de descarga de un documento.
     private func updateDownloadState(_ documentId: String, newState: DocumentDownloadStatus) {
         DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
@@ -147,9 +146,12 @@ class DocumentsViewModel: ObservableObject {
     }
 
     /// Obtiene el SSID asociado a un nombre de dispositivo.
-    func getSSIDForDeviceName(_ deviceName: String?) -> String? {
-        guard let deviceName = deviceName?.trimmingCharacters(in: .whitespaces) else { return nil }
-        return documents.first(where: { $0.deviceName.trimmingCharacters(in: .whitespaces) == deviceName })?.ssid
+    func getSSIDForDeviceName(_ deviceName: String) -> String {
+        let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
+        guard let ssid = documents.first(where: { $0.deviceName.trimmingCharacters(in: .whitespaces) == trimmedDevice })?.ssid else {
+            fatalError("❌ No se encontró SSID para el deviceName '\(deviceName)'")
+        }
+        return ssid
     }
 
     /// Elimina todos los archivos locales almacenados.

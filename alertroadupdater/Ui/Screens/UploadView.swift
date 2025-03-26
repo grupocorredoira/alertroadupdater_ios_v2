@@ -7,14 +7,32 @@ struct UploadView: View {
     var deviceName: String
 
     @StateObject private var wifiManager = WiFiSSIDManager()
-    /*var password: String? {
-            DocumentsViewModel.getPasswordForSSID(deviceName)
-        }*/
+    @ObservedObject var uploadDocumentsViewModel : UploadDocumentsViewModel
+    @ObservedObject var documentsViewModel: DocumentsViewModel
+
+    var ssidSelected: String {
+        let ssid = documentsViewModel.getSSIDForDeviceName(deviceName)
+        print("🔍 [ssidSelected] Para deviceName: '\(deviceName)', se encontró SSID: '\(ssid)'")
+        return ssid
+    }
+
+    var password: String? {
+        documentsViewModel.getPasswordForSSID(ssidSelected)
+    }
+
+    @State private var showToast = false
+
+    let ssidCheckTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+
+    @ObservedObject var wifiSSIDManager: WiFiSSIDManager
+    @State private var showPermissionDenied = false
+
+    @State private var fileNames: [String] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
 
-            if wifiManager.ssid == deviceName {
+            if wifiManager.ssid == ssidSelected {
                 // ✅ Coincide con la red esperada
                 Text("Dispositivo conectado \(deviceName)")
                     .font(.title2)
@@ -26,84 +44,187 @@ struct UploadView: View {
                     .font(.headline)
                     .padding(.bottom, 4)
 
-                FileSelectionView() // ✅ Vista de selección de documentos
+                FileSelectionListView(uploadDocumentsViewModel: uploadDocumentsViewModel, deviceName: deviceName)
+
 
             } else {
-                Text("Conéctate a la red WiFi:")
-                    .font(.headline)
-                    .padding(.top)
+                VStack {
+                    Text("Conéctate a la red WiFi:")
+                        .font(.headline)
+                        .padding(.top)
 
-                Text(deviceName)
-                    .font(.title3)
-                    .bold()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top)
-
-                Text("Copia la siguiente contraseña:")
-                    .font(.headline)
-                    .padding(.top)
-/*
-                if let password = password {
-                    HStack(spacing: 8) {
-                        Text(password)
-                            .font(.title3)
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .center)
-
-                        Button(action: {
-                            UIPasteboard.general.string = password
-                        }) {
-                            Image(systemName: "doc.on.doc") // 📋 Icono de copiar
-                                .foregroundColor(.blue)
-                                .font(.title3)
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                    .padding(.top)
-                } else {
-                    Text("Contraseña no disponible")
+                    Text(ssidSelected)
                         .font(.title3)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top)
-                }
 
-*/
-                WifiSettingsButton()
+                    Text("Copia la siguiente contraseña:")
+                        .font(.headline)
+                        .padding(.top)
+
+                    if let password = password {
+                        HStack(spacing: 8) {
+                            Text(password)
+                                .font(.title3)
+                                .bold()
+
+                            Button(action: {
+                                UIPasteboard.general.string = password
+                                withAnimation {
+                                    showToast = true
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    withAnimation {
+                                        showToast = false
+                                    }
+                                }
+                            }) {
+                                Image(systemName: "doc.on.doc") // 📋 Icono de copiar
+                                    .foregroundColor(.blue)
+                                    .font(.title3)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                        }
+                        .padding(.top)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Text("Contraseña no disponible")
+                            .font(.title3)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top)
+                    }
+
+                    Spacer()
+
+                    WifiSettingsButton()
+                }
+                // ✅ Aquí aplicamos el toast
+                .toast(message: "Contraseña copiada", icon: "checkmark.circle", isShowing: $showToast)
             }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .onReceive(ssidCheckTimer) { _ in
+            wifiManager.fetchSSID()
+            print("🔁 [Timer] wifiManager.ssid: \(wifiManager.ssid ?? "nil") | ssidSelected: \(ssidSelected ?? "nil") | deviceName: \(deviceName)")
+        }
+        .alert(isPresented: $showPermissionDenied) {
+            Alert(title: Text("Permisos requeridos"),
+                  message: Text("Debes permitir acceso a la localización para detectar la red Wi-Fi."),
+                  dismissButton: .default(Text("Aceptar")))
+        }
+        .onAppear {
+            wifiSSIDManager.requestLocationPermission()
+            loadFileNames()
+            print("📲 [onAppear] deviceName: \(deviceName)")
+            print("📶 [onAppear] wifiManager.ssid: \(wifiManager.ssid ?? "nil")")
+            print("🧩 [onAppear] ssidSelected: \(ssidSelected ?? "nil")")
+        }
+    }
+
+    private func loadFileNames() {
+        let fileManager = FileManager.default
+        if let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            do {
+                let files = try fileManager.contentsOfDirectory(atPath: documentsURL.path)
+                fileNames = files
+                print("📄 Archivos locales encontrados:", files)
+            } catch {
+                print("❌ Error al leer archivos locales: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
-struct FileSelectionView: View {
-    let sampleFiles = ["Documento A", "Documento B", "Documento C"]
+/*struct FileSelectionView: View {
+ let sampleFiles = ["Documento A", "Documento B", "Documento C"]
+
+ var body: some View {
+ VStack(alignment: .leading, spacing: 10) {
+ ForEach(sampleFiles, id: \.self) { file in
+ HStack {
+ Image(systemName: "doc.fill")
+ .foregroundColor(.blue)
+
+ Text(file)
+ .font(.headline)
+ .foregroundColor(.black)
+
+ Spacer()
+ }
+ .padding()
+ .frame(maxWidth: .infinity, alignment: .leading)
+ .background(Color.gray.opacity(0.2))
+ .cornerRadius(8)
+ }
+ }
+ .padding()
+ }
+ }*/
+
+struct UploadDocumentRowView: View {
+    let document: Document
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ForEach(sampleFiles, id: \.self) { file in
-                HStack {
-                    Image(systemName: "doc.fill")
-                        .foregroundColor(.blue)
+        HStack {
+            VStack(alignment: .leading) {
+                Text(document.type)
+                    .font(.headline)
 
-                    Text(file)
-                        .font(.headline)
-                        .foregroundColor(.black)
+                Text("Versión: \(document.version)")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
 
-                    Spacer()
+            Spacer()
+
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+                .font(.title2)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(8)
+    }
+}
+
+struct FileSelectionListView: View {
+    @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel
+    var deviceName: String
+
+    init(uploadDocumentsViewModel: UploadDocumentsViewModel, deviceName: String) {
+        self.uploadDocumentsViewModel = uploadDocumentsViewModel
+        self.deviceName = deviceName
+        print("📂 FileSelectionListView init con deviceName:", deviceName)
+    }
+
+    var body: some View {
+        let documents = uploadDocumentsViewModel.getDocumentsStoredLocallyForDevice(deviceName: deviceName)
+
+        return VStack(alignment: .leading, spacing: 10) {
+            if documents.isEmpty {
+                Text("No hay documentos almacenados localmente para este dispositivo.")
+                    .foregroundColor(.red)
+            } else {
+                ForEach(documents, id: \.id) { document in
+                    UploadDocumentRowView(document: document)
                 }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(8)
             }
         }
         .padding()
     }
 }
+
+
+
+
+
+
 
 
 /*

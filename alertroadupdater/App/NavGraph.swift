@@ -14,11 +14,11 @@ struct NavGraph: View {
 
     // Repositorios y gestores requeridos
 
-     @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
+    @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
     /*
      @StateObject private var firestoreRepository = FirestoreRepository()
      */
-    //@StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
+    @StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
     @StateObject private var networkStatusRepository = NetworkStatusRepository()
 
     @StateObject private var localRepository = LocalRepository()
@@ -83,13 +83,13 @@ struct NavGraph: View {
                     documentsViewModel: documentsViewModel,
                     connectionViewModel: connectionViewModel,
                     networkStatusViewModel: networkStatusViewModel
-                ) { ssid in
+                ) { deviceName in
                     // ✅ Cuando se selecciona una red, se navega a UploadView con el SSID
-                    currentScreen = .upload(deviceName: ssid)
+                    currentScreen = .upload(deviceName: deviceName)
                 }
             }
         case .upload(let deviceName):
-            UploadView(deviceName: deviceName)
+            UploadView(deviceName: deviceName, uploadDocumentsViewModel: uploadDocumentsViewModel, documentsViewModel: documentsViewModel, wifiSSIDManager: wifiSSIDManager)
         }
     }
 
