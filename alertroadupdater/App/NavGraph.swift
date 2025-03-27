@@ -3,7 +3,9 @@ import SwiftUI
 struct NavGraph: View {
     @State private var currentScreen: Screen? = nil
 
-    // Inicializar con los parámetros requeridos
+    // ✅ Instancia única y compartida
+    private let sharedLocalRepository = LocalRepository()
+
     @StateObject private var prefs = PreferencesManager()
     /*
      @StateObject private var usersHandler = UsersHandler()
@@ -13,15 +15,14 @@ struct NavGraph: View {
     @StateObject private var connectionManager = ConnectionManager()
 
     // Repositorios y gestores requeridos
+    @StateObject private var documentsViewModel: DocumentsViewModel
+    @StateObject private var uploadDocumentsViewModel: UploadDocumentsViewModel
 
-    @StateObject private var documentsViewModel = DocumentsViewModel(firestoreRepository: FirestoreRepository(), localRepository: LocalRepository())
     /*
      @StateObject private var firestoreRepository = FirestoreRepository()
      */
-    @StateObject private var uploadDocumentsViewModel = UploadDocumentsViewModel(localRepository: LocalRepository())
     @StateObject private var networkStatusRepository = NetworkStatusRepository()
 
-    @StateObject private var localRepository = LocalRepository()
     @StateObject private var networkStatusViewModel = NetworkStatusViewModel(networkStatusRepository: NetworkStatusRepository())
 
     @State private var connectionViewModel: ConnectionViewModel?
@@ -29,6 +30,17 @@ struct NavGraph: View {
     // 👇 Añadimos estos dos
     @StateObject private var wifiSSIDManager = WiFiSSIDManager()
     @StateObject private var permissionsViewModel = PermissionsViewModel()
+
+    init() {
+            // ✅ Inicializa manualmente los StateObjects con la misma instancia
+            let firestoreRepo = FirestoreRepository()
+            let documentsVM = DocumentsViewModel(firestoreRepository: firestoreRepo, localRepository: sharedLocalRepository)
+            let uploadVM = UploadDocumentsViewModel(localRepository: sharedLocalRepository)
+
+            _documentsViewModel = StateObject(wrappedValue: documentsVM)
+            _uploadDocumentsViewModel = StateObject(wrappedValue: uploadVM)
+        }
+
 
 
     var body: some View {

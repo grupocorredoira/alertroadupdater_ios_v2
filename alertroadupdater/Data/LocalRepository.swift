@@ -5,7 +5,8 @@ class LocalRepository: ObservableObject {
 
     init() {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        self.documentsFolder = paths[0].appendingPathComponent("Documents")
+        self.documentsFolder = paths[0]
+        print("📁 [LocalRepository] Ruta usada para almacenamiento: \(documentsFolder.path)")
         createDocumentsFolderIfNeeded()
     }
 
@@ -22,16 +23,19 @@ class LocalRepository: ObservableObject {
     func listAllDocuments() -> [String] {
         do {
             let fileNames = try FileManager.default.contentsOfDirectory(atPath: documentsFolder.path)
+            print("📄 [LocalRepository] Documentos encontrados en \(documentsFolder.path): \(fileNames)")
             return fileNames
         } catch {
-            print("Error listing documents: \(error.localizedDescription)")
+            print("❌ [LocalRepository] Error al listar documentos: \(error.localizedDescription)")
             return []
         }
     }
 
     func isDocumentStored(documentId: String) -> Bool {
         let fileURL = documentsFolder.appendingPathComponent(documentId)
-        return FileManager.default.fileExists(atPath: fileURL.path)
+        let exists = FileManager.default.fileExists(atPath: fileURL.path)
+        print("📂 Verificando existencia del archivo: \(fileURL.path) => \(exists)")
+        return exists
     }
 
     func deleteAllDocuments() -> DeleteDocumentsResult {

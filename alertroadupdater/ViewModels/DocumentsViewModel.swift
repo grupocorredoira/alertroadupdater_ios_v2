@@ -10,9 +10,9 @@ class DocumentsViewModel: ObservableObject {
     private let firestoreRepository: FirestoreRepository
     private let localRepository: LocalRepository
 
-    private var documents: [Document] = []
     @Published var documentDownloadStates: [String: DocumentDownloadStatus] = [:]
     @Published var downloadError: String? = nil // ✅ Se define explícitamente como opcional
+    @Published var documents: [Document] = []
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -64,13 +64,11 @@ class DocumentsViewModel: ObservableObject {
         return uniqueSSIDs
     }
 
-
-
     /// Busca la contraseña asociada a un SSID.
     func getPasswordForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.password
     }
-    
+
     /// Descarga un archivo desde Firestore y lo guarda localmente.
     func downloadFileAndWait(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         updateDownloadState(documentId, newState: .downloading(progress: 0))
@@ -87,6 +85,12 @@ class DocumentsViewModel: ObservableObject {
                         case .success:
                             self.updateDownloadState(documentId, newState: .downloaded)
                             print("Documento \(documentId) descargado exitosamente.")
+
+                            // 📦 Ruta esperada de almacenamiento local
+                            let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                            let destinationURL = documentsDir.appendingPathComponent("Documents").appendingPathComponent(documentId)
+                            print("✅ [downloadFileAndWait] Documento '\(documentId)' guardado en: \(destinationURL.path)")
+
                             completion(.success(()))
                         case .failure(let error):
                             print("Error al descargar \(documentId): \(error.localizedDescription)")

@@ -131,10 +131,32 @@ struct ConnectionView: View {
     }
 
     private func showNetworkErrorAlert() {
-        let alert = UIAlertController(title: "Sin conexión", message: "No hay conexión a Internet. Por favor, vuelve a conectarte antes de continuar.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: "Sin conexión a Internet",
+            message: "Por favor, revisa tu conexión. Puedes abrir los ajustes para verificar Wi-Fi o datos móviles.",
+            preferredStyle: .alert
+        )
+
+        // Botón OK
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+
+        // Botón que abre Ajustes
+        alert.addAction(UIAlertAction(title: "Abrir Ajustes", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString),
+               UIApplication.shared.canOpenURL(settingsURL) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+
+        rootVC.present(alert, animated: true)
     }
+
+
 
     private func showDownloadErrorAlert() {
         let alert = UIAlertController(title: "Error de descarga", message: "No se han podido descargar los documentos. Verifica tu conexión y vuelve a intentarlo.", preferredStyle: .alert)

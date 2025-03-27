@@ -19,7 +19,6 @@ class FileDownloadManager {
         onError: @escaping (Error) -> Void
     ) {
         let fileRef = storage.reference().child(fileName)
-
         fileRef.downloadURL { url, error in
             if let error = error {
                 print("Error al obtener la URL del archivo \(fileName): \(error.localizedDescription)")

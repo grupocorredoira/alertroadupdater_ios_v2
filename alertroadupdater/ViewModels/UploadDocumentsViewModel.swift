@@ -11,17 +11,26 @@ class UploadDocumentsViewModel: ObservableObject {
         self.localRepository = localRepository
         loadDocuments()
     }
+/*
+    func loadDocuments() {
+        documents = FirestoreRepository.allDocuments ?? []
+    }*/
 
     func loadDocuments() {
         documents = FirestoreRepository.allDocuments ?? []
+        print("📦 [UploadDocumentsViewModel] Documentos cargados: \(documents.count)")
+        for doc in documents {
+            print("🔍 \(doc.id) | \(doc.deviceName)")
+        }
     }
+
 
     func updateUploadStatus(documentId: String, newStatus: DocumentUploadStatus) {
         DispatchQueue.main.async {
             self.uploadStates[documentId] = newStatus
         }
     }
-
+/*
     func getDocumentsStoredLocallyForDevice(deviceName: String?) -> [Document] {
         print("📥 Buscando documentos locales para deviceName: '\(deviceName ?? "nil")'")
         for doc in documents {
@@ -31,7 +40,25 @@ class UploadDocumentsViewModel: ObservableObject {
         let filtered = documents.filter { $0.deviceName == deviceName && localRepository.isDocumentStored(documentId: $0.id) }
         print("✅ Documentos encontrados: \(filtered.count)")
         return filtered
+    }*/
+
+    func getDocumentsStoredLocallyForDevice(deviceName: String?) -> [Document] {
+        print("📥 Buscando documentos locales para deviceName: '\(deviceName ?? "nil")'")
+
+        for doc in documents {
+            let stored = localRepository.isDocumentStored(documentId: doc.id)
+            print("➡️ \(doc.deviceName) | ID: \(doc.id) | Guardado localmente: \(stored)")
+        }
+
+        let filtered = documents.filter {
+            $0.deviceName == deviceName &&
+            localRepository.isDocumentStored(documentId: $0.id)
+        }
+
+        print("✅ Documentos encontrados: \(filtered.count)")
+        return filtered
     }
+
 
 
     func uploadDocument(_ document: Document, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -52,6 +79,13 @@ class UploadDocumentsViewModel: ObservableObject {
             }
         }
     }
+
+    func listAllDocumentsInLocalStorage() -> [String] {
+        let files = localRepository.listAllDocuments()
+        print("📦 [UploadDocumentsViewModel] Archivos en local: \(files)")
+        return files
+    }
+
 }
 
 enum DocumentUploadStatus {

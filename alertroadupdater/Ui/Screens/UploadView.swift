@@ -122,8 +122,18 @@ struct UploadView: View {
             loadFileNames()
             print("📲 [onAppear] deviceName: \(deviceName)")
             print("📶 [onAppear] wifiManager.ssid: \(wifiManager.ssid ?? "nil")")
-            print("🧩 [onAppear] ssidSelected: \(ssidSelected ?? "nil")")
+            print("🧩 [onAppear] ssidSelected: \(ssidSelected)")
+/*
+            // 🚨 Inspecciona los documentos cargados
+            for doc in uploadDocumentsViewModel.documents {
+                print("📋 Documento: \(doc.id) | Device: \(doc.deviceName)")
+            }
+*/
+            // 🚨 Lista de archivos reales en disco
+            let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
+            print("📁 Archivos en disco: \(actualFiles)")
         }
+
     }
 
     private func loadFileNames() {
