@@ -3,38 +3,41 @@ import NetworkExtension
 import CoreLocation
 
 struct UploadView: View {
+    // MARK: - Constantes públicas
     var title: String = "Cargar archivos"
     var deviceName: String
 
-    @StateObject private var wifiManager = WiFiSSIDManager()
-    @ObservedObject var uploadDocumentsViewModel : UploadDocumentsViewModel
+    // MARK: - Dependencias externas (observed, environment)
     @ObservedObject var documentsViewModel: DocumentsViewModel
+    @ObservedObject var uploadDocumentsViewModel : UploadDocumentsViewModel
+    @ObservedObject var wifiSSIDManager: WiFiSSIDManager
 
+    // MARK: - StateObject (propiedades propias de la vista)
+    @StateObject private var wifiManager = WiFiSSIDManager()
+
+    // MARK: - State
+    @State private var showToast = false
+    @State private var showPermissionDenied = false
+    @State private var fileNames: [String] = []
+
+    // MARK: - Computed properties
     var ssidSelected: String {
         let ssid = documentsViewModel.getSSIDForDeviceName(deviceName)
         print("🔍 [ssidSelected] Para deviceName: '\(deviceName)', se encontró SSID: '\(ssid)'")
         return ssid
     }
-
     var password: String? {
         documentsViewModel.getPasswordForSSID(ssidSelected)
     }
 
-    @State private var showToast = false
-
+    // MARK: - Timers, Publishers, etc.
     let ssidCheckTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
-
-    @ObservedObject var wifiSSIDManager: WiFiSSIDManager
-    @State private var showPermissionDenied = false
-
-    @State private var fileNames: [String] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
 
             if wifiManager.ssid == ssidSelected {
-                // ✅ Coincide con la red esperada
-                Text("Dispositivo conectado \(deviceName)")
+                Text("Conectado a \(deviceName)")
                     .font(.title2)
                     .bold()
                     .foregroundColor(.green)
@@ -45,8 +48,6 @@ struct UploadView: View {
                     .padding(.bottom, 4)
 
                 FileSelectionListView(uploadDocumentsViewModel: uploadDocumentsViewModel, deviceName: deviceName)
-
-
             } else {
                 VStack {
                     Text("Conéctate a la red WiFi:")
@@ -80,7 +81,7 @@ struct UploadView: View {
                                     }
                                 }
                             }) {
-                                Image(systemName: "doc.on.doc") // 📋 Icono de copiar
+                                Image(systemName: "doc.on.doc")
                                     .foregroundColor(.blue)
                                     .font(.title3)
                             }
@@ -100,7 +101,6 @@ struct UploadView: View {
 
                     WifiSettingsButton()
                 }
-                // ✅ Aquí aplicamos el toast
                 .toast(message: "Contraseña copiada", icon: "checkmark.circle", isShowing: $showToast)
             }
         }
@@ -110,7 +110,6 @@ struct UploadView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onReceive(ssidCheckTimer) { _ in
             wifiManager.fetchSSID()
-            print("🔁 [Timer] wifiManager.ssid: \(wifiManager.ssid ?? "nil") | ssidSelected: \(ssidSelected ?? "nil") | deviceName: \(deviceName)")
         }
         .alert(isPresented: $showPermissionDenied) {
             Alert(title: Text("Permisos requeridos"),
@@ -123,12 +122,7 @@ struct UploadView: View {
             print("📲 [onAppear] deviceName: \(deviceName)")
             print("📶 [onAppear] wifiManager.ssid: \(wifiManager.ssid ?? "nil")")
             print("🧩 [onAppear] ssidSelected: \(ssidSelected)")
-/*
-            // 🚨 Inspecciona los documentos cargados
-            for doc in uploadDocumentsViewModel.documents {
-                print("📋 Documento: \(doc.id) | Device: \(doc.deviceName)")
-            }
-*/
+
             // 🚨 Lista de archivos reales en disco
             let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
             print("📁 Archivos en disco: \(actualFiles)")
@@ -150,59 +144,7 @@ struct UploadView: View {
     }
 }
 
-/*struct FileSelectionView: View {
- let sampleFiles = ["Documento A", "Documento B", "Documento C"]
-
- var body: some View {
- VStack(alignment: .leading, spacing: 10) {
- ForEach(sampleFiles, id: \.self) { file in
- HStack {
- Image(systemName: "doc.fill")
- .foregroundColor(.blue)
-
- Text(file)
- .font(.headline)
- .foregroundColor(.black)
-
- Spacer()
- }
- .padding()
- .frame(maxWidth: .infinity, alignment: .leading)
- .background(Color.gray.opacity(0.2))
- .cornerRadius(8)
- }
- }
- .padding()
- }
- }*/
-
-struct UploadDocumentRowView: View {
-    let document: Document
-
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(document.type)
-                    .font(.headline)
-
-                Text("Versión: \(document.version)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-            }
-
-            Spacer()
-
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
-                .font(.title2)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.gray.opacity(0.2))
-        .cornerRadius(8)
-    }
-}
-
+/// Caja que contenedora de cada tarjeta
 struct FileSelectionListView: View {
     @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel
     var deviceName: String
@@ -216,157 +158,56 @@ struct FileSelectionListView: View {
     var body: some View {
         let documents = uploadDocumentsViewModel.getDocumentsStoredLocallyForDevice(deviceName: deviceName)
 
-        return VStack(alignment: .leading, spacing: 10) {
-            if documents.isEmpty {
-                Text("No hay documentos almacenados localmente para este dispositivo.")
-                    .foregroundColor(.red)
-            } else {
-                ForEach(documents, id: \.id) { document in
-                    UploadDocumentRowView(document: document)
+        return ScrollView { // ✅ Envuelve en ScrollView
+            VStack(alignment: .leading, spacing: 10) {
+                if documents.isEmpty {
+                    Text("No hay documentos almacenados localmente para este dispositivo.")
+                        .foregroundColor(.red)
+                } else {
+                    ForEach(documents, id: \.id) { document in
+                        UploadDocumentRowView(document: document)
+                    }
                 }
             }
+            .padding()
         }
-        .padding()
     }
 }
 
+/// Tarjeta de cada documento
+struct UploadDocumentRowView: View {
+    let document: Document
 
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(document.type)
+                    .font(.headline)
 
+                Text(document.deviceName)
+                    .font(.subheadline)
 
+                Text("Versión: \(document.version)")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
 
+            Spacer()
 
-
-
-/*
- struct UploadView: View {
- @ObservedObject var connectionViewModel: ConnectionViewModel
- @ObservedObject var documentsViewModel: DocumentsViewModel
- @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel
-
- var deviceName: String?
-
- @State private var snackbarMessage: String?
- @State private var showUploadDialog: Bool = false
- @State private var showSuccessDialog: Bool = false
- @State private var uploadError: String?
-
- var body: some View {
- NavigationView {
- VStack {
- TopAppBarComponent(title: "Subir archivos") {
- // Acción para retroceder
- }
-
- if connectionViewModel.isConnectedToDevice {
- Text("Conectado a \(deviceName ?? "Desconocido")")
- .font(.title)
- .bold()
- .foregroundColor(.green)
- .multilineTextAlignment(.center)
- .padding(.top, 16)
-
- Spacer()
-
- Text("Archivos para subir:")
- .font(.headline)
-
- List {
- ForEach(uploadDocumentsViewModel.getDocumentsStoredLocallyForDevice(deviceName: deviceName)) { document in
- UploadDocumentRow(
- document: document,
- uploadDocumentsViewModel: uploadDocumentsViewModel,
- onUploadError: { errorMessage in
- self.uploadError = errorMessage
- self.showUploadDialog = false
- },
- onUploadSuccess: {
- self.showSuccessDialog = true
- }
- )
- }
- }
- } else {
- Text("No conectado al dispositivo")
- .foregroundColor(.red)
- .bold()
-
- Button(action: {
- connectionViewModel.openWifiSettings()
- }) {
- Text("Ir a configuración de Wi-Fi")
- .padding()
- .background(Color.blue)
- .foregroundColor(.white)
- .cornerRadius(8)
- }
- .padding(.top, 16)
- }
-
- Spacer()
- }
- .padding()
- }
- .alert("Error de subida", isPresented: Binding<Bool>(
- get: { uploadError != nil },
- set: { if !$0 { uploadError = nil } }
- )) {
- Button("Aceptar", role: .cancel) { uploadError = nil }
- } message: {
- Text(uploadError ?? "")
- }
- .alert("Subida completa", isPresented: $showSuccessDialog) {
- Button("Cerrar", role: .cancel) { showSuccessDialog = false }
- } message: {
- Text("Todos los archivos han sido subidos correctamente.")
- }
- }
- }
-
- // 📌 **Componente para cada archivo en la lista**
- struct UploadDocumentRow: View {
- let document: Document
- @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel
- var onUploadError: (String) -> Void
- var onUploadSuccess: () -> Void
-
- @State private var progress: Double = 0.0
- @State private var isUploading: Bool = false
-
- var body: some View {
- HStack {
- VStack(alignment: .leading) {
- Text(document.type)
- .font(.headline)
- Text("Versión: \(document.version)")
- .font(.subheadline)
- .foregroundColor(.gray)
- }
-
- Spacer()
-
- if isUploading {
- ProgressView(value: progress, total: 100)
- .progressViewStyle(CircularProgressViewStyle())
- } else {
- Button("Subir") {
- isUploading = true
- uploadDocumentsViewModel.uploadDocument(document) { result in
- isUploading = false
- switch result {
- case .success:
- onUploadSuccess()
- case .failure(let error):
- onUploadError(error.localizedDescription)
- }
- }
- }
- .padding()
- .background(Color.green)
- .foregroundColor(.white)
- .cornerRadius(8)
- }
- }
- .padding()
- }
- }
- */
+            Button(action: {
+            }) {
+                Text("Enviar")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(8)
+    }
+}

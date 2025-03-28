@@ -5,25 +5,20 @@ class UploadDocumentsViewModel: ObservableObject {
     private let localRepository: LocalRepository
 
     @Published var uploadStates: [String: DocumentUploadStatus] = [:]
-    @Published var documents: [Document] = []
+    
+    private var cancellables = Set<AnyCancellable>()
 
-    init(localRepository: LocalRepository) {
+
+    @Published private(set) var documents: [Document] = []
+
+    init(localRepository: LocalRepository, documentsViewModel: DocumentsViewModel) {
         self.localRepository = localRepository
-        loadDocuments()
-    }
-/*
-    func loadDocuments() {
-        documents = FirestoreRepository.allDocuments ?? []
-    }*/
 
-    func loadDocuments() {
-        documents = FirestoreRepository.allDocuments ?? []
-        print("📦 [UploadDocumentsViewModel] Documentos cargados: \(documents.count)")
-        for doc in documents {
-            print("🔍 \(doc.id) | \(doc.deviceName)")
-        }
+        documentsViewModel.$documents
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.documents, on: self)
+            .store(in: &cancellables)
     }
-
 
     func updateUploadStatus(documentId: String, newStatus: DocumentUploadStatus) {
         DispatchQueue.main.async {

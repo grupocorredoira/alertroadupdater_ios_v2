@@ -32,14 +32,18 @@ struct NavGraph: View {
     @StateObject private var permissionsViewModel = PermissionsViewModel()
 
     init() {
-            // ✅ Inicializa manualmente los StateObjects con la misma instancia
-            let firestoreRepo = FirestoreRepository()
-            let documentsVM = DocumentsViewModel(firestoreRepository: firestoreRepo, localRepository: sharedLocalRepository)
-            let uploadVM = UploadDocumentsViewModel(localRepository: sharedLocalRepository)
+        // ✅ Inicializa manualmente los StateObjects con la misma instancia
+        let firestoreRepo = FirestoreRepository()
+        let documentsVM = DocumentsViewModel(firestoreRepository: firestoreRepo, localRepository: sharedLocalRepository)
+        let uploadVM = UploadDocumentsViewModel(
+            localRepository: sharedLocalRepository,
+            documentsViewModel: documentsVM // 👈 añadido
+        )
 
-            _documentsViewModel = StateObject(wrappedValue: documentsVM)
-            _uploadDocumentsViewModel = StateObject(wrappedValue: uploadVM)
-        }
+
+        _documentsViewModel = StateObject(wrappedValue: documentsVM)
+        _uploadDocumentsViewModel = StateObject(wrappedValue: uploadVM)
+    }
 
 
 
@@ -101,7 +105,7 @@ struct NavGraph: View {
                 }
             }
         case .upload(let deviceName):
-            UploadView(deviceName: deviceName, uploadDocumentsViewModel: uploadDocumentsViewModel, documentsViewModel: documentsViewModel, wifiSSIDManager: wifiSSIDManager)
+            UploadView(deviceName: deviceName, documentsViewModel: documentsViewModel, uploadDocumentsViewModel: uploadDocumentsViewModel, wifiSSIDManager: wifiSSIDManager)
         }
     }
 

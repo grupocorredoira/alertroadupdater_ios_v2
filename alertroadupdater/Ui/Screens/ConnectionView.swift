@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ConnectionView: View {
+    // MARK: - Constantes públicas
     var title: String
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @ObservedObject var connectionViewModel: ConnectionViewModel
