@@ -78,7 +78,7 @@ struct ConnectionView: View {
                                 .tint(.white)   // ✅ Estilo blanco, más moderno
                                 .padding()
 
-                            Text("Descargando...\nPor favor, espera")
+                            Text("Actualizando documentos...")
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.white)
                                 .font(.headline)
