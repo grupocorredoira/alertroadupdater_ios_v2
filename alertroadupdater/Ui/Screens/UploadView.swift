@@ -36,7 +36,7 @@ struct UploadView: View {
     // MARK: - Timers, Publishers, etc.
     // TODO: revisar porque está ejecutando todos los métodos del body y solo tendría que verificar si se cumple
     // la condición o no
-    let ssidCheckTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    let ssidCheckTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         ZStack {
@@ -91,12 +91,12 @@ struct UploadView: View {
                 .padding(.bottom, 4)
 
             // ✅ Pasamos las callbacks de subida y finalización a cada celda
-                        FileSelectionListView(
-                            uploadDocumentsViewModel: uploadDocumentsViewModel,
-                            deviceName: deviceName,
-                            onUploading: { doc, progress in activeUpload = (doc, progress) },
-                            onUploadDone: { activeUpload = nil }
-                        )
+            FileSelectionListView(
+                uploadDocumentsViewModel: uploadDocumentsViewModel,
+                deviceName: deviceName,
+                onUploading: { doc, progress in activeUpload = (doc, progress) },
+                onUploadDone: { activeUpload = nil }
+            )
         }
     }
 
@@ -229,12 +229,32 @@ struct UploadDocumentRowView: View {
     private var documentCard: some View {
         VStack(alignment: .leading) {
             HStack {
-                documentInfo
+                documentInfo // 👉 Muestra tipo, nombre y versión
                 Spacer()
-                uploadButton
+                uploadButton // 👉 Botón que lanza la subida
             }
             .padding()
         }
+        //TODO - volver a ponerlo
+        /*
+        .overlay(
+            Group {
+                if showSuccessDialog || progress > 0 { // 👉 Si hay progreso o se completó, muestra el diálogo
+                    UploadProgressDialog(
+                        document: document,
+                        progress: progress,
+                        onCloseApp: {
+                            exit(0) // 👉 Acción al pulsar "Finalizar y cerrar la app"
+                        },
+                        onDismiss: {
+                            showSuccessDialog = false // 👉 Acción al pulsar "Cerrar"
+                            onUploadDone() // 👉 Informa al padre de que el diálogo se cerró
+                        }
+                    )
+                }
+            }
+        )
+         */
     }
 
     /// Información del documento (tipo, nombre del dispositivo y versión)
@@ -264,9 +284,11 @@ struct UploadDocumentRowView: View {
     /// Lógica para iniciar la subida
     private func startUpload() {
         progress = 0
+        showSuccessDialog = true // 👉 Muestra el diálogo desde el inicio de la subida
         uploadDocumentsViewModel.uploadDocument(document) { result in
             if case .failure(let error) = result {
                 errorMessage = error.localizedDescription
+                showSuccessDialog = false // 👉 Oculta el diálogo en caso de error
                 onUploadDone()
             }
         }
@@ -283,9 +305,10 @@ struct UploadDocumentRowView: View {
 
         case .uploaded:
             progress = 100
-            onUploadDone()
+            showSuccessDialog = true // 👉 Muestra el mensaje de subida completada
 
         case .available, .error:
+            showSuccessDialog = false
             onUploadDone()
         }
     }
@@ -316,13 +339,13 @@ struct UploadProgressDialog: View {
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.8))
 
-                    Text("No cierres la app mientras se realiza el envío")
+                    Text("No cierres la aplicación mientras se realiza el envío")
                         .font(.footnote)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.orange)
                 } else {
-                    VStack(spacing: 12) {
-                        Text("✅ ¡Carga completada!")
+                    VStack(spacing: 16) {
+                        Text("¡Carga completada!")
                             .font(.title2)
                             .bold()
                             .foregroundColor(.green)
@@ -338,11 +361,6 @@ struct UploadProgressDialog: View {
                                 .background(Color.green)
                                 .foregroundColor(.black)
                                 .cornerRadius(8)
-                        }
-
-                        Button(action: onDismiss) {
-                            Text("Cancelar")
-                                .foregroundColor(.gray)
                         }
                     }
                 }
