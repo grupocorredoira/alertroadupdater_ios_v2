@@ -23,7 +23,7 @@ class LocalRepository: ObservableObject {
     func listAllDocuments() -> [String] {
         do {
             let fileNames = try FileManager.default.contentsOfDirectory(atPath: documentsFolder.path)
-            print("📄 [LocalRepository] Documentos encontrados en \(documentsFolder.path): \(fileNames)")
+            //print("📄 [LocalRepository] Documentos encontrados en \(documentsFolder.path): \(fileNames)")
             return fileNames
         } catch {
             print("❌ [LocalRepository] Error al listar documentos: \(error.localizedDescription)")
@@ -34,7 +34,7 @@ class LocalRepository: ObservableObject {
     func isDocumentStored(documentId: String) -> Bool {
         let fileURL = documentsFolder.appendingPathComponent(documentId)
         let exists = FileManager.default.fileExists(atPath: fileURL.path)
-        print("📂 Verificando existencia del archivo: \(fileURL.path) => \(exists)")
+        //print("📂 Verificando existencia del archivo: \(fileURL.path) => \(exists)")
         return exists
     }
 

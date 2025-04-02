@@ -5,12 +5,15 @@ class SimpleSocket {
     private var outputStream: OutputStream?
 
     func connect(host: String, port: Int, timeout: TimeInterval) throws {
+        print("🔌 [SimpleSocket] Intentando conectar con \(host):\(port)")
         var input: InputStream?
         var output: OutputStream?
 
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &input, outputStream: &output)
 
+        // TODO - verificar
         guard let inputStream = input, let outputStream = output else {
+            print("❌ [SimpleSocket] No se pudieron obtener los streams")
             throw NSError(domain: "SimpleSocket", code: -1, userInfo: [NSLocalizedDescriptionKey: "No se pudieron obtener los streams"])
         }
 
@@ -23,6 +26,7 @@ class SimpleSocket {
         inputStream.open()
         outputStream.open()
 
+        // TODO - verificar
         let startTime = Date()
         while inputStream.streamStatus != .open || outputStream.streamStatus != .open {
             if Date().timeIntervalSince(startTime) > timeout {
@@ -34,6 +38,7 @@ class SimpleSocket {
 
     func write(_ data: Data) throws {
         guard let outputStream = outputStream else {
+            print("❌ [SimpleSocket] OutputStream no disponible")
             throw NSError(domain: "SimpleSocket", code: -3, userInfo: [NSLocalizedDescriptionKey: "OutputStream no disponible"])
         }
 
@@ -42,12 +47,16 @@ class SimpleSocket {
         }
 
         if bytesWritten <= 0 {
+            print("❌ [SimpleSocket] Fallo al escribir datos")
             throw NSError(domain: "SimpleSocket", code: -4, userInfo: [NSLocalizedDescriptionKey: "No se pudieron escribir los datos"])
         }
+
+        print("📤 [SimpleSocket] Escribió \(bytesWritten) bytes")
     }
 
     func read(length: Int) throws -> Data {
         guard let inputStream = inputStream else {
+            print("❌ [SimpleSocket] InputStream no disponible")
             throw NSError(domain: "SimpleSocket", code: -5, userInfo: [NSLocalizedDescriptionKey: "InputStream no disponible"])
         }
 
@@ -55,13 +64,16 @@ class SimpleSocket {
         let bytesRead = inputStream.read(&buffer, maxLength: length)
 
         if bytesRead < 0 {
+            print("❌ [SimpleSocket] Error al leer del socket")
             throw NSError(domain: "SimpleSocket", code: -6, userInfo: [NSLocalizedDescriptionKey: "Error al leer del socket"])
         }
 
+        print("📥 [SimpleSocket] Leyó \(bytesRead) bytes")
         return Data(buffer.prefix(bytesRead))
     }
 
     func close() {
+        print("🔒 [SimpleSocket] Cerrando streams")
         inputStream?.close()
         outputStream?.close()
     }

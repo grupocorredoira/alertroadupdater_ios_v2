@@ -27,11 +27,11 @@ class UploadDocumentsViewModel: ObservableObject {
     }
     
     func getDocumentsStoredLocallyForDevice(deviceName: String?) -> [Document] {
-        print("📥 Buscando documentos locales para deviceName: '\(deviceName ?? "nil")'")
+        //print("📥 Buscando documentos locales para deviceName: '\(deviceName ?? "nil")'")
 
         for doc in documents {
             let stored = localRepository.isDocumentStored(documentId: doc.id)
-            print("➡️ \(doc.deviceName) | ID: \(doc.id) | Guardado localmente: \(stored)")
+            //print("➡️ \(doc.deviceName) | ID: \(doc.id) | Guardado localmente: \(stored)")
         }
 
         let filtered = documents.filter {
@@ -39,7 +39,7 @@ class UploadDocumentsViewModel: ObservableObject {
             localRepository.isDocumentStored(documentId: $0.id)
         }
 
-        print("✅ Documentos encontrados: \(filtered.count)")
+        //(print("✅ Documentos encontrados: \(filtered.count)")
         return filtered
     }
 

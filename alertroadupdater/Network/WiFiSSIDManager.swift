@@ -28,7 +28,7 @@ class WiFiSSIDManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     func fetchSSID() {
-        print("📶 Intentando obtener el SSID actual...")
+        //print("📶 Intentando obtener el SSID actual...")
         guard hasPermission else {
             print("❌ No hay permisos de ubicación para obtener el SSID")
             return
@@ -37,7 +37,7 @@ class WiFiSSIDManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         if let ssid = getCurrentSSID() {
             DispatchQueue.main.async {
                 self.ssid = ssid
-                print("✅ SSID obtenido: \(ssid)")
+                //print("✅ SSID obtenido: \(ssid)")
             }
         } else {
             print("⚠️ No se pudo obtener el SSID.")
@@ -47,7 +47,7 @@ class WiFiSSIDManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     public func getCurrentSSID() -> String? {
         if let interfaces = CNCopySupportedInterfaces() as? [String] {
             for interface in interfaces {
-                print("🔍 Comprobando interfaz: \(interface)")
+                //print("🔍 Comprobando interfaz: \(interface)")
                 if let info = CNCopyCurrentNetworkInfo(interface as CFString) as NSDictionary? {
                     if let ssid = info[kCNNetworkInfoKeySSID as String] as? String {
                         return ssid

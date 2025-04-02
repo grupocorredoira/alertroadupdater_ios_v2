@@ -20,10 +20,13 @@ struct UploadView: View {
     @State private var showPermissionDenied = false
     @State private var fileNames: [String] = []
 
+    // 🆕 Estado global del diálogo
+    @State private var activeUpload: (Document, Int)? = nil
+
     // MARK: - Computed properties
     var ssidSelected: String {
         let ssid = documentsViewModel.getSSIDForDeviceName(deviceName)
-        print("🔍 [ssidSelected] Para deviceName: '\(deviceName)', se encontró SSID: '\(ssid)'")
+        //print("🔍 [ssidSelected] Para deviceName: '\(deviceName)', se encontró SSID: '\(ssid)'")
         return ssid
     }
     var password: String? {
@@ -31,9 +34,12 @@ struct UploadView: View {
     }
 
     // MARK: - Timers, Publishers, etc.
+    // TODO: revisar porque está ejecutando todos los métodos del body y solo tendría que verificar si se cumple
+    // la condición o no
     let ssidCheckTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
     var body: some View {
+        ZStack {
             VStack(alignment: .leading, spacing: 16) {
                 if wifiManager.ssid == ssidSelected {
                     connectedView
@@ -43,126 +49,136 @@ struct UploadView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .onReceive(ssidCheckTimer) { _ in
-                wifiManager.fetchSSID()
-            }
-            .alert(isPresented: $showPermissionDenied) {
-                Alert(title: Text("Permisos requeridos"),
-                      message: Text("Debes permitir acceso a la localización para detectar la red Wi-Fi."),
-                      dismissButton: .default(Text("Aceptar")))
-            }
-            .onAppear {
-                wifiSSIDManager.requestLocationPermission()
-                loadFileNames()
-                print("📲 [onAppear] deviceName: \(deviceName)")
-                print("📶 [onAppear] wifiManager.ssid: \(wifiManager.ssid ?? "nil")")
-                print("🧩 [onAppear] ssidSelected: \(ssidSelected)")
-                let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
-                print("📁 Archivos en disco: \(actualFiles)")
+
+            // 🆕 Diálogo de progreso a nivel global
+            if let (document, progress) = activeUpload {
+                UploadProgressDialog(
+                    document: document,
+                    progress: progress,
+                    onCloseApp: { exit(0) },
+                    onDismiss: { activeUpload = nil }
+                )
             }
         }
-
-        private var connectedView: some View {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Conectado a \(deviceName)")
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.green)
-                    .frame(maxWidth: .infinity, alignment: .center)
-
-                Text("Documentos disponibles para el dispositivo:")
-                    .font(.headline)
-                    .padding(.bottom, 4)
-
-                FileSelectionListView(uploadDocumentsViewModel: uploadDocumentsViewModel, deviceName: deviceName)
-            }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .onReceive(ssidCheckTimer) { _ in
+            wifiManager.fetchSSID()
         }
+        .alert(isPresented: $showPermissionDenied) {
+            Alert(title: Text("Permisos requeridos"),
+                  message: Text("Debes permitir acceso a la localización para detectar la red Wi-Fi."),
+                  dismissButton: .default(Text("Aceptar")))
+        }
+        .onAppear {
+            wifiSSIDManager.requestLocationPermission()
+            loadFileNames()
+            let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
+            print("📁 Archivos en disco: \(actualFiles)")
+        }
+    }
 
-        private var notConnectedView: some View {
-            VStack {
-                Text("Conéctate a la red WiFi:")
-                    .font(.headline)
-                    .padding(.top)
+    private var connectedView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Conectado a \(deviceName)")
+                .font(.title2)
+                .bold()
+                .foregroundColor(.green)
+                .frame(maxWidth: .infinity, alignment: .center)
 
-                Text(ssidSelected)
+            Text("Documentos disponibles para el dispositivo:")
+                .font(.headline)
+                .padding(.bottom, 4)
+
+            // ✅ Pasamos las callbacks de subida y finalización a cada celda
+                        FileSelectionListView(
+                            uploadDocumentsViewModel: uploadDocumentsViewModel,
+                            deviceName: deviceName,
+                            onUploading: { doc, progress in activeUpload = (doc, progress) },
+                            onUploadDone: { activeUpload = nil }
+                        )
+        }
+    }
+
+    private var notConnectedView: some View {
+        VStack {
+            Text("Conéctate a la red WiFi:")
+                .font(.headline)
+                .padding(.top)
+
+            Text(ssidSelected)
+                .font(.title3)
+                .bold()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.top)
+
+            Text("Copia la siguiente contraseña:")
+                .font(.headline)
+                .padding(.top)
+
+            if let password = password {
+                passwordCopyView
+            } else {
+                Text("Contraseña no disponible")
                     .font(.title3)
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.top)
+            }
 
-                Text("Copia la siguiente contraseña:")
-                    .font(.headline)
-                    .padding(.top)
+            Spacer()
+            WifiSettingsButton()
+        }
+        .toast(message: "Contraseña copiada", icon: "checkmark.circle", isShowing: $showToast)
+    }
 
-                if let password = password {
-                    passwordCopyView
-                } else {
-                    Text("Contraseña no disponible")
-                        .font(.title3)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding(.top)
+    private var passwordCopyView: some View {
+        HStack(spacing: 8) {
+            Text(password ?? "")
+                .font(.title3)
+                .bold()
+
+            Button(action: {
+                UIPasteboard.general.string = password
+                withAnimation {
+                    showToast = true
                 }
-
-                Spacer()
-                WifiSettingsButton()
-            }
-            .toast(message: "Contraseña copiada", icon: "checkmark.circle", isShowing: $showToast)
-        }
-
-        private var passwordCopyView: some View {
-            HStack(spacing: 8) {
-                Text(password ?? "")
-                    .font(.title3)
-                    .bold()
-
-                Button(action: {
-                    UIPasteboard.general.string = password
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     withAnimation {
-                        showToast = true
+                        showToast = false
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation {
-                            showToast = false
-                        }
-                    }
-                }) {
-                    Image(systemName: "doc.on.doc")
-                        .foregroundColor(.blue)
-                        .font(.title3)
                 }
-                .buttonStyle(BorderlessButtonStyle())
+            }) {
+                Image(systemName: "doc.on.doc")
+                    .foregroundColor(.blue)
+                    .font(.title3)
             }
-            .padding(.top)
-            .frame(maxWidth: .infinity, alignment: .center)
+            .buttonStyle(BorderlessButtonStyle())
         }
+        .padding(.top)
+        .frame(maxWidth: .infinity, alignment: .center)
+    }
 
-        private func loadFileNames() {
-            let fileManager = FileManager.default
-            if let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
-                do {
-                    let files = try fileManager.contentsOfDirectory(atPath: documentsURL.path)
-                    fileNames = files
-                    print("📄 Archivos locales encontrados:", files)
-                } catch {
-                    print("❌ Error al leer archivos locales: \(error.localizedDescription)")
-                }
+    private func loadFileNames() {
+        let fileManager = FileManager.default
+        if let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+            do {
+                let files = try fileManager.contentsOfDirectory(atPath: documentsURL.path)
+                fileNames = files
+                print("📄 Archivos locales encontrados:", files)
+            } catch {
+                print("❌ Error al leer archivos locales: \(error.localizedDescription)")
             }
         }
+    }
 }
 
 /// Caja que contenedora de cada tarjeta
 struct FileSelectionListView: View {
     @ObservedObject var uploadDocumentsViewModel: UploadDocumentsViewModel
     var deviceName: String
-
-    init(uploadDocumentsViewModel: UploadDocumentsViewModel, deviceName: String) {
-        self.uploadDocumentsViewModel = uploadDocumentsViewModel
-        self.deviceName = deviceName
-        print("📂 FileSelectionListView init con deviceName:", deviceName)
-    }
+    var onUploading: (Document, Int) -> Void
+    var onUploadDone: () -> Void
 
     var body: some View {
         let documents = uploadDocumentsViewModel.getDocumentsStoredLocallyForDevice(deviceName: deviceName)
@@ -174,7 +190,12 @@ struct FileSelectionListView: View {
                         .foregroundColor(.red)
                 } else {
                     ForEach(documents, id: \ .id) { document in
-                        UploadDocumentRowView(document: document, uploadDocumentsViewModel: uploadDocumentsViewModel)
+                        UploadDocumentRowView(
+                            document: document,
+                            uploadDocumentsViewModel: uploadDocumentsViewModel,
+                            onUploading: onUploading,
+                            onUploadDone: onUploadDone
+                        )
                     }
                 }
             }
@@ -187,90 +208,85 @@ struct FileSelectionListView: View {
 struct UploadDocumentRowView: View {
     let document: Document
     let uploadDocumentsViewModel: UploadDocumentsViewModel
+    var onUploading: (Document, Int) -> Void
+    var onUploadDone: () -> Void
 
     @State private var progress = 0
-    @State private var showProgressDialog = false
     @State private var errorMessage: String? = nil
+    @State private var showSuccessDialog = false
 
     var body: some View {
-        baseCard
+        documentCard
             .background(Color.gray.opacity(0.1))
             .cornerRadius(8)
-            .overlay(progressDialogOverlay)
-            .alert("Error", isPresented: .constant(errorMessage != nil), actions: {
-                Button("OK") {
-                    errorMessage = nil
-                }
-            }, message: {
+            .alert("Error", isPresented: .constant(errorMessage != nil), actions: { Button("OK") { errorMessage = nil } }, message: {
                 Text(errorMessage ?? "")
             })
-            .onReceive(uploadDocumentsViewModel.$uploadStates) { states in
-                guard let state = states[document.id] else { return }
-                switch state {
-                case .uploading(let p):
-                    progress = p
-                    showProgressDialog = true
-                case .uploaded:
-                    progress = 100
-                case .available, .error:
-                    showProgressDialog = false
-                }
-            }
+            .onReceive(uploadDocumentsViewModel.$uploadStates) { handleUploadState($0) }
     }
 
-    private var baseCard: some View {
+    /// Vista principal de la tarjeta
+    private var documentCard: some View {
         VStack(alignment: .leading) {
             HStack {
-                VStack(alignment: .leading) {
-                    Text(document.type).font(.headline)
-                    Text(document.deviceName).font(.subheadline)
-                    Text("Versión: \(document.version)")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
+                documentInfo
                 Spacer()
-                Button("Enviar") {
-                    startUpload()
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                .disabled(uploadDocumentsViewModel.uploadStates[document.id] == .uploaded)
+                uploadButton
             }
             .padding()
         }
     }
 
-    private var progressDialogOverlay: some View {
-        Group {
-            if showProgressDialog {
-                UploadProgressDialog(
-                    document: document,
-                    progress: progress,
-                    onCloseApp: {
-                        exit(0)
-                    },
-                    onDismiss: {
-                        showProgressDialog = false
-                    }
-                )
+    /// Información del documento (tipo, nombre del dispositivo y versión)
+    private var documentInfo: some View {
+        VStack(alignment: .leading) {
+            Text(document.type).font(.headline)
+            Text(document.deviceName).font(.subheadline)
+            Text("Versión: \(document.version)")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+        }
+    }
+
+    /// Botón de envío con estilo
+    private var uploadButton: some View {
+        Button("Enviar") {
+            startUpload()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color.blue)
+        .foregroundColor(.white)
+        .cornerRadius(8)
+        .disabled(uploadDocumentsViewModel.uploadStates[document.id] == .uploaded)
+    }
+
+    /// Lógica para iniciar la subida
+    private func startUpload() {
+        progress = 0
+        uploadDocumentsViewModel.uploadDocument(document) { result in
+            if case .failure(let error) = result {
+                errorMessage = error.localizedDescription
+                onUploadDone()
             }
         }
     }
 
-    private func startUpload() {
-        progress = 0
-        showProgressDialog = true
-        uploadDocumentsViewModel.uploadDocument(document) { result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                errorMessage = error.localizedDescription
-                showProgressDialog = false
-            }
+    /// Gestión del estado de subida observado
+    private func handleUploadState(_ states: [String: DocumentUploadStatus]) {
+        guard let state = states[document.id] else { return }
+
+        switch state {
+        case .uploading(let p):
+            progress = p
+            onUploading(document, p)
+
+        case .uploaded:
+            progress = 100
+            onUploadDone()
+
+        case .available, .error:
+            onUploadDone()
         }
     }
 }
@@ -283,59 +299,58 @@ struct UploadProgressDialog: View {
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
+            Color.black.opacity(0.4).ignoresSafeArea()
 
             VStack(spacing: 20) {
                 if progress < 100 {
+                    ProgressView(value: Float(progress) / 100.0)
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(2)
+                        .padding()
+
                     Text("Enviando archivo...")
                         .font(.headline)
-
-                    ProgressView(value: Float(progress), total: 100)
-                        .progressViewStyle(LinearProgressViewStyle())
-                        .scaleEffect(1.2)
+                        .foregroundColor(.white)
 
                     Text("\(progress)% completado")
                         .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .foregroundColor(.white.opacity(0.8))
 
-                    Text("No cierres la app durante la carga.")
+                    Text("No cierres la app mientras se realiza el envío")
                         .font(.footnote)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.orange)
                 } else {
-                    HStack {
-                        Spacer()
+                    VStack(spacing: 12) {
+                        Text("✅ ¡Carga completada!")
+                            .font(.title2)
+                            .bold()
+                            .foregroundColor(.green)
+
+                        Text("El documento '\(document.type)' versión \(document.version) se ha enviado correctamente.")
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+
+                        Button(action: onCloseApp) {
+                            Text("Finalizar y cerrar la app")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.green)
+                                .foregroundColor(.black)
+                                .cornerRadius(8)
+                        }
+
                         Button(action: onDismiss) {
-                            Image(systemName: "xmark.circle.fill")
+                            Text("Cancelar")
                                 .foregroundColor(.gray)
-                                .font(.title2)
                         }
                     }
-
-                    Text("✅ ¡Carga completada!")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(.green)
-
-                    Text("El documento '\(document.type)' versión \(document.version) se ha enviado correctamente.")
-                        .multilineTextAlignment(.center)
-                        .font(.body)
-
-                    Button("Finalizar y cerrar la app") {
-                        onCloseApp()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
                 }
             }
-            .padding()
-            .background(Color.white)
+            .padding(30)
+            .background(Color.black.opacity(0.85))
             .cornerRadius(16)
-            .padding(32)
+            .padding(.horizontal, 40)
         }
     }
 }
-
