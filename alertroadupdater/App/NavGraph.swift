@@ -105,7 +105,7 @@ struct NavGraph: View {
                 }
             }
         case .upload(let deviceName):
-            UploadView(deviceName: deviceName, documentsViewModel: documentsViewModel, uploadDocumentsViewModel: uploadDocumentsViewModel, wifiSSIDManager: wifiSSIDManager)
+            UploadView(deviceName: deviceName, documentsViewModel: documentsViewModel, uploadDocumentsViewModel: uploadDocumentsViewModel, wifiSSIDManager: wifiSSIDManager, currentScreen: $currentScreen)
         }
     }
 

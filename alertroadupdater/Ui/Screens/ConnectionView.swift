@@ -60,7 +60,7 @@ struct ConnectionView: View {
         .alert(isPresented: $showDialog) {
             Alert(
                 title: Text("Descargar"),
-                message: Text("La red \(selectedNetwork ?? "") pertenece al dispositivo \(deviceName ?? ""). ¿Deseas descargar los documentos asociados a este dispositivo?"),
+                message: Text("La red \(selectedNetwork ?? "") pertenece al dispositivo \(deviceName ?? ""). ¿Deseas descargar los documentos más recientes asociados a este dispositivo?"),
                 primaryButton: .default(Text("Aceptar"), action: startLoading),
                 secondaryButton: .cancel()
             )

@@ -1,65 +1,49 @@
 import SwiftUI
 
+
 struct SettingsView: View {
     @State private var showDialogSafeDisconnect = false
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
 
-    let versionName = "1.0.0" // Sustituye por el método adecuado para obtener la versión en iOS
-    let versionCode = "100" // Sustituye por el método adecuado para obtener el código de versión
+    let versionName = "1.0.0"
+    let versionCode = "100"
 
     var body: some View {
-        NavigationView {
-            VStack {
-                
-
-                List {
-                    Section(header: Text("Preferencias de usuario").font(.headline)) {
-                        SettingsOption(title: "Política de Privacidad") {
-                            showPrivacyPolicyDialog = true
-                        }
-                        SettingsOption(title: "Términos y Condiciones") {
-                            showTermsDialog = true
-                        }
-                        SettingsOption(title: "Eliminar archivos locales") {
-                            deleteLocalFiles()
-                        }
-                        SettingsOption(title: "Cerrar sesión") {
-                            showDialogSafeDisconnect = true
-                        }
+        VStack {
+            List {
+                Section(header: Text("Preferencias de usuario").font(.headline)) {
+                    SettingsOption(title: "Política de Privacidad") {
+                        showPrivacyPolicyDialog = true
+                    }
+                    SettingsOption(title: "Términos y Condiciones") {
+                        showTermsDialog = true
+                    }
+                    SettingsOption(title: "Eliminar archivos locales") {
+                        deleteLocalFiles()
+                    }
+                    SettingsOption(title: "Cerrar sesión") {
+                        showDialogSafeDisconnect = true
                     }
                 }
+            }
 
-                Text("Versión: \(versionName) (\(versionCode))")
-                    .font(.footnote)
-                    .padding()
-            }
-            .overlay {
-                if showDialogSafeDisconnect {
-                    disconnectDialog()
-                }
-            }
-            /*
-            .sheet(isPresented: $showPrivacyPolicyDialog) {
-                DialogReadTextComponent(
-                    title: "Política de Privacidad",
-                    text: "Aquí va el contenido de la política de privacidad.",
-                    onDismiss: { showPrivacyPolicyDialog = false }
-                )
-            }
-            .sheet(isPresented: $showTermsDialog) {
-                DialogReadTextComponent(
-                    title: "Términos y Condiciones",
-                    text: "Aquí van los términos y condiciones.",
-                    onDismiss: { showTermsDialog = false }
-                )
-            }
-             */
+            Text("Versión: \(versionName) (\(versionCode))")
+                .font(.footnote)
+                .padding()
         }
+        .overlay {
+            if showDialogSafeDisconnect {
+                disconnectDialog()
+            }
+        }
+        // ✅ Ya no usamos .sheet ni NavigationView aquí
+        .navigationTitle("Ajustes")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     func deleteLocalFiles() {
-        print("Archivos locales eliminados") // Sustituye con la lógica real
+        print("Archivos locales eliminados")
     }
 
     @ViewBuilder
@@ -97,7 +81,7 @@ struct SettingsView: View {
     }
 
     func signOut() {
-        print("Sesión cerrada") // Sustituye con la lógica real
+        print("Sesión cerrada")
     }
 }
 

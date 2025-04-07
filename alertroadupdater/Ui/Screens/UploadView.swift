@@ -22,6 +22,7 @@ struct UploadView: View {
 
     // 🆕 Estado global del diálogo
     @State private var activeUpload: (Document, Int)? = nil
+    @Binding var currentScreen: Screen?
 
     // MARK: - Computed properties
     var ssidSelected: String {
@@ -56,7 +57,8 @@ struct UploadView: View {
                     document: document,
                     progress: progress,
                     onCloseApp: { exit(0) },
-                    onDismiss: { activeUpload = nil }
+                    onDismiss: { activeUpload = nil },
+                    currentScreen: $currentScreen
                 )
             }
         }
@@ -229,32 +231,12 @@ struct UploadDocumentRowView: View {
     private var documentCard: some View {
         VStack(alignment: .leading) {
             HStack {
-                documentInfo // 👉 Muestra tipo, nombre y versión
+                documentInfo
                 Spacer()
-                uploadButton // 👉 Botón que lanza la subida
+                uploadButton
             }
             .padding()
         }
-        //TODO - volver a ponerlo
-        /*
-        .overlay(
-            Group {
-                if showSuccessDialog || progress > 0 { // 👉 Si hay progreso o se completó, muestra el diálogo
-                    UploadProgressDialog(
-                        document: document,
-                        progress: progress,
-                        onCloseApp: {
-                            exit(0) // 👉 Acción al pulsar "Finalizar y cerrar la app"
-                        },
-                        onDismiss: {
-                            showSuccessDialog = false // 👉 Acción al pulsar "Cerrar"
-                            onUploadDone() // 👉 Informa al padre de que el diálogo se cerró
-                        }
-                    )
-                }
-            }
-        )
-         */
     }
 
     /// Información del documento (tipo, nombre del dispositivo y versión)
@@ -319,6 +301,7 @@ struct UploadProgressDialog: View {
     let progress: Int
     let onCloseApp: () -> Void
     let onDismiss: () -> Void
+    @Binding var currentScreen: Screen?
 
     var body: some View {
         ZStack {
@@ -362,13 +345,32 @@ struct UploadProgressDialog: View {
                                 .foregroundColor(.black)
                                 .cornerRadius(8)
                         }
+
+                        BackToHomeButton(currentScreen: $currentScreen)
                     }
                 }
             }
             .padding(30)
-            .background(Color.black.opacity(0.85))
+            .background(Color.black.opacity(0.80))
             .cornerRadius(16)
             .padding(.horizontal, 40)
+        }
+    }
+}
+
+struct BackToHomeButton: View {
+    @Binding var currentScreen: Screen?
+
+    var body: some View {
+        Button(action: {
+            currentScreen = nil // 👈 Esto te lleva a WelcomeView
+        }) {
+            HStack {
+                Image(systemName: "house.fill")
+                Text("Ir al inicio")
+            }
+            .padding()
+            .foregroundColor(.gray)
         }
     }
 }
