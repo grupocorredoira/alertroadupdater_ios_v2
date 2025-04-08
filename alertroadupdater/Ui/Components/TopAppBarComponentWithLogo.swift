@@ -1,30 +1,44 @@
 import SwiftUI
 
 struct TopAppBarComponentWithLogo: View {
-    //var logoName: String = "logo_cabecera" // Reemplaza con el nombre de tu imagen en Assets
     var showMenu: Bool = true
     var onMenuClick: () -> Void = {}
 
     var body: some View {
         HStack {
+            // 🟩 Espacio invisible para compensar el botón de la derecha
+            if showMenu {
+                Color.clear
+                    .frame(width: 44, height: 44)
+            }
+
             Spacer()
-            /*
-            Image(logoName)
+
+            Image("logo_cabecera")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 40) // Ajusta el tamaño del logo
-             */
+                .frame(width: 250, height: 50) // Ajusta esto al tamaño de tu banner
+                //.clipped()
+
             Spacer()
 
             if showMenu {
-                Button(action: onMenuClick) {
-                    Image(systemName: "line.horizontal.3") // Icono de menú en SF Symbols
+                Button(action: {
+                    print("✅ Botón de menú pulsado")
+                    onMenuClick()
+                }) {
+                    Image(systemName: "line.horizontal.3")
                         .foregroundColor(.white)
-                        .font(.title)
-                }
+                        .font(.title2)
+                        .padding(8)
+                        .background(Color.black.opacity(0.2))
+                        .clipShape(Circle())
+                }//.zIndex(1)
+                .frame(width: 44, height: 44)
             }
         }
-        .padding()
-        .background(Color.black) // Color de fondo
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(Color.black)
     }
 }

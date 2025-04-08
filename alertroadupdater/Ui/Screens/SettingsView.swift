@@ -6,11 +6,12 @@ struct SettingsView: View {
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
 
-    let versionName = "1.0.0"
-    let versionCode = "100"
+    let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
+    let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
     var body: some View {
         VStack {
+            Spacer()
             List {
                 Section(header: Text("Preferencias de usuario").font(.headline)) {
                     SettingsOption(title: "Política de Privacidad") {
@@ -48,31 +49,45 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func disconnectDialog() -> some View {
-        VStack {
+        VStack() {
             Text("¿Seguro que quieres cerrar sesión?")
                 .font(.headline)
                 .padding()
 
-            HStack {
-                Button("Cancelar") {
-                    showDialogSafeDisconnect = false
-                }
-                .frame(maxWidth: .infinity)
+            Text("Para evitar problemas con tu cuenta, aconsejamos no cerrrar sesión, ¿estás seguro que deseas salir de tu cuenta?")
+                .font(.subheadline)
                 .padding()
-                .background(Color.gray.opacity(0.3))
-                .cornerRadius(10)
 
-                Button("Sí, cerrar sesión") {
+            HStack(spacing: 12) {
+                Button(action: {
                     signOut()
                     showDialogSafeDisconnect = false
+                }) {
+                    Text("Cerrar sesión")
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red)
+                        .cornerRadius(10)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+
+                Button(action: {
+                    showDialogSafeDisconnect = false
+                }) {
+                    Text("Cancelar")
+                        .foregroundColor(.black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.gray.opacity(0.3))
+                        .cornerRadius(10)
+                }
             }
             .padding()
+
         }
         .frame(maxWidth: 300)
         .background(Color.white)

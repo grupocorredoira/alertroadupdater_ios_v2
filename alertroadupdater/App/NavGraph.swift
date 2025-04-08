@@ -49,17 +49,19 @@ struct NavGraph: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 getStartView()
 
-                if let screen = currentScreen {
-                    NavigationLink(destination: getDestinationView(for: screen),
-                                   isActive: Binding(
-                                    get: { currentScreen != nil },
-                                    set: { if !$0 { currentScreen = nil } }
-                                   )) {
-                                       EmptyView()
-                                   }
+                NavigationLink(
+                    destination: currentScreen.map { screen in
+                        getDestinationView(for: screen)
+                    },
+                    isActive: Binding(
+                        get: { currentScreen != nil },
+                        set: { if !$0 { currentScreen = nil } }
+                    )
+                ) {
+                    EmptyView()
                 }
             }
             .navigationTitle("Atrás") // ✅ Agrega un título para evitar conflictos
