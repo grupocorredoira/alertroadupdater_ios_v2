@@ -1,40 +1,64 @@
 import SwiftUI
 
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
+    @StateObject private var loginViewModel = LoginViewModel()
     @Binding var currentScreen: Screen?
+    @State var selectedPrefix: String = "+34"
 
     var body: some View {
-        VStack(spacing: 20) {
-            if !viewModel.isCodeSent {
-                TextField("Introduce tu número", text: $viewModel.phoneNumber)
+        VStack(spacing: 16) {
+            TopAppBarComponentWithLogo()
+
+            Spacer()
+
+            if !loginViewModel.isCodeSent {
+
+                Text("Accede a tu cuenta")
+                    .font(.largeTitle)
+                    .bold()
+
+                Text("Si no tienes una cuenta creada, al introducir tu teléfono móvil te enviaremos un SMS para registrarte")
+                    .font(.headline)
+                    .bold()
+
+                // Dropdown para seleccionar el prefijo
+                CountryCodeDropdownMenu(
+                    selectedPrefix: selectedPrefix,
+                    onPrefixSelected: { newPrefix in
+                        selectedPrefix = newPrefix
+                    }
+                )
+
+                //Recojo el phone number, pero luego paso el fullnumber
+                TextField("Introduce tu número", text: $loginViewModel.phoneNumber)
                     .keyboardType(.phonePad)
                     .padding()
                     .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(8)
 
                 Button(action: {
-                    viewModel.checkIfPhoneExists {
+                    let fullNumber = "\(selectedPrefix)\(loginViewModel.phoneNumber)"
+                    loginViewModel.checkIfPhoneExists(fullPhoneNumber: fullNumber) {
                         currentScreen = .welcome
                     }
                 }) {
-                    Text("Continuar")
+                    Text("Entrar")
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                .disabled(viewModel.isLoading)
+                .disabled(loginViewModel.isLoading)
             } else {
-                TextField("Código SMS", text: $viewModel.verificationCode)
+                TextField("Código SMS", text: $loginViewModel.verificationCode)
                     .keyboardType(.numberPad)
                     .padding()
                     .background(Color(UIColor.secondarySystemBackground))
                     .cornerRadius(8)
 
                 Button(action: {
-                    viewModel.verifyCode {
+                    loginViewModel.verifyCode {
                         currentScreen = .welcome
                     }
                 }) {
@@ -45,14 +69,18 @@ struct LoginView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                .disabled(viewModel.isLoading)
+                .disabled(loginViewModel.isLoading)
             }
 
-            if let errorMessage = viewModel.errorMessage {
+            if let errorMessage = loginViewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
             }
+
+            Spacer()
+            Spacer()
         }
-        .padding()
+        .padding(.top, 8)
+        .navigationBarHidden(true)
     }
 }

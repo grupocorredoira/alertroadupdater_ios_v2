@@ -11,25 +11,25 @@ class LoginViewModel: ObservableObject {
 
     private let authService = LoginService()
 
-    func checkIfPhoneExists(onSuccess: @escaping () -> Void) {
+    func checkIfPhoneExists(fullPhoneNumber: String, completion: @escaping () -> Void) {
         isLoading = true
         errorMessage = nil
 
-        authService.checkPhoneInFirestore(phoneNumber: phoneNumber) { [weak self] exists in
+        authService.checkPhoneInFirestore(phoneNumber: fullPhoneNumber) { [weak self] exists in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isLoading = false
                 if exists {
                     // 🔐 Lógica para ya registrado (por ahora, vamos directo a welcome)
-                    onSuccess()
+                    completion()
                 } else {
-                    self.sendVerificationCode()
+                    self.sendVerificationCode(to: fullPhoneNumber)
                 }
             }
         }
     }
 
-    private func sendVerificationCode() {
+    func sendVerificationCode(to phoneNumber: String) {
         isLoading = true
         authService.sendVerificationCode(to: phoneNumber) { [weak self] result in
             DispatchQueue.main.async {

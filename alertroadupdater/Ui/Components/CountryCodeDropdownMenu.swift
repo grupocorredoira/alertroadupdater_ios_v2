@@ -6,22 +6,16 @@ struct CountryCodeDropdownMenu: View {
 
     @State private var isExpanded = false
 
-    let countryOptions: [(String, String)] = [
-        ("España", "+34"),
-        ("México", "+52"),
-        ("Argentina", "+54")
-    ] // Agrega más opciones según necesites.
-
     var body: some View {
         Menu {
-            ForEach(countryOptions, id: \.1) { country in
-                Button(action: { onPrefixSelected(country.1) }) {
-                    Text("\(country.0) (\(country.1))")
+            ForEach(CountryUtils.countryOptions, id: \.code) { country in
+                Button(action: { onPrefixSelected(country.code) }) {
+                    Text(country.name)
                 }
             }
         } label: {
             HStack {
-                Text(countryOptions.first { $0.1 == selectedPrefix }?.0 ?? "Seleccionar")
+                Text(CountryUtils.countryOptions.first { $0.code == selectedPrefix }?.name ?? "Seleccionar")
                 Spacer()
                 Image(systemName: "chevron.down")
             }

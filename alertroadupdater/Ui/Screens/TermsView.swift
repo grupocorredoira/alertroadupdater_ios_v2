@@ -7,7 +7,7 @@ struct TermsView: View {
         NavigationView {
             VStack {
                 // Barra superior con logo
-                TopAppBarComponentWithLogo(showMenu: false)
+                TopAppBarComponentWithLogoAndMenu(showMenu: false)
 
                 Text("Términos y Condiciones")
                     .font(.title)

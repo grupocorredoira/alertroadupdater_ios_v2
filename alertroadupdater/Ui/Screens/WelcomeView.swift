@@ -13,12 +13,11 @@ struct WelcomeView: View {
     @ObservedObject var permissionsViewModel: PermissionsViewModel // ✅ ESTA ES LA BUENA
     var title: String = "Alert Road"
 
-
     var body: some View {
         VStack(spacing: 16) {
             // Barra de navegación arriba del todo
 
-            TopAppBarComponentWithLogo(
+            TopAppBarComponentWithLogoAndMenu(
                 showMenu: true,
                 onMenuClick: {
                     currentScreen = .settings

@@ -7,7 +7,7 @@ struct PrivacyPolicyView: View {
         NavigationView {
             VStack {
                 // Barra superior con logo
-                TopAppBarComponentWithLogo(showMenu: false)
+                TopAppBarComponentWithLogoAndMenu(showMenu: false)
 
                 Text("Política de Privacidad")
                     .font(.title)
