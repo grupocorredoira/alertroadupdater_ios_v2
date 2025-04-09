@@ -1,92 +1,64 @@
 import Foundation
 import FirebaseAuth
-import Combine
-/*
+import FirebaseFirestore
+
 class LoginViewModel: ObservableObject {
-    private let usersHandler: UsersHandler
-    private let prefs: PreferencesManager
-    private var cancellables = Set<AnyCancellable>()
-
-    @Published var isPhoneValid = false
-    @Published var isLoading = false
+    @Published var phoneNumber: String = ""
+    @Published var verificationCode: String = ""
+    @Published var isCodeSent: Bool = false
+    @Published var isLoading: Bool = false
     @Published var errorMessage: String?
-    @Published var verificationID: String?
-    @Published var isAuthenticated = false
 
-    private let auth = Auth.auth()
+    private let authService = LoginService()
 
-    init(usersHandler: UsersHandler, prefs: PreferencesManager) {
-        self.usersHandler = usersHandler
-        self.prefs = prefs
-        self.isAuthenticated = prefs.getIsAuthenticated()
-    }
-
-    /// Valida el número de teléfono según el prefijo del país.
-    func validatePhoneNumber(prefix: String, phone: String) {
-        switch prefix {
-        case "+351", "+33":
-            isPhoneValid = phone.count == 9
-        case "+34":
-            isPhoneValid = phone.count == 9 && (phone.hasPrefix("6") || phone.hasPrefix("7"))
-        default:
-            isPhoneValid = phone.count >= 7
-        }
-    }
-
-    /// Envía un código de verificación por SMS al número de teléfono dado.
-    func sendVerificationCode(phoneNumber: String) {
+    func checkIfPhoneExists(onSuccess: @escaping () -> Void) {
         isLoading = true
-        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { [weak self] verificationID, error in
+        errorMessage = nil
+
+        authService.checkPhoneInFirestore(phoneNumber: phoneNumber) { [weak self] exists in
+            guard let self = self else { return }
             DispatchQueue.main.async {
-                guard let self = self else { return }
                 self.isLoading = false
-
-                if let error = error {
-                    self.errorMessage = error.localizedDescription
-                } else if let verificationID = verificationID {
-                    self.verificationID = verificationID
-                    self.prefs.saveTokenLogin(verificationID)  // Solo guarda si no es `nil`
-                }
-            }
-        }
-    }
-
-    /// Verifica el código ingresado por el usuario y autentica en Firebase.
-    func verifyCode(code: String) {
-        guard let verificationID = verificationID else {
-            errorMessage = "No hay un código de verificación disponible."
-            return
-        }
-
-        let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationID, verificationCode: code)
-
-        auth.signIn(with: credential) { [weak self] authResult, error in
-            DispatchQueue.main.async {
-                guard let self = self else { return }
-
-                if let error = error {
-                    self.errorMessage = error.localizedDescription
+                if exists {
+                    // 🔐 Lógica para ya registrado (por ahora, vamos directo a welcome)
+                    onSuccess()
                 } else {
-                    self.isAuthenticated = true
-                    self.prefs.saveIsAuthenticated(true)
+                    self.sendVerificationCode()
                 }
             }
         }
     }
 
-    /// Cierra la sesión del usuario actual.
-    func signOut() {
-        do {
-            try auth.signOut()
+    private func sendVerificationCode() {
+        isLoading = true
+        authService.sendVerificationCode(to: phoneNumber) { [weak self] result in
             DispatchQueue.main.async {
-                self.isAuthenticated = false
-                self.prefs.saveIsAuthenticated(false)
+                self?.isLoading = false
+                switch result {
+                case .success:
+                    self?.isCodeSent = true
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                }
             }
-        } catch {
+        }
+    }
+
+    func verifyCode(onSuccess: @escaping () -> Void) {
+        isLoading = true
+        errorMessage = nil
+
+        authService.verifyCode(code: verificationCode) { [weak self] result in
             DispatchQueue.main.async {
-                self.errorMessage = "Error cerrando sesión: \(error.localizedDescription)"
+                self?.isLoading = false
+                switch result {
+                case .success:
+                    self?.authService.savePhoneToFirestore(phoneNumber: self?.phoneNumber ?? "")
+                    onSuccess()
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                }
             }
         }
     }
 }
-*/

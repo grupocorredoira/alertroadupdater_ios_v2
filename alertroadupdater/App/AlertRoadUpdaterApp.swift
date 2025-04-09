@@ -2,10 +2,10 @@ import SwiftUI
 import Firebase
 
 @main
-struct alertroadupdaterApp: App {
-    init() {
-        FirebaseApp.configure()
-    }
+//He cambiado el nombre de alertroadupdaterApp a AlertRoadUpdaterApp
+struct AlertRoadUpdaterApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
         WindowGroup {
             NavGraph()  // Aquí cargamos NavGraph en lugar de ConnectionView

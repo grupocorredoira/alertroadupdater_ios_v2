@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAuth
 
 struct NavGraph: View {
     @State private var currentScreen: Screen? = nil
@@ -30,6 +31,11 @@ struct NavGraph: View {
     // 👇 Añadimos estos dos
     @StateObject private var wifiSSIDManager = WiFiSSIDManager()
     @StateObject private var permissionsViewModel = PermissionsViewModel()
+
+    private var isLoggedIn: Bool {
+        Auth.auth().currentUser != nil
+    }
+
 
     init() {
         // ✅ Inicializa manualmente los StateObjects con la misma instancia
@@ -76,16 +82,25 @@ struct NavGraph: View {
 
     @ViewBuilder
     private func getStartView() -> some View {
-        WelcomeView(
-            currentScreen: $currentScreen,
-            wifiSSIDManager: wifiSSIDManager,
-            permissionsViewModel: permissionsViewModel
-        )
+        if isLoggedIn {
+            WelcomeView(
+                currentScreen: $currentScreen,
+                wifiSSIDManager: wifiSSIDManager,
+                permissionsViewModel: permissionsViewModel
+            )
+        } else {
+            LoginView(currentScreen: $currentScreen)
+        }
     }
+
 
     @ViewBuilder
     private func getDestinationView(for screen: Screen) -> some View {
         switch screen {
+        case .login:
+            LoginView(
+                currentScreen: $currentScreen
+            )
         case .welcome:
             WelcomeView(
                 currentScreen: $currentScreen,
@@ -93,7 +108,7 @@ struct NavGraph: View {
                 permissionsViewModel: permissionsViewModel
             )
         case .settings:
-            SettingsView()
+            SettingsView(currentScreen: $currentScreen)
         case .connection:
             if let connectionViewModel = connectionViewModel {
                 ConnectionView(

@@ -17,12 +17,12 @@ struct WelcomeView: View {
     var body: some View {
         VStack(spacing: 16) {
             // Barra de navegación arriba del todo
-            
-             TopAppBarComponentWithLogo(
+
+            TopAppBarComponentWithLogo(
                 showMenu: true,
                 onMenuClick: {
                     currentScreen = .settings
-                    print("Pulsado SETTINGS")} // Navegar a la configuración
+                }
             )
 
             Spacer()

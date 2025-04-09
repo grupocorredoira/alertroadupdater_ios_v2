@@ -1,10 +1,11 @@
 import SwiftUI
-
+import FirebaseAuth
 
 struct SettingsView: View {
     @State private var showDialogSafeDisconnect = false
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
+    @Binding var currentScreen: Screen?
 
     let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
     let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
@@ -96,7 +97,13 @@ struct SettingsView: View {
     }
 
     func signOut() {
-        print("Sesión cerrada")
+        do {
+            try Auth.auth().signOut()
+            print("Sesión cerrada correctamente")
+            currentScreen = .login // 👈 Aquí es donde redirigimos al login
+        } catch {
+            print("Error al cerrar sesión: \(error.localizedDescription)")
+        }
     }
 }
 

@@ -7,6 +7,7 @@ enum Screen: Hashable/*, Identifiable*/ {
     case login
     case verificationCode
 */
+    case login
     case welcome
     case settings
     case connection
