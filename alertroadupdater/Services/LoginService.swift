@@ -5,6 +5,7 @@ class LoginService {
     private let db = Firestore.firestore()
     private let usersCollection = "users"
 
+    /// Verifica si un número ya existe en Firestore
     func checkPhoneInFirestore(phoneNumber: String, completion: @escaping (Bool) -> Void) {
         db.collection(usersCollection)
             .whereField("phoneNumber", isEqualTo: phoneNumber)
@@ -17,6 +18,7 @@ class LoginService {
             }
     }
 
+    /// Envía código de verificación vía Firebase Auth
     func sendVerificationCode(to phoneNumber: String, completion: @escaping (Result<Void, Error>) -> Void) {
         PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
             if let error = error {
@@ -60,10 +62,27 @@ class LoginService {
         }
     }
 
-    func savePhoneToFirestore(phoneNumber: String) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        db.collection(usersCollection).document(uid).setData([
-            "phoneNumber": phoneNumber
-        ])
+    func createUser(uid: String, phoneNumber: String, completion: @escaping (Error?) -> Void) {
+        let now = Date()
+        let expiration = Calendar.current.date(byAdding: .day, value: 7, to: now)!
+
+        let newUser = User(
+            fullPhoneNumber: phoneNumber,
+            creationDate: now,
+            expirationDate: expiration,
+            trialPeriodDays: 7,
+            purchaseDate: nil,
+            purchaseToken: "",
+            forcePurchase: false
+        )
+
+        do {
+            try db.collection("users").document(uid).setData(from: newUser)
+            print("✅ Usuario nuevo creado en Firestore")
+            completion(nil)
+        } catch {
+            print("❌ Error al crear usuario: \(error.localizedDescription)")
+            completion(error)
+        }
     }
 }

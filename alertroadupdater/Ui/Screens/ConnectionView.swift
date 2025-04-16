@@ -12,7 +12,8 @@ struct ConnectionView: View {
     @State private var selectedNetwork: String? = nil
     @State private var showDialog = false
     @State private var showLoadingDialog = false
-    @State private var navigateToUploadView = false
+
+    @EnvironmentObject var coordinator: NavigationCoordinator
 
     var deviceName: String? {
         documentsViewModel.getDeviceNameForSSID(selectedNetwork!)!
@@ -53,6 +54,9 @@ struct ConnectionView: View {
             .padding(.horizontal)
             .padding(.bottom, 4)
         }
+        .onAppear {
+            coordinator.pushIfNeeded(.connection)
+        }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .navigationTitle(title)
@@ -89,7 +93,6 @@ struct ConnectionView: View {
                     }
                 }
             }
-
         )
     }
 

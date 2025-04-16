@@ -5,7 +5,7 @@ struct SettingsView: View {
     @State private var showDialogSafeDisconnect = false
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
-    @Binding var currentScreen: Screen?
+    @EnvironmentObject var coordinator: NavigationCoordinator
 
     let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
     let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
@@ -42,6 +42,12 @@ struct SettingsView: View {
         // ✅ Ya no usamos .sheet ni NavigationView aquí
         .navigationTitle("Ajustes")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            coordinator.pushIfNeeded(.settings)
+        }
+        .onDisappear {
+            print("👋 SettingsView desapareció")
+        }
     }
 
     func deleteLocalFiles() {
@@ -63,6 +69,7 @@ struct SettingsView: View {
                 Button(action: {
                     signOut()
                     showDialogSafeDisconnect = false
+                    coordinator.popTo(.login)
                 }) {
                     Text("Cerrar sesión")
                         .foregroundColor(.white)
@@ -100,7 +107,7 @@ struct SettingsView: View {
         do {
             try Auth.auth().signOut()
             print("Sesión cerrada correctamente")
-            currentScreen = .login // 👈 Aquí es donde redirigimos al login
+            coordinator.navigate(to: .login)
         } catch {
             print("Error al cerrar sesión: \(error.localizedDescription)")
         }

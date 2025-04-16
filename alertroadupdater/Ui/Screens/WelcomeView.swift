@@ -4,7 +4,7 @@ import CoreLocation
 struct WelcomeView: View {
     //@ObservedObject var loginViewModel: LoginViewModel
     //@ObservedObject var usersHandler: UsersHandler
-    @Binding var currentScreen: Screen? // Permite modificar la pantalla en NavGraph
+    @EnvironmentObject var coordinator: NavigationCoordinator
     @State private var showPaymentDialog: Bool = false
     @State private var isCheckingUser: Bool = false
     @State private var snackbarMessage: String?
@@ -20,7 +20,7 @@ struct WelcomeView: View {
             TopAppBarComponentWithLogoAndMenu(
                 showMenu: true,
                 onMenuClick: {
-                    currentScreen = .settings
+                    coordinator.navigate(to: .settings)
                 }
             )
 
@@ -38,35 +38,7 @@ struct WelcomeView: View {
             Button(action: {
                 handleStartButtonTap()
                 isCheckingUser = true
-                currentScreen = .connection
-                /*
-                 Task {
-                 let userIsAuthenticated = await usersHandler.checkUserIsAuthenticated(
-                 phoneNumber: PreferencesManager.shared.getPhoneNumberWithPrefix()
-                 )
-
-                 if userIsAuthenticated {
-                 if let user = await usersHandler.getUser(
-                 phoneNumber: PreferencesManager.shared.getPhoneNumberWithPrefix()
-                 ) {
-                 if usersHandler.checkHaveToPurchase(user: user) {
-                 isCheckingUser = false
-                 showPaymentDialog = true
-                 } else {
-                 // Navegar a la pantalla de conexión
-                 loginViewModel.isAuthenticated = true
-                 currentScreen = .connection
-                 }
-                 } else {
-                 isCheckingUser = false
-                 snackbarMessage = "Error obteniendo usuario"
-                 }
-                 } else {
-                 isCheckingUser = false
-                 snackbarMessage = "Error de autenticación"
-                 }
-                 }
-                 */
+                coordinator.navigate(to: .connection)
             }) {
                 Text("Empezar")
                     .frame(maxWidth: .infinity)
@@ -89,6 +61,7 @@ struct WelcomeView: View {
         }
         .onAppear {
             wifiSSIDManager.requestLocationPermission()
+            coordinator.pushIfNeeded(.welcome)
         }
     }
 
@@ -96,14 +69,14 @@ struct WelcomeView: View {
         let status = CLLocationManager.authorizationStatus()
 
         if status == .authorizedWhenInUse || status == .authorizedAlways {
-            currentScreen = .connection
+            coordinator.navigate(to: .connection)
         } else if status == .notDetermined {
             permissionsViewModel.checkPermissions()
 
             // Escucha el cambio de permisos en segundo plano
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if permissionsViewModel.hasLocationPermission {
-                    currentScreen = .connection
+                    coordinator.navigate(to: .connection)
                 } else {
                     snackbarMessage = "Se necesitan permisos de ubicación para continuar"
                 }
