@@ -11,8 +11,15 @@ struct SettingsView: View {
     let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
     var body: some View {
-        VStack {
-            Spacer()
+
+        VStack(spacing: 16) {
+            CustomNavigationBar(
+                    title: "Ajustes",
+                    showBackButton: true
+                ) {
+                    coordinator.pop()
+                }
+
             List {
                 Section(header: Text("Preferencias de usuario").font(.headline)) {
                     SettingsOption(title: "Política de Privacidad") {
@@ -30,6 +37,8 @@ struct SettingsView: View {
                 }
             }
 
+            Spacer()
+
             Text("Versión: \(versionName) (\(versionCode))")
                 .font(.footnote)
                 .padding()
@@ -40,8 +49,10 @@ struct SettingsView: View {
             }
         }
         // ✅ Ya no usamos .sheet ni NavigationView aquí
-        .navigationTitle("Ajustes")
-        .navigationBarTitleDisplayMode(.inline)
+        //.navigationTitle("Ajustes")
+        //.navigationBarTitleDisplayMode(.inline)
+        .padding(.top, 8)
+        .navigationBarHidden(true)
         .onAppear {
             coordinator.pushIfNeeded(.settings)
         }

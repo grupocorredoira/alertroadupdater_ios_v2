@@ -42,6 +42,12 @@ struct UploadView: View {
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 16) {
+                CustomNavigationBar(
+                        title: "Cargar archivos",
+                        showBackButton: true
+                    ) {
+                        coordinator.pop()
+                    }
                 if wifiManager.ssid == ssidSelected {
                     connectedView
                 } else {
@@ -61,8 +67,8 @@ struct UploadView: View {
                 )
             }
         }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
+        //.navigationTitle(title)
+        //.navigationBarTitleDisplayMode(.inline)
         .onReceive(ssidCheckTimer) { _ in
             wifiManager.fetchSSID()
         }

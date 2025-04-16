@@ -20,7 +20,14 @@ struct ConnectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(/*alignment: .leading, */spacing: 16) {
+            CustomNavigationBar(
+                    title: "Conexión",
+                    showBackButton: true
+                ) {
+                    coordinator.pop()
+                }
+            
             Spacer()
 
             Text("Paso 1: Asegúrate de que el Wi-Fi del dispositivo Alert Road está encendido.")
@@ -59,8 +66,8 @@ struct ConnectionView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
+        //.navigationTitle(title)
+        //.navigationBarTitleDisplayMode(.inline)
         .alert(isPresented: $showDialog) {
             Alert(
                 title: Text("Descargar"),
@@ -222,12 +229,12 @@ struct WifiNetworksView: View {
                 .padding()
             }
         }
-        .navigationTitle("Conexión")
-        .navigationBarTitleDisplayMode(.inline)
+        //.navigationTitle("Conexión")
+        //.navigationBarTitleDisplayMode(.inline)
     }
 }
 
-
+/*
 struct WifiSettingsButton: View {
     var body: some View {
         Button(action: openWifiSettings) {
@@ -247,3 +254,22 @@ struct WifiSettingsButton: View {
         }
     }
 }
+*/
+struct WifiSettingsButton: View {
+    @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
+
+    var body: some View {
+        Button(action: {
+            coordinator.navigate(to: .upload(deviceName:"alertroadV6")) // ✅ TEST directo sin descargas
+        }) {
+            Text("Ir a UploadView (TEST)")
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }
+        .padding(.horizontal, 16)
+    }
+}
+
