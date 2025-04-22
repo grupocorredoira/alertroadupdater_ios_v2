@@ -22,6 +22,10 @@ class DocumentsViewModel: ObservableObject {
         loadDocumentsFromExternalDatabase()
     }
 
+    func refreshDocuments () {
+        loadDocumentsFromExternalDatabase()
+    }
+
     /// Carga documentos desde Firestore y sincroniza con almacenamiento local.
     private func loadDocumentsFromExternalDatabase() {
         firestoreRepository.loadDocumentsFromFirestore()
@@ -162,9 +166,9 @@ class DocumentsViewModel: ObservableObject {
     func deleteAllLocalFiles() -> String {
         switch localRepository.deleteAllDocuments() {
         case .noFiles:
-            return "No hay archivos para eliminar."
+            return "No hay archivos para eliminar"
         case .success:
-            return "Archivos eliminados con éxito."
+            return "Archivos eliminados con éxito"
         case .error(let failedFiles):
             return "Error eliminando archivos:\n" + failedFiles.joined(separator: "\n")
         }

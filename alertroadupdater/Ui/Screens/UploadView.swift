@@ -43,7 +43,7 @@ struct UploadView: View {
         ZStack {
             VStack(alignment: .leading, spacing: 16) {
                 CustomNavigationBar(
-                        title: "Cargar archivos",
+                        title: "Enviar",
                         showBackButton: true
                     ) {
                         coordinator.pop()
@@ -54,9 +54,11 @@ struct UploadView: View {
                     notConnectedView
                 }
             }
-            .padding()
+            //.padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
-            
+            .padding(.top, 8)
+            .navigationBarHidden(true)
+
             // 🆕 Diálogo de progreso a nivel global
             if let (document, progress) = activeUpload {
                 UploadProgressDialog(

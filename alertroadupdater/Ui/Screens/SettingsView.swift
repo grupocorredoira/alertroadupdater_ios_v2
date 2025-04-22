@@ -2,9 +2,12 @@ import SwiftUI
 import FirebaseAuth
 
 struct SettingsView: View {
+    @ObservedObject var documentsViewModel: DocumentsViewModel
     @State private var showDialogSafeDisconnect = false
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
+    @State private var showToastDeleteLocalFiles = false
+    @State private var toastMessageDeleteLocalFiles = ""
     @EnvironmentObject var coordinator: NavigationCoordinator
 
     let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
@@ -14,11 +17,11 @@ struct SettingsView: View {
 
         VStack(spacing: 16) {
             CustomNavigationBar(
-                    title: "Ajustes",
-                    showBackButton: true
-                ) {
-                    coordinator.pop()
-                }
+                title: "Ajustes",
+                showBackButton: true
+            ) {
+                coordinator.pop()
+            }
 
             List {
                 Section(header: Text("Preferencias de usuario").font(.headline)) {
@@ -59,10 +62,13 @@ struct SettingsView: View {
         .onDisappear {
             print("👋 SettingsView desapareció")
         }
+        .toast(message: toastMessageDeleteLocalFiles, icon: "trash", isShowing: $showToastDeleteLocalFiles)
     }
 
-    func deleteLocalFiles() {
-        print("Archivos locales eliminados")
+    private func deleteLocalFiles() {
+        let message = documentsViewModel.deleteAllLocalFiles()
+        toastMessageDeleteLocalFiles = message
+        showToastDeleteLocalFiles = true
     }
 
     @ViewBuilder
@@ -88,7 +94,8 @@ struct SettingsView: View {
                         .minimumScaleFactor(0.7)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.red)
+                        .background(Color.gray.opacity(0.3))
+                    //.background(Color.red)
                         .cornerRadius(10)
                 }
 
@@ -101,7 +108,8 @@ struct SettingsView: View {
                         .minimumScaleFactor(0.7)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.gray.opacity(0.3))
+                    //.background(Color.gray.opacity(0.3))
+                        .background(Color.red)
                         .cornerRadius(10)
                 }
             }

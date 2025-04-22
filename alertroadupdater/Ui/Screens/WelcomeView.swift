@@ -10,13 +10,13 @@ struct WelcomeView: View {
     @State private var snackbarMessage: String?
     @ObservedObject var wifiSSIDManager: WiFiSSIDManager
     @State private var showPermissionDenied = false
-    @ObservedObject var permissionsViewModel: PermissionsViewModel // ✅ ESTA ES LA BUENA
+    @ObservedObject var permissionsViewModel: PermissionsViewModel
+    @ObservedObject var documentsViewModel: DocumentsViewModel
+
     var title: String = "Alert Road"
 
     var body: some View {
         VStack(spacing: 16) {
-            // Barra de navegación arriba del todo
-
             TopAppBarComponentWithLogoAndMenu(
                 showMenu: true,
                 onMenuClick: {
@@ -38,7 +38,7 @@ struct WelcomeView: View {
             Button(action: {
                 handleStartButtonTap()
                 isCheckingUser = true
-                coordinator.navigate(to: .connection)
+                //coordinator.navigate(to: .connection)
             }) {
                 Text("Empezar")
                     .frame(maxWidth: .infinity)
@@ -62,6 +62,7 @@ struct WelcomeView: View {
         .onAppear {
             wifiSSIDManager.requestLocationPermission()
             coordinator.pushIfNeeded(.welcome)
+            documentsViewModel.refreshDocuments()
         }
     }
 

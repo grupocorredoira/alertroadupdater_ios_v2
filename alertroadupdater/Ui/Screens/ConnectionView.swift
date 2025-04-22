@@ -22,12 +22,12 @@ struct ConnectionView: View {
     var body: some View {
         VStack(/*alignment: .leading, */spacing: 16) {
             CustomNavigationBar(
-                    title: "Conexión",
-                    showBackButton: true
-                ) {
-                    coordinator.pop()
-                }
-            
+                title: "Conexión",
+                showBackButton: true
+            ) {
+                coordinator.pop()
+            }
+
             Spacer()
 
             Text("Paso 1: Asegúrate de que el Wi-Fi del dispositivo Alert Road está encendido.")
@@ -64,8 +64,10 @@ struct ConnectionView: View {
         .onAppear {
             coordinator.pushIfNeeded(.connection)
         }
-        .padding()
+        //.padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
+        .padding(.top, 8)
+        .navigationBarHidden(true)
         //.navigationTitle(title)
         //.navigationBarTitleDisplayMode(.inline)
         .alert(isPresented: $showDialog) {
@@ -234,7 +236,7 @@ struct WifiNetworksView: View {
     }
 }
 
-/*
+
 struct WifiSettingsButton: View {
     var body: some View {
         Button(action: openWifiSettings) {
@@ -254,7 +256,9 @@ struct WifiSettingsButton: View {
         }
     }
 }
-*/
+
+/* NO BORRAR - PRUEBAS */
+/*
 struct WifiSettingsButton: View {
     @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
 
@@ -272,4 +276,4 @@ struct WifiSettingsButton: View {
         .padding(.horizontal, 16)
     }
 }
-
+*/

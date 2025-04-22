@@ -6,9 +6,9 @@ class LoginService {
     private let usersCollection = "users"
 
     /// Verifica si un número ya existe en Firestore
-    func checkPhoneInFirestore(phoneNumber: String, completion: @escaping (Bool) -> Void) {
+    func checkPhoneInFirebase(fullPhoneNumber: String, completion: @escaping (Bool) -> Void) {
         db.collection(usersCollection)
-            .whereField("phoneNumber", isEqualTo: phoneNumber)
+            .whereField("fullPhoneNumber", isEqualTo: fullPhoneNumber)
             .getDocuments { snapshot, error in
                 if let docs = snapshot?.documents, !docs.isEmpty {
                     completion(true)
@@ -64,21 +64,22 @@ class LoginService {
 
     func createUser(uid: String, phoneNumber: String, completion: @escaping (Error?) -> Void) {
         let now = Date()
-        let expiration = Calendar.current.date(byAdding: .day, value: 7, to: now)!
+        let expiration = Calendar.current.date(byAdding: .day, value: 365, to: now)!
 
         let newUser = User(
             fullPhoneNumber: phoneNumber,
             creationDate: now,
             expirationDate: expiration,
-            trialPeriodDays: 7,
+            trialPeriodDays: 365,
             purchaseDate: nil,
             purchaseToken: "",
             forcePurchase: false
         )
 
         do {
-            try db.collection("users").document(uid).setData(from: newUser)
-            print("✅ Usuario nuevo creado en Firestore")
+            let data = try newUser.toDictionary(includingNil: true)
+            try db.collection("users").document(uid).setData(data)
+            print("✅ Usuario nuevo creado en Firestore con purchaseDate null")
             completion(nil)
         } catch {
             print("❌ Error al crear usuario: \(error.localizedDescription)")

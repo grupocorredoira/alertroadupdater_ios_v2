@@ -41,6 +41,10 @@ class LocalRepository: ObservableObject {
     func deleteAllDocuments() -> DeleteDocumentsResult {
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsFolder, includingPropertiesForKeys: nil)
+            guard !fileURLs.isEmpty else {
+                return .noFiles
+            }
+
             var failedFiles = [String]()
             for file in fileURLs {
                 do {
@@ -49,11 +53,13 @@ class LocalRepository: ObservableObject {
                     failedFiles.append(file.lastPathComponent)
                 }
             }
+
             return failedFiles.isEmpty ? .success : .error(failedFiles)
         } catch {
             return .error(["Failed to list documents"])
         }
     }
+
 
     enum DeleteDocumentsResult {
         case noFiles

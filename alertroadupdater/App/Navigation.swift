@@ -116,7 +116,8 @@ struct NavGraph: View {
         if isLoggedIn {
             WelcomeView(
                 wifiSSIDManager: wifiSSIDManager,
-                permissionsViewModel: permissionsViewModel
+                permissionsViewModel: permissionsViewModel,
+                documentsViewModel: documentsViewModel
             )
         } else {
             LoginView()
@@ -133,11 +134,12 @@ struct NavGraph: View {
         case .welcome:
             WelcomeView(
                 wifiSSIDManager: wifiSSIDManager,
-                permissionsViewModel: permissionsViewModel
+                permissionsViewModel: permissionsViewModel,
+                documentsViewModel: documentsViewModel
             )
 
         case .settings:
-            SettingsView()
+            SettingsView(documentsViewModel: documentsViewModel)
 
         case .connection:
             if let connectionViewModel = connectionViewModel {

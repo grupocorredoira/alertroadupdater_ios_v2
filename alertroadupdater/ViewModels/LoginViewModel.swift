@@ -15,7 +15,7 @@ class LoginViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        authService.checkPhoneInFirestore(phoneNumber: fullPhoneNumber) { [weak self] exists in
+        authService.checkPhoneInFirebase(fullPhoneNumber: fullPhoneNumber) { [weak self] exists in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isLoading = false
@@ -62,9 +62,10 @@ class LoginViewModel: ObservableObject {
                         return
                     }
 
-                    self.authService.checkPhoneInFirestore(phoneNumber: phone) { exists in
+                    self.authService.checkPhoneInFirebase(fullPhoneNumber: phone) { exists in
                         if exists {
                             print("✅ Usuario ya existe en Firestore")
+                            PreferencesManager.shared.savePhoneNumberWithPrefix(phone)
                             onSuccess()
                         } else {
                             self.authService.createUser(uid: uid, phoneNumber: phone) { error in
@@ -73,6 +74,7 @@ class LoginViewModel: ObservableObject {
                                         self.errorMessage = "Error al crear usuario: \(error.localizedDescription)"
                                     } else {
                                         print("✅ Usuario creado correctamente")
+                                        PreferencesManager.shared.savePhoneNumberWithPrefix(phone)
                                         onSuccess()
                                     }
                                 }
@@ -86,42 +88,4 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-
-
-    private func checkOrCreateUser(completion: @escaping () -> Void) {
-        guard let uid = Auth.auth().currentUser?.uid,
-              let phone = Auth.auth().currentUser?.phoneNumber else {
-            self.errorMessage = "Error al obtener información del usuario."
-            return
-        }
-
-        authService.checkPhoneInFirestore(phoneNumber: phone) { [weak self] exists in
-            guard let self = self else { return }
-
-            if exists {
-                completion()
-            } else {
-                let newUser = User(
-                    fullPhoneNumber: phone,
-                    creationDate: Date(),
-                    expirationDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())!,
-                    trialPeriodDays: 7,
-                    purchaseDate: nil,
-                    purchaseToken: "",
-                    forcePurchase: false
-                )
-
-                self.authService.createUser(uid: uid, phoneNumber: phone) { error in
-                    DispatchQueue.main.async {
-                        if let error = error {
-                            self.errorMessage = "Error al crear usuario: \(error.localizedDescription)"
-                        } else {
-                            completion()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 }
