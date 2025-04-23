@@ -1,39 +1,65 @@
 import SwiftUI
 
 struct PrivacyPolicyView: View {
-    var onAccept: () -> Void
+    @EnvironmentObject var coordinator: NavigationCoordinator
+    @ObservedObject var prefs: PreferencesManager
 
     var body: some View {
-        NavigationView {
-            VStack {
-                // Barra superior con logo
-                TopAppBarComponentWithLogoAndMenu(showMenu: false)
+        VStack(spacing: 16) {
+            TopAppBarComponentWithLogo()
 
-                Text("Política de Privacidad")
-                    .font(.title)
-                    .bold()
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 16)
+            Spacer()
 
-                ScrollView {
-                    Text("""
-                    Aquí va el contenido de la política de privacidad. Puedes cargarlo desde un archivo o una cadena larga.
-                    """)
-                    .font(.body)
-                    .padding()
-                }
+            Text("Política de privacidad")
+                .font(.title)
+                .bold()
+                .padding(.top)
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
 
-                Button(action: onAccept) {
-                    Text("Aceptar")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+
+                    Text("Aquí va el contenido completo de la política de privacidad...")
+
+                    Button("Aceptar") {
+                        prefs.savePrivacyAccepted(true)
+                        coordinator.navigate(to: .login)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top, 20)
                 }
                 .padding()
             }
-            .padding()
         }
+    }
+}
+
+struct PrivacyDialogView: View {
+    var onDismiss: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Política de Privacidad")
+                .font(.headline)
+                .padding(.top)
+
+            ScrollView {
+                Text("""
+                Aquí va el contenido completo de la política de privacidad de la aplicación...
+                """)
+                    .font(.body)
+                    .padding()
+            }
+
+            Button("Cerrar") {
+                onDismiss()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+        .frame(maxWidth: 350, maxHeight: 500)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(radius: 10)
     }
 }

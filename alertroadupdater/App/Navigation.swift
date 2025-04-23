@@ -111,9 +111,28 @@ struct NavGraph: View {
     }
 
     // MARK: - Pantalla inicial
+    /*
+     @ViewBuilder
+     private func getStartView() -> some View {
+     if isLoggedIn {
+     WelcomeView(
+     wifiSSIDManager: wifiSSIDManager,
+     permissionsViewModel: permissionsViewModel,
+     documentsViewModel: documentsViewModel
+     )
+     } else {
+     LoginView()
+     }
+     }
+     */
+
     @ViewBuilder
     private func getStartView() -> some View {
-        if isLoggedIn {
+        if !prefs.getIsTermsAccepted() {
+            TermsView(prefs: prefs)
+        } else if !prefs.getIsPrivacyAccepted() {
+            PrivacyPolicyView(prefs: prefs)
+        } else if isLoggedIn {
             WelcomeView(
                 wifiSSIDManager: wifiSSIDManager,
                 permissionsViewModel: permissionsViewModel,
@@ -124,10 +143,17 @@ struct NavGraph: View {
         }
     }
 
+
     // MARK: - Destinos
     @ViewBuilder
     private func getDestinationView(for screen: Screen) -> some View {
         switch screen {
+        case .terms:
+            TermsView(prefs: prefs)
+
+        case .privacyPolicy:
+            PrivacyPolicyView(prefs: prefs)
+
         case .login:
             LoginView()
 
@@ -166,6 +192,8 @@ struct NavGraph: View {
 
 // MARK: - Rutas de navegación tipo NavGraph
 enum Screen: Hashable {
+    case terms
+    case privacyPolicy
     case login
     case welcome
     case settings

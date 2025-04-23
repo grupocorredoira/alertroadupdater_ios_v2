@@ -1,39 +1,63 @@
 import SwiftUI
 
 struct TermsView: View {
-    var onAccept: () -> Void
+    @EnvironmentObject var coordinator: NavigationCoordinator
+    @ObservedObject var prefs: PreferencesManager
 
     var body: some View {
-        NavigationView {
-            VStack {
-                // Barra superior con logo
-                TopAppBarComponentWithLogoAndMenu(showMenu: false)
+        VStack(spacing: 16) {
+            TopAppBarComponentWithLogo()
 
-                Text("Términos y Condiciones")
-                    .font(.title)
-                    .bold()
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 16)
+            Spacer()
 
-                ScrollView {
-                    Text("""
-                    Aquí va el contenido de los términos y condiciones. Puedes cargarlo desde un archivo o una cadena larga.
-                    """)
-                    .font(.body)
-                    .padding()
-                }
+            Text("Términos y condiciones")
+                .font(.title)
+                .bold()
+                .padding(.top)
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Aquí van tus términos y condiciones completos...")
 
-                Button(action: onAccept) {
-                    Text("Aceptar")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                    Button("Aceptar") {
+                        prefs.saveTermsAccepted(true)
+                        coordinator.navigate(to: .privacyPolicy)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top, 20)
                 }
                 .padding()
             }
-            .padding()
         }
+    }
+}
+
+struct TermsDialogView: View {
+    var onDismiss: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Términos y Condiciones")
+                .font(.headline)
+                .padding(.top)
+
+            ScrollView {
+                Text("""
+                Aquí van los términos y condiciones completos de uso de la aplicación...
+                """)
+                    .font(.body)
+                    .padding()
+            }
+
+            Button("Cerrar") {
+                onDismiss()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding()
+        .frame(maxWidth: 350, maxHeight: 500)
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(radius: 10)
     }
 }

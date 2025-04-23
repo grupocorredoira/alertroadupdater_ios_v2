@@ -15,54 +15,67 @@ struct SettingsView: View {
 
     var body: some View {
 
-        VStack(spacing: 16) {
-            CustomNavigationBar(
-                title: "Ajustes",
-                showBackButton: true
-            ) {
-                coordinator.pop()
-            }
+        ZStack { // Añado fondo gris uniforme
+            Color.gray.opacity(0.1)
+                .ignoresSafeArea()
+            VStack(spacing: 16) {
+                CustomNavigationBar(
+                    title: "Ajustes",
+                    showBackButton: true
+                ) {
+                    coordinator.pop()
+                }
 
-            List {
-                Section(header: Text("Preferencias de usuario").font(.headline)) {
-                    SettingsOption(title: "Política de Privacidad") {
-                        showPrivacyPolicyDialog = true
+                List {
+                    Section(header: Text("Preferencias de usuario").font(.headline)) {
+                        SettingsOption(title: "Política de Privacidad") {
+                            showPrivacyPolicyDialog = true
+                        }
+                        SettingsOption(title: "Términos y Condiciones") {
+                            showTermsDialog = true
+                        }
+                        SettingsOption(title: "Eliminar archivos locales") {
+                            deleteLocalFiles()
+                        }
+                        SettingsOption(title: "Cerrar sesión") {
+                            showDialogSafeDisconnect = true
+                        }
                     }
-                    SettingsOption(title: "Términos y Condiciones") {
-                        showTermsDialog = true
+                }
+
+                Spacer()
+
+                Text("Versión: \(versionName) (\(versionCode))")
+                    .font(.footnote)
+                    .padding()
+            }
+            .overlay {
+                if showDialogSafeDisconnect {
+                    disconnectDialog()
+                } else if showPrivacyPolicyDialog {
+                    PrivacyDialogView {
+                        showPrivacyPolicyDialog = false
                     }
-                    SettingsOption(title: "Eliminar archivos locales") {
-                        deleteLocalFiles()
-                    }
-                    SettingsOption(title: "Cerrar sesión") {
-                        showDialogSafeDisconnect = true
+                } else if showTermsDialog {
+                    TermsDialogView {
+                        showTermsDialog = false
                     }
                 }
             }
 
-            Spacer()
-
-            Text("Versión: \(versionName) (\(versionCode))")
-                .font(.footnote)
-                .padding()
-        }
-        .overlay {
-            if showDialogSafeDisconnect {
-                disconnectDialog()
+            // ✅ Ya no usamos .sheet ni NavigationView aquí
+            //.navigationTitle("Ajustes")
+            //.navigationBarTitleDisplayMode(.inline)
+            .padding(.top, 8)
+            .navigationBarHidden(true)
+            .onAppear {
+                coordinator.pushIfNeeded(.settings)
             }
+            .onDisappear {
+                print("👋 SettingsView desapareció")
+            }
+            .toast(message: toastMessageDeleteLocalFiles, icon: "trash", isShowing: $showToastDeleteLocalFiles)
         }
-        // ✅ Ya no usamos .sheet ni NavigationView aquí
-        //.navigationTitle("Ajustes")
-        //.navigationBarTitleDisplayMode(.inline)
-        .padding(.top, 8)
-        .navigationBarHidden(true)
-        .onAppear {
-            coordinator.pushIfNeeded(.settings)
-        }
-        .onDisappear {
-            print("👋 SettingsView desapareció")
-        }
-        .toast(message: toastMessageDeleteLocalFiles, icon: "trash", isShowing: $showToastDeleteLocalFiles)
     }
 
     private func deleteLocalFiles() {
