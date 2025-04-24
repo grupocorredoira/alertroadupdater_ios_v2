@@ -23,7 +23,7 @@
 "no_internet_message" = "No hay conexión a Internet. Verifica tu conexión para acceder.";
 "login_button" = "Acceder";
 "checking_account" = "Comprobando cuenta…";
-"sms_waiting" = "Si no recibes el SMS en %1$d:%2$02d minutos,";
+"sms_waiting" = "Si no recibes el SMS en %1$d:%2$02d minutos";
 "sms_no_waiting" = "Si no recibes el SMS,";
 "click_here" = "pulsa aquí";
 "toast_wait" = "Por favor, espera hasta que hayan pasado 3 minutos";
@@ -62,7 +62,7 @@
 "no_button" = "No";
 "no_files_in_memory" = "No hay archivos en memoria";
 "files_delete_correctly" = "Archivos borrados correctamente";
-"files_delete_error" = "Error al borrar algunos archivos:\n%s";
+"files_delete_error" = "Error al borrar algunos archivos:\n%@";
 "no_files" = "No hay archivos en memoria";
 "delete_success" = "Archivos borrados correctamente";
 "delete_error" = "Error al borrar algunos archivos: ";
@@ -80,9 +80,9 @@
 "connection_issues" = "Problemas de conexión, volver a intentar";
 "device_not_found" = "Si no aparece ninguna de estas redes, por favor, revisa el paso 1";
 "device_name" = "Dispositivo: %@";
-"wifi_network" = "Red Wi-Fi: %1$s";
+"wifi_network" = "Red Wi-Fi: %@";
 "detecting_devices" = "Detectando dispositivos…";
-"please_wait" = "Por favor, espera %1$d segundos";
+"please_wait" = "Por favor, espera %@d segundos";
 "updating_documents" = "Actualizando documentos…";
 
 /* Permissions general */
@@ -94,14 +94,14 @@
 
 /* Documents Screen */
 "documents_title" = "Documentos";
-"step_documents" = "Documentos disponibles para el dispositivo: %1$s";
+"step_documents" = "Documentos disponibles para el dispositivo: %@";
 "download_required" = "Necesitas descargar algún archivo para continuar";
-"error_loading_documents" = "Error cargando documentos: %1$s";
+"error_loading_documents" = "Error cargando documentos: %@";
 "download_button" = "Descargar";
-"downloading_button" = "Descargando %1$d%%";
-"document_version" = "Versión: %1$s";
-"status_label" = "Estado: %1$s";
-"document_status" = "Estado: %1$s";
+"downloading_button" = "Descargando %@d%%";
+"document_version" = "Versión: ";
+"status_label" = "Estado: %@";
+"document_status" = "Estado: %@";
 "document_status_available" = "Disponible para descargar";
 "document_status_downloaded" = "Descargado";
 "document_status_downloading" = "Descargando…";
@@ -109,10 +109,10 @@
 /* Upload Screen */
 "upload_screen_title" = "Enviar archivos";
 "connect_to_network" = "Conéctate a la red WiFi:";
-"connect_to_device" = "Conectado a %1$s";
+"connect_to_device" = "Conectado a";
 "documents_to_send" = "Documentos disponibles para enviar:";
-"upload_success" = "Archivo %1$s - versión %2$s cargado con éxito.";
-"upload_error" = "Error al cargar el archivo %1$s - versión %2$s";
+"upload_success" = "Archivo %@ - versión %@ cargado con éxito.";
+"upload_error" = "Error al cargar el archivo %@ - versión %@";
 "sending_file" = "Enviando archivo";
 "progress_completed" = "%1$d%% completado";
 "dont_close_app" = "Por favor, no cierres ni minimices la aplicación hasta finalizar el envío.";
@@ -134,7 +134,7 @@
 "copy_password" = "Copia la siguiente contraseña:";
 "go_to_wifi_settings" = "Ir a ajustes Wi-Fi";
 "password_copied" = "Contraseña copiada";
-"document_success" = "Documento %1$s con versión: %2$s cargado con éxito";
+"document_success" = "Documento %@ con versión: %@ cargado con éxito";
 "finish_and_close" = "Finalizar y cerrar";
-"no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %1$s";
-"version_text" = "Version: %1$s";
+"no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %@";
+"version_text" = "Versión: %@";

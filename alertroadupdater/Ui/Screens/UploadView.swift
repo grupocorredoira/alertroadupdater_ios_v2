@@ -27,7 +27,6 @@ struct UploadView: View {
     // MARK: - Computed properties
     var ssidSelected: String {
         let ssid = documentsViewModel.getSSIDForDeviceName(deviceName)
-        //print("🔍 [ssidSelected] Para deviceName: '\(deviceName)', se encontró SSID: '\(ssid)'")
         return ssid
     }
     var password: String? {
@@ -54,12 +53,10 @@ struct UploadView: View {
                     notConnectedView
                 }
             }
-            //.padding()
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.top, 8)
             .navigationBarHidden(true)
 
-            // 🆕 Diálogo de progreso a nivel global
             if let (document, progress) = activeUpload {
                 UploadProgressDialog(
                     document: document,
@@ -69,8 +66,6 @@ struct UploadView: View {
                 )
             }
         }
-        //.navigationTitle(title)
-        //.navigationBarTitleDisplayMode(.inline)
         .onReceive(ssidCheckTimer) { _ in
             wifiManager.fetchSSID()
         }
@@ -102,6 +97,7 @@ struct UploadView: View {
             Text("documents_to_send".localized)
                 .font(.headline)
                 .padding(.bottom, 4)
+                .frame(maxWidth: .infinity, alignment: .center)
 
             FileSelectionListView(
                 uploadDocumentsViewModel: uploadDocumentsViewModel,
@@ -142,6 +138,7 @@ struct UploadView: View {
             WifiSettingsButton()
         }
         .toast(message: "password_copied".localized, icon: "checkmark.circle", isShowing: $showToast)
+        .padding()
     }
 
     private var passwordCopyView: some View {

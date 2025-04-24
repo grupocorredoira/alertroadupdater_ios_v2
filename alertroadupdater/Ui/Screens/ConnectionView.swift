@@ -28,18 +28,28 @@ struct ConnectionView: View {
                 coordinator.pop()
             }
 
-            //Spacer()
+            Spacer()
 
             Text("step_one".localized)
                 .font(.headline)
+                .multilineTextAlignment(.leading) // Alineación a la izquierda
+                .lineLimit(nil)                   // Permite varias líneas
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 16)
                 .padding(.bottom, 4)
+
             HelpButton()
+
+            Spacer()
 
             Text("step_two".localized)
                 .font(.headline)
+                .multilineTextAlignment(.leading)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 16)
                 .padding(.bottom, 4)
 
-            // ✅ Ahora `WifiNetworksView` no maneja `showLoadingDialog`, solo `showDialog`
             WifiNetworksView(documentsViewModel: documentsViewModel, selectedNetwork: $selectedNetwork, showDialog: $showDialog)
 
             WifiSettingsButton()
@@ -47,12 +57,14 @@ struct ConnectionView: View {
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.yellow)
-                    .font(.title2) // Ajusta el tamaño si quieres que sea más visible
+                    .font(.title2)
 
                 Text("device_not_found".localized)
                     .font(.headline)
                     .foregroundColor(.black)
                     .multilineTextAlignment(.leading)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding()
             .frame(maxWidth: .infinity)
@@ -60,23 +72,22 @@ struct ConnectionView: View {
             .cornerRadius(12)
             .padding(.horizontal)
             .padding(.bottom, 4)
+
+            Spacer()
         }
         .onAppear {
             coordinator.pushIfNeeded(.connection)
         }
-        //.padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
         .padding(.top, 8)
         .navigationBarHidden(true)
-        //.navigationTitle(title)
-        //.navigationBarTitleDisplayMode(.inline)
         .alert(isPresented: $showDialog) {
             Alert(
-                        title: Text("download_button".localized),
-                        message: Text(String(format: "step_documents".localized, selectedNetwork ?? "")),
-                        primaryButton: .default(Text("accept_button".localized), action: startLoading),
-                        secondaryButton: .cancel(Text("cancel_button".localized))
-                    )
+                title: Text("download_button".localized),
+                message: Text(String(format: "step_documents".localized, deviceName ?? "")),
+                primaryButton: .default(Text("accept_button".localized), action: startLoading),
+                secondaryButton: .cancel(Text("cancel_button".localized))
+            )
         }
         .overlay(
             Group {
@@ -134,7 +145,7 @@ struct ConnectionView: View {
 
                 switch result {
                 case .success:
-                    onNetworkSelected(deviceName) // ✅ ahora sí solo se llama una vez
+                    onNetworkSelected(deviceName)
                 case .failure:
                     showDownloadErrorAlert()
                 }
@@ -208,7 +219,7 @@ struct WifiNetworksView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(wifiNetworks, id: \.self) { network in
                         HStack {
-                            Image(systemName: "wifi") // Icono de Wi-Fi
+                            Image(systemName: "wifi")
                                 .foregroundColor(.blue)
 
                             Text(network)
@@ -219,16 +230,18 @@ struct WifiNetworksView: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(height: 60) // 🔁 altura fija para cada tarjeta
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(8)
                         .onTapGesture {
                             selectedNetwork = network
-                            showDialog = true // ✅ Ahora solo maneja `showDialog`
+                            showDialog = true
                         }
                     }
                 }
-                .padding()
+                .padding([.horizontal, .bottom]) // padding sin .top
             }
+            .frame(height: 60 * 2.5 + 10 * 2) // 🔁 muestra 2.5 celdas + 2 separaciones
         }
     }
 }
@@ -256,21 +269,21 @@ struct WifiSettingsButton: View {
 
 /* NO BORRAR - PRUEBAS */
 /*
-struct WifiSettingsButton: View {
-    @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
+ struct WifiSettingsButton: View {
+ @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
 
-    var body: some View {
-        Button(action: {
-            coordinator.navigate(to: .upload(deviceName:"alertroadV6")) // ✅ TEST directo sin descargas
-        }) {
-            Text("Ir a UploadView (TEST)")
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-        }
-        .padding(.horizontal, 16)
-    }
-}
-*/
+ var body: some View {
+ Button(action: {
+ coordinator.navigate(to: .upload(deviceName:"alertroadV6")) // ✅ TEST directo sin descargas
+ }) {
+ Text("Ir a UploadView (TEST)")
+ .frame(maxWidth: .infinity)
+ .padding()
+ .background(Color.green)
+ .foregroundColor(.white)
+ .cornerRadius(10)
+ }
+ .padding(.horizontal, 16)
+ }
+ }
+ */
