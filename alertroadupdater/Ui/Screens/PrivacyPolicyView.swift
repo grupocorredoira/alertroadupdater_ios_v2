@@ -5,32 +5,38 @@ struct PrivacyPolicyView: View {
     @ObservedObject var prefs: PreferencesManager
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             TopAppBarComponentWithLogo()
 
             Spacer()
 
-            Text("Política de privacidad")
-                .font(.title)
-                .bold()
-                .padding(.top)
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+            VStack(spacing: 16) {
+                Text("privacy_title".localized)
+                    .font(.title)
+                    .bold()
+                    .padding(.top)
 
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("privacy_content".localized)
 
-                    Text("Aquí va el contenido completo de la política de privacidad...")
+                        HStack {
+                            Spacer()
 
-                    Button("Aceptar") {
-                        prefs.savePrivacyAccepted(true)
-                        coordinator.navigate(to: .login)
+                            Button("accept_privacy_button".localized) {
+                                prefs.saveTermsAccepted(true)
+                                coordinator.navigate(to: .login)
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding(.top, 20)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.top, 20)
+                    .padding()
                 }
-                .padding()
             }
         }
+        .padding(.top, 8)
+        .navigationBarHidden(true)
     }
 }
 
@@ -39,19 +45,17 @@ struct PrivacyDialogView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Política de Privacidad")
+            Text("privacy_title".localized)
                 .font(.headline)
                 .padding(.top)
 
             ScrollView {
-                Text("""
-                Aquí va el contenido completo de la política de privacidad de la aplicación...
-                """)
+                Text("privacy_content".localized)
                     .font(.body)
                     .padding()
             }
 
-            Button("Cerrar") {
+            Button("close_button".localized) {
                 onDismiss()
             }
             .buttonStyle(.borderedProminent)

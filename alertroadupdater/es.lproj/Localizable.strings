@@ -1,0 +1,140 @@
+/* General */
+"app_name" = "AlertRoadUpdater";
+"next_button" = "Siguiente";
+"no_internet" = "No hay conexión a Internet. Verifica tu conexión para continuar.";
+"accept_button" = "Aceptar";
+"unknown" = "desconocido";
+"cancel_button" = "Cancelar";
+
+/* Términos y Condiciones Screen */
+"terms_title" = "Términos y Condiciones";
+"terms_content" = "Estos términos regulan el uso de la aplicación Alert Road Updater. Al usar la aplicación, aceptas cumplir con estas condiciones.\n\n1. Uso de la aplicación\n• La aplicación requiere el registro de un número de teléfono válido para autenticación.\n• El uso de la aplicación está destinado exclusivamente a personas mayores de edad.\n\n2. Periodo de prueba y licencias\n• La aplicación es gratuita durante un periodo inicial de prueba de un año desde la fecha de registro.\n• Al finalizar el periodo de prueba, el usuario deberá adquirir una licencia para continuar usando la aplicación.\n\n3. Datos personales\n• Recopilamos y procesamos datos como el número de teléfono, fechas de registro y compra para autenticar al usuario y gestionar licencias.\n• Estos datos son esenciales para el funcionamiento de la aplicación y no se pueden eliminar mientras exista una relación contractual activa.\n\n4. Notificaciones\n• Alert Road Updater enviará notificaciones únicamente para forzar actualizaciones críticas de la aplicación.\n\n5. Responsabilidades del usuario\n• El usuario es responsable de proporcionar información veraz durante el registro.\n• Queda prohibido el uso de la aplicación para fines ilegales o que violen los derechos de terceros.\n\n6. Limitaciones de responsabilidad\n• No somos responsables de fallos técnicos, pérdida de datos o interrupciones en el servicio causadas por terceros o por el mal uso de la aplicación.\n• La empresa no garantiza el funcionamiento continuo de la aplicación.\n\n7. Modificaciones\nNos reservamos el derecho de modificar estos términos notificando a los usuarios mediante un aviso en la aplicación.\n\n8. Legislación aplicable y jurisdicción\nEstos términos se rigen por las leyes de España. Cualquier disputa se resolverá en los tribunales competentes de Lugo.\n\n9. Contacto\nPara consultas sobre estos términos, puedes escribirnos a infoalertroad@gmail.com.";
+"accept_terms_button" = "Aceptar Términos";
+
+/* Política de Privacidad Screen */
+"privacy_title" = "Política de Privacidad";
+"privacy_content" = "En Alert Road Updater, nos comprometemos a proteger la privacidad de nuestros usuarios. Esta política explica cómo recopilamos, usamos y protegemos tu información personal.\n\nDatos que recopilamos\n• Número de teléfono móvil: Usado para la autenticación y vinculación de la cuenta.\n• Fechas importantes: Fecha de registro y fecha de vencimiento del periodo de prueba.\n• Código único de compra: Asociado a las transacciones realizadas para la adquisición del servicio.\n\nFinalidad del tratamiento\n• Autenticación del usuario y acceso a la aplicación.\n• Registro y validación del uso durante el periodo de prueba de un año.\n• Gestión de licencias de uso y compras.\n• Registro de errores para mejorar la funcionalidad mediante Crashlytics.\n\nConservación de los datos\n• Los datos se almacenan en Firebase, que cumple con altos estándares de seguridad y protección.\n• Conservamos los datos mientras el usuario utilice la aplicación y durante un año después de la última actividad, o hasta que se requiera para fines legales o contractuales.\n\nConsentimiento\nAl utilizar la aplicación y registrarse con su número de teléfono, el usuario otorga su consentimiento explícito para la recopilación y uso de sus datos según esta política.\n\nDerechos del usuario\nPuedes ejercer tus derechos de acceso, rectificación y oposición enviando un correo electrónico a infoalertroad@gmail.com. Sin embargo, no es posible eliminar la cuenta debido a las políticas de gestión de licencias.\n\nProtección de la información\nUsamos Firebase para garantizar la seguridad de los datos almacenados. Implementamos medidas de seguridad técnicas y organizativas para proteger la información personal contra el acceso no autorizado, pérdida o daño.\n\nModificaciones\nNos reservamos el derecho de actualizar esta política en cualquier momento. Notificaremos a los usuarios sobre los cambios significativos mediante un aviso dentro de la aplicación.\n\nContacto\nSi tienes preguntas sobre esta política, puedes escribirnos a infoalertroad@gmail.com.";
+"accept_privacy_button" = "Aceptar Política de Privacidad";
+
+/* Login Screen */
+"login_title" = "Accede a tu cuenta";
+"login_instructions" = "Si no tienes una cuenta creada, al introducir tu teléfono móvil te enviaremos un SMS para registrarte";
+"phone_label" = "Teléfono";
+"no_internet_message" = "No hay conexión a Internet. Verifica tu conexión para acceder.";
+"login_button" = "Acceder";
+"checking_account" = "Comprobando cuenta…";
+"sms_waiting" = "Si no recibes el SMS en %1$d:%2$02d minutos,";
+"sms_no_waiting" = "Si no recibes el SMS,";
+"click_here" = "pulsa aquí";
+"toast_wait" = "Por favor, espera hasta que hayan pasado 3 minutos";
+
+/* Verification Screen */
+"verification_title" = "Verificación";
+"verification_instructions" = "Te vamos a enviar un SMS. A continuación, introduce el código de verificación que aparece en el mensaje:";
+"verify_button" = "Verificar";
+"verifying_title" = "Verificando";
+"verifying_message" = "Verificando el código, no cierres la aplicación";
+"clean_button" = "Limpiar";
+
+/* Welcome Screen */
+"welcome_title" = "Bienvenido";
+"registered_phone" = "Teléfono registrado: %@";
+"start_button" = "Empezar";
+"access_required_title" = "Acceso requerido";
+"access_required_message" = "Se ha terminado el periodo de prueba de 1 año, necesitas comprar el servicio para continuar.";
+"buy_button" = "Comprar";
+"starting_message" = "Empezando…";
+"user_error_message" = "Error al buscar el usuario, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
+"auth_error_message" = "Error de autenticación, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
+"billing_connection_error_message" = "Error al conectar con el servicio de facturación";
+
+/* Settings Screen */
+"settings_label" = "Ajustes";
+"user_preferences" = "Preferencias de usuario";
+"privacy_policy_option" = "Políticas de Privacidad";
+"terms_conditions_option" = "Términos y Condiciones";
+"delete_files_option" = "Borrar archivos";
+"disconnect_option" = "Desconectar";
+"version_code_text" = "Versión: %@(%@)";
+"confirm_disconnect_title" = "Confirmar desconexión";
+"confirm_disconnect_message" = "Para evitar problemas con tu cuenta, aconsejamos no cerrar tu sesión, ¿estás seguro de que deseas salir de tu cuenta?";
+"yes_button" = "Sí";
+"no_button" = "No";
+"no_files_in_memory" = "No hay archivos en memoria";
+"files_delete_correctly" = "Archivos borrados correctamente";
+"files_delete_error" = "Error al borrar algunos archivos:\n%s";
+"no_files" = "No hay archivos en memoria";
+"delete_success" = "Archivos borrados correctamente";
+"delete_error" = "Error al borrar algunos archivos: ";
+
+/* Connection Screen */
+"connection_title" = "Conexión";
+"step_one" = "Paso 1: encender Wi-Fi del dispositivo Alert Road";
+"step_two" = "Paso 2: encender Wi-Fi del teléfono";
+"step_three" = "Paso 3: detectar dispositivo";
+"help_button" = "Ver cómo hacerlo";
+"wifi_enabled" = "Wi-Fi encendido";
+"enable_wifi" = "Encender Wi-Fi";
+"detect_device" = "Detectar dispositivo";
+"device_found" = "Dispositivo encontrado";
+"connection_issues" = "Problemas de conexión, volver a intentar";
+"device_not_found" = "Si no aparece ninguna de estas redes, por favor, revisa el paso 1";
+"device_name" = "Dispositivo: %@";
+"wifi_network" = "Red Wi-Fi: %1$s";
+"detecting_devices" = "Detectando dispositivos…";
+"please_wait" = "Por favor, espera %1$d segundos";
+"updating_documents" = "Actualizando documentos…";
+
+/* Permissions general */
+"permission_location" = "Se requiere acceso a la ubicación para poder localizar dispositivos cercanos";
+"permission_write_settings" = "Se requiere acceso para configurar el sistema y realizar acciones con el Wi-Fi";
+"permission_generic" = "Se requiere un permiso.";
+"permission_required" = "Permiso requerido";
+"grant_permission" = "Conceder permiso";
+
+/* Documents Screen */
+"documents_title" = "Documentos";
+"step_documents" = "Documentos disponibles para el dispositivo: %1$s";
+"download_required" = "Necesitas descargar algún archivo para continuar";
+"error_loading_documents" = "Error cargando documentos: %1$s";
+"download_button" = "Descargar";
+"downloading_button" = "Descargando %1$d%%";
+"document_version" = "Versión: %1$s";
+"status_label" = "Estado: %1$s";
+"document_status" = "Estado: %1$s";
+"document_status_available" = "Disponible para descargar";
+"document_status_downloaded" = "Descargado";
+"document_status_downloading" = "Descargando…";
+
+/* Upload Screen */
+"upload_screen_title" = "Enviar archivos";
+"connect_to_network" = "Conéctate a la red WiFi:";
+"connect_to_device" = "Conectado a %1$s";
+"documents_to_send" = "Documentos disponibles para enviar:";
+"upload_success" = "Archivo %1$s - versión %2$s cargado con éxito.";
+"upload_error" = "Error al cargar el archivo %1$s - versión %2$s";
+"sending_file" = "Enviando archivo";
+"progress_completed" = "%1$d%% completado";
+"dont_close_app" = "Por favor, no cierres ni minimices la aplicación hasta finalizar el envío.";
+"error_dialog_title" = "Error";
+"what_to_do" = "¿Qué deseas hacer?";
+"close_app" = "Cerrar aplicación";
+"go_to_home" = "Volver al inicio";
+"connected" = "Conectado";
+"connect" = "Conectar";
+"finish_button" = "Finalizar";
+"close_button" = "Cerrar";
+"upload_progress" = "Progreso: %1$d%%";
+"upload_available" = "Enviar";
+"upload_in_progress" = "Enviando… %1$d%%";
+"upload_completed" = "Enviado";
+"upload_unknown_status" = "Estado desconocido";
+"unknown_password" = "No se encontró ninguna contraseña";
+"done" = "¡HECHO!";
+"copy_password" = "Copia la siguiente contraseña:";
+"go_to_wifi_settings" = "Ir a ajustes Wi-Fi";
+"password_copied" = "Contraseña copiada";
+"document_success" = "Documento %1$s con versión: %2$s cargado con éxito";
+"finish_and_close" = "Finalizar y cerrar";
+"no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %1$s";
+"version_text" = "Version: %1$s";

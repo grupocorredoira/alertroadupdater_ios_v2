@@ -20,22 +20,22 @@ struct ConnectionView: View {
     }
 
     var body: some View {
-        VStack(/*alignment: .leading, */spacing: 16) {
+        VStack(spacing: 16) {
             CustomNavigationBar(
-                title: "Conexión",
+                title: "connection_title".localized,
                 showBackButton: true
             ) {
                 coordinator.pop()
             }
 
-            Spacer()
+            //Spacer()
 
-            Text("Paso 1: Asegúrate de que el Wi-Fi del dispositivo Alert Road está encendido.")
+            Text("step_one".localized)
                 .font(.headline)
                 .padding(.bottom, 4)
             HelpButton()
 
-            Text("Paso 2: ¿Alguna de estas redes aparece en tus ajustes de Wi-Fi? Seleccionala")
+            Text("step_two".localized)
                 .font(.headline)
                 .padding(.bottom, 4)
 
@@ -49,7 +49,7 @@ struct ConnectionView: View {
                     .foregroundColor(.yellow)
                     .font(.title2) // Ajusta el tamaño si quieres que sea más visible
 
-                Text("Si no aparece ninguna de estas redes, por favor, revisa el paso 1")
+                Text("device_not_found".localized)
                     .font(.headline)
                     .foregroundColor(.black)
                     .multilineTextAlignment(.leading)
@@ -72,11 +72,11 @@ struct ConnectionView: View {
         //.navigationBarTitleDisplayMode(.inline)
         .alert(isPresented: $showDialog) {
             Alert(
-                title: Text("Descargar"),
-                message: Text("La red \(selectedNetwork ?? "") pertenece al dispositivo \(deviceName ?? ""). ¿Deseas descargar los documentos más recientes asociados a este dispositivo?"),
-                primaryButton: .default(Text("Aceptar"), action: startLoading),
-                secondaryButton: .cancel()
-            )
+                        title: Text("download_button".localized),
+                        message: Text(String(format: "step_documents".localized, selectedNetwork ?? "")),
+                        primaryButton: .default(Text("accept_button".localized), action: startLoading),
+                        secondaryButton: .cancel(Text("cancel_button".localized))
+                    )
         }
         .overlay(
             Group {
@@ -91,7 +91,7 @@ struct ConnectionView: View {
                                 .tint(.white)   // ✅ Estilo blanco, más moderno
                                 .padding()
 
-                            Text("Actualizando documentos...")
+                            Text("updating_documents".localized)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.white)
                                 .font(.headline)
@@ -150,16 +150,13 @@ struct ConnectionView: View {
         }
 
         let alert = UIAlertController(
-            title: "Sin conexión a Internet",
-            message: "Por favor, revisa tu conexión. Puedes abrir los ajustes para verificar Wi-Fi o datos móviles.",
+            title: "no_internet".localized,
+            message: "no_internet_message".localized,
             preferredStyle: .alert
         )
 
-        // Botón OK
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
-
-        // Botón que abre Ajustes
-        alert.addAction(UIAlertAction(title: "Abrir Ajustes", style: .default) { _ in
+        alert.addAction(UIAlertAction(title: "accept_button".localized, style: .cancel))
+        alert.addAction(UIAlertAction(title: "go_to_wifi_settings".localized, style: .default) { _ in
             if let settingsURL = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(settingsURL) {
                 UIApplication.shared.open(settingsURL)
@@ -169,11 +166,13 @@ struct ConnectionView: View {
         rootVC.present(alert, animated: true)
     }
 
-
-
     private func showDownloadErrorAlert() {
-        let alert = UIAlertController(title: "Error de descarga", message: "No se han podido descargar los documentos. Verifica tu conexión y vuelve a intentarlo.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(
+            title: "error_dialog_title".localized,
+            message: "error_loading_documents".localized,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
         UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
     }
 }
@@ -186,7 +185,7 @@ struct HelpButton: View {
                 UIApplication.shared.open(url)
             }
         }) {
-            Text("Ver cómo hacerlo")
+            Text("help_button".localized)
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.blue)
@@ -231,8 +230,6 @@ struct WifiNetworksView: View {
                 .padding()
             }
         }
-        //.navigationTitle("Conexión")
-        //.navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -240,7 +237,7 @@ struct WifiNetworksView: View {
 struct WifiSettingsButton: View {
     var body: some View {
         Button(action: openWifiSettings) {
-            Text("Abrir Ajustes de Wi-Fi")
+            Text("go_to_wifi_settings".localized)
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(Color.blue)

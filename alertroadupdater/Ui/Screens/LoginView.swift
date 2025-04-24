@@ -8,12 +8,10 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Banner: ocupa 100% del ancho
             TopAppBarComponentWithLogo()
 
             Spacer()
 
-            // Contenido con padding horizontal
             VStack(spacing: 24) {
 
                 if !loginViewModel.isCodeSent {

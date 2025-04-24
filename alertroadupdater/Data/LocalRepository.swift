@@ -60,7 +60,6 @@ class LocalRepository: ObservableObject {
         }
     }
 
-
     enum DeleteDocumentsResult {
         case noFiles
         case success

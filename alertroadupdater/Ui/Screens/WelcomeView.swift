@@ -2,8 +2,6 @@ import SwiftUI
 import CoreLocation
 
 struct WelcomeView: View {
-    //@ObservedObject var loginViewModel: LoginViewModel
-    //@ObservedObject var usersHandler: UsersHandler
     @EnvironmentObject var coordinator: NavigationCoordinator
     @State private var showPaymentDialog: Bool = false
     @State private var isCheckingUser: Bool = false
@@ -12,8 +10,6 @@ struct WelcomeView: View {
     @State private var showPermissionDenied = false
     @ObservedObject var permissionsViewModel: PermissionsViewModel
     @ObservedObject var documentsViewModel: DocumentsViewModel
-
-    var title: String = "Alert Road"
 
     var body: some View {
         VStack(spacing: 16) {
@@ -26,11 +22,11 @@ struct WelcomeView: View {
 
             Spacer()
 
-            Text("¡Bienvenido!")
+            Text("welcome_title".localized)
                 .font(.largeTitle)
                 .bold()
 
-            Text("Teléfono registrado: \(PreferencesManager.shared.getPhoneNumberWithPrefix())")
+            Text(String(format: "registered_phone".localized, PreferencesManager.shared.getPhoneNumberWithPrefix()))
                 .font(.footnote)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 16)
@@ -38,9 +34,8 @@ struct WelcomeView: View {
             Button(action: {
                 handleStartButtonTap()
                 isCheckingUser = true
-                //coordinator.navigate(to: .connection)
             }) {
-                Text("Empezar")
+                Text("start_button".localized)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.green)
@@ -55,9 +50,11 @@ struct WelcomeView: View {
         .padding(.top, 8)
         .navigationBarHidden(true)
         .alert(isPresented: $showPermissionDenied) {
-            Alert(title: Text("Permisos requeridos"),
-                  message: Text("Debes permitir acceso a la localización para detectar la red Wi-Fi."),
-                  dismissButton: .default(Text("Aceptar")))
+            Alert(
+                title: Text("permission_required".localized),
+                message: Text("permission_location".localized),
+                dismissButton: .default(Text("accept_button".localized))
+            )
         }
         .onAppear {
             wifiSSIDManager.requestLocationPermission()
@@ -74,16 +71,15 @@ struct WelcomeView: View {
         } else if status == .notDetermined {
             permissionsViewModel.checkPermissions()
 
-            // Escucha el cambio de permisos en segundo plano
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if permissionsViewModel.hasLocationPermission {
                     coordinator.navigate(to: .connection)
                 } else {
-                    snackbarMessage = "Se necesitan permisos de ubicación para continuar"
+                    snackbarMessage = "permission_location".localized
                 }
             }
         } else {
-            snackbarMessage = "Se necesitan permisos de ubicación para continuar"
+            snackbarMessage = "permission_location".localized
         }
     }
 }

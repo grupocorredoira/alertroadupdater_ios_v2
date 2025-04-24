@@ -5,30 +5,38 @@ struct TermsView: View {
     @ObservedObject var prefs: PreferencesManager
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             TopAppBarComponentWithLogo()
 
             Spacer()
 
-            Text("Términos y condiciones")
-                .font(.title)
-                .bold()
-                .padding(.top)
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Aquí van tus términos y condiciones completos...")
+            VStack(spacing: 16) {
+                Text("terms_title".localized)
+                    .font(.title)
+                    .bold()
+                    .padding(.top)
 
-                    Button("Aceptar") {
-                        prefs.saveTermsAccepted(true)
-                        coordinator.navigate(to: .privacyPolicy)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("terms_content".localized)
+
+                        HStack {
+                            Spacer()
+
+                            Button("accept_terms_button".localized) {
+                                prefs.saveTermsAccepted(true)
+                                coordinator.navigate(to: .privacyPolicy)
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding(.top, 20)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.top, 20)
+                    .padding()
                 }
-                .padding()
             }
         }
+        .padding(.top, 8)
+        .navigationBarHidden(true)
     }
 }
 
@@ -37,19 +45,17 @@ struct TermsDialogView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Términos y Condiciones")
+            Text("terms_title".localized)
                 .font(.headline)
                 .padding(.top)
 
             ScrollView {
-                Text("""
-                Aquí van los términos y condiciones completos de uso de la aplicación...
-                """)
+                Text("terms_content".localized)
                     .font(.body)
                     .padding()
             }
 
-            Button("Cerrar") {
+            Button("close_button".localized){
                 onDismiss()
             }
             .buttonStyle(.borderedProminent)
