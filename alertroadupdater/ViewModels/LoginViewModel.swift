@@ -8,13 +8,13 @@ class LoginViewModel: ObservableObject {
     @Published var isCodeSent: Bool = false
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
-    
+
     private let authService = LoginService()
-    
+
     func checkIfPhoneExists(fullPhoneNumber: String, completion: @escaping () -> Void) {
         isLoading = true
         errorMessage = nil
-        
+
         authService.checkPhoneInFirebase(fullPhoneNumber: fullPhoneNumber) { [weak self] exists in
             guard let self = self else { return }
             DispatchQueue.main.async {
@@ -29,7 +29,7 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-    
+
     func sendVerificationCode(to phoneNumber: String) {
         isLoading = true
         authService.sendVerificationCode(to: phoneNumber) { [weak self] result in
@@ -39,12 +39,12 @@ class LoginViewModel: ObservableObject {
                 case .success:
                     self?.isCodeSent = true
                 case .failure(let error):
-                    self?.errorMessage = error.localizedDescription
+                    self?.errorMessage = self?.mapFirebaseError(error)
                 }
             }
         }
     }
-    
+
     func verifyCode(onSuccess: @escaping () -> Void) {
         isLoading = true
         errorMessage = nil
@@ -83,9 +83,26 @@ class LoginViewModel: ObservableObject {
                     }
 
                 case .failure(let error):
-                    self.errorMessage = error.localizedDescription
+                    self.errorMessage = self.mapFirebaseError(error)
                 }
             }
+        }
+    }
+
+    private func mapFirebaseError(_ error: Error) -> String {
+        let nsError = error as NSError
+
+        switch nsError.code {
+        case AuthErrorCode.networkError.rawValue:
+            return "Error de red, comprueba tu conexión"
+        case AuthErrorCode.tooManyRequests.rawValue:
+            return "Has hecho demasiados intentos, inténtalo de nuevo en 24 horas"
+        case AuthErrorCode.invalidVerificationCode.rawValue:
+            return "El código introducido no es válido. Revisa el SMS e inténtalo otra vez."
+        case AuthErrorCode.invalidPhoneNumber.rawValue:
+            return "El número de teléfono no es válido. Revisa el formato."
+        default:
+            return nsError.localizedDescription
         }
     }
 }

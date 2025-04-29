@@ -20,19 +20,18 @@ struct PrivacyPolicyView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("privacy_content".localized)
 
-                        HStack {
-                            Spacer()
-
-                            Button("accept_privacy_button".localized) {
-                                prefs.saveTermsAccepted(true)
-                                coordinator.navigate(to: .login)
-                            }
-                            .buttonStyle(.borderedProminent)
+                        Button("accept_privacy_button".localized) {
+                            prefs.saveTermsAccepted(true)
+                            coordinator.navigate(to: .login)
                         }
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity) // Ocupa todo el ancho disponible
                         .padding(.top, 20)
+                        .multilineTextAlignment(.center) // Centra el texto si ocupa más de una línea
                     }
                     .padding()
                 }
+
             }
         }
         .padding(.top, 8)

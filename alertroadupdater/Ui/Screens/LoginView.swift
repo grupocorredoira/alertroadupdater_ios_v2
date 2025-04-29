@@ -86,7 +86,12 @@ struct LoginView: View {
                 if let errorMessage = loginViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 8)
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: errorMessage)
                 }
+
             }
             .padding() // 👉 Aquí el padding horizontal para todo el contenido
             .frame(maxWidth: .infinity, alignment: .center)

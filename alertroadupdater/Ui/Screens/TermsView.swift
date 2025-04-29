@@ -11,6 +11,7 @@ struct TermsView: View {
             Spacer()
 
             VStack(spacing: 16) {
+
                 Text("terms_title".localized)
                     .font(.title)
                     .bold()
@@ -20,16 +21,14 @@ struct TermsView: View {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("terms_content".localized)
 
-                        HStack {
-                            Spacer()
-
-                            Button("accept_terms_button".localized) {
-                                prefs.saveTermsAccepted(true)
-                                coordinator.navigate(to: .privacyPolicy)
-                            }
-                            .buttonStyle(.borderedProminent)
+                        Button("accept_terms_button".localized) {
+                            prefs.saveTermsAccepted(true)
+                            coordinator.navigate(to: .privacyPolicy)
                         }
+                        .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity)
                         .padding(.top, 20)
+                        .multilineTextAlignment(.center)
                     }
                     .padding()
                 }
