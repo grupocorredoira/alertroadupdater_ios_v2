@@ -87,7 +87,6 @@ struct NavGraph: View {
     var body: some View {
         NavigationView {
             ZStack {
-                // 🛠 CAMBIO: Mostramos vista según si hay pantalla activa o no
                 if let screen = coordinator.current {
                     getDestinationView(for: screen)
                         .transition(.slide)
@@ -97,7 +96,6 @@ struct NavGraph: View {
                 }
             }
             .onAppear {
-                // 🛠 CAMBIO: Añadido push automático a .welcome si está logueado
                 if isLoggedIn && coordinator.current == nil {
                     coordinator.navigate(to: .welcome)
                 }
@@ -109,22 +107,6 @@ struct NavGraph: View {
         .environmentObject(coordinator)
         .navigationViewStyle(StackNavigationViewStyle())
     }
-
-    // MARK: - Pantalla inicial
-    /*
-     @ViewBuilder
-     private func getStartView() -> some View {
-     if isLoggedIn {
-     WelcomeView(
-     wifiSSIDManager: wifiSSIDManager,
-     permissionsViewModel: permissionsViewModel,
-     documentsViewModel: documentsViewModel
-     )
-     } else {
-     LoginView()
-     }
-     }
-     */
 
     @ViewBuilder
     private func getStartView() -> some View {

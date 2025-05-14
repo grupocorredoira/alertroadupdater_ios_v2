@@ -10,6 +10,7 @@ struct WelcomeView: View {
     @State private var showPermissionDenied = false
     @ObservedObject var permissionsViewModel: PermissionsViewModel
     @ObservedObject var documentsViewModel: DocumentsViewModel
+    @StateObject private var purchaseViewModel = PurchaseViewModel()
 
     var body: some View {
         VStack(spacing: 16) {
@@ -31,6 +32,43 @@ struct WelcomeView: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 16)
 
+            if purchaseViewModel.needsToPay {
+                Text("Periodo finalizado. Para continuar necesitas realizar el pago del servicio")
+                    .font(.callout)
+                    .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+
+                Button(action: {
+                    Task {
+                        await purchaseViewModel.makePurchase()
+                    }
+                }) {
+                    Text(purchaseViewModel.isPurchasing ? "Comprando..." : "Comprar servicio")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal, 16)
+                .disabled(purchaseViewModel.isPurchasing)
+            } else {
+                Button(action: {
+                    handleStartButtonTap()
+                    isCheckingUser = true
+                }) {
+                    Text("start_button".localized)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.horizontal, 16)
+            }
+
+            //TODO - BORRAR, solo testing
             Button(action: {
                 handleStartButtonTap()
                 isCheckingUser = true
@@ -43,6 +81,7 @@ struct WelcomeView: View {
                     .cornerRadius(8)
             }
             .padding(.horizontal, 16)
+
 
             Spacer()
             Spacer()
@@ -60,6 +99,9 @@ struct WelcomeView: View {
             wifiSSIDManager.requestLocationPermission()
             coordinator.pushIfNeeded(.welcome)
             documentsViewModel.refreshDocuments()
+            Task {
+                await purchaseViewModel.start()
+            }
         }
     }
 

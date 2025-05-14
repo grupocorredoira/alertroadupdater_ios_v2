@@ -8,7 +8,7 @@ struct AlertRoadUpdaterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavGraph()  // Aquí cargamos NavGraph en lugar de ConnectionView
+            NavGraph()
         }
     }
 }
