@@ -8,6 +8,8 @@ class LoginViewModel: ObservableObject {
     @Published var isCodeSent: Bool = false
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var isPhoneValid: Bool = false
+    @Published var phoneErrorMessage: String? = nil
 
     private let authService = LoginService()
 
@@ -104,5 +106,36 @@ class LoginViewModel: ObservableObject {
         default:
             return nsError.localizedDescription
         }
+    }
+
+    func validatePhoneNumber(prefix: String, phone: String) {
+        let sanitized = phone.filter { $0.isNumber }
+
+        let (isValid, errorMessage): (Bool, String?) = {
+            switch prefix {
+            case "+351", "+33":
+                let valid = sanitized.count == 9
+                return (valid, valid ? nil : "El número debe tener 9 dígitos.")
+
+            case "+34":
+                let valid = sanitized.count == 9 && (sanitized.hasPrefix("6") || sanitized.hasPrefix("7"))
+                if !valid {
+                    if sanitized.count != 9 {
+                        return (false, "El número móvil debe tener 9 dígitos.")
+                    } else {
+                        return (false, "Con el prefijo +34 el teléfono debe comenzar con 6 o 7.")
+                    }
+                }
+                return (true, nil)
+
+            default:
+                let valid = sanitized.count >= 7
+                return (valid, valid ? nil : "El número debe tener al menos 9 dígitos.")
+            }
+        }()
+
+        self.phoneNumber = sanitized
+        self.isPhoneValid = isValid
+        self.phoneErrorMessage = errorMessage
     }
 }

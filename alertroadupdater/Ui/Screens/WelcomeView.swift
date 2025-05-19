@@ -69,6 +69,8 @@ struct WelcomeView: View {
             }
 
             //TODO - BORRAR, solo testing
+            // Para testear los pagos
+            /*
             Button(action: {
                 handleStartButtonTap()
                 isCheckingUser = true
@@ -81,7 +83,7 @@ struct WelcomeView: View {
                     .cornerRadius(8)
             }
             .padding(.horizontal, 16)
-
+*/
 
             Spacer()
             Spacer()

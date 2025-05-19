@@ -32,9 +32,8 @@ struct ConnectionView: View {
 
             Text("step_one".localized)
                 .font(.headline)
-                .multilineTextAlignment(.leading) // Alineación a la izquierda
-                .lineLimit(nil)                   // Permite varias líneas
-                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading) // fuerza el ancho
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
 
@@ -268,6 +267,7 @@ struct WifiSettingsButton: View {
 }
 
 /* NO BORRAR - PRUEBAS */
+// Está para cuando queramos avanzar sin descargar docs
 /*
  struct WifiSettingsButton: View {
  @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
