@@ -21,7 +21,7 @@ struct PrivacyPolicyView: View {
                         Text("privacy_content".localized)
 
                         Button("accept_privacy_button".localized) {
-                            prefs.saveTermsAccepted(true)
+                            prefs.savePrivacyAccepted(true)
                             coordinator.navigate(to: .login)
                         }
                         .buttonStyle(.borderedProminent)

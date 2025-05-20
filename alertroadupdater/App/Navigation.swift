@@ -96,6 +96,9 @@ struct NavGraph: View {
                 }
             }
             .onAppear {
+                print("Terms aceptados: \(prefs.getIsTermsAccepted())")
+                print("Privacy aceptados: \(prefs.getIsPrivacyAccepted())")
+
                 if isLoggedIn && coordinator.current == nil {
                     coordinator.navigate(to: .welcome)
                 }
