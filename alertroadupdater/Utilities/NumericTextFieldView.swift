@@ -4,7 +4,8 @@ import SwiftUI
 struct NumericTextFieldView: UIViewRepresentable {
     @Binding var text: String
     var placeholder: String
-    
+    var borderColor: UIColor
+
     func makeUIView(context: Context) -> UITextField {
         let textField = UITextField()
         textField.placeholder = placeholder
@@ -23,18 +24,10 @@ struct NumericTextFieldView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextField, context: Context) {
-        uiView.text = text
-        
-        // 👉 Validación visual: borde verde si válido
-        if text.count == 9 {
-            uiView.layer.borderColor = UIColor.systemGreen.cgColor
-        } else if text.isEmpty {
-            uiView.layer.borderColor = UIColor.gray.cgColor
-        } else {
-            uiView.layer.borderColor = UIColor.systemRed.cgColor
+            uiView.text = text
+            uiView.layer.borderColor = borderColor.cgColor
         }
-    }
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(text: $text)
     }

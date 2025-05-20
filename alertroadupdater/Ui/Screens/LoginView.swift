@@ -5,18 +5,18 @@ struct LoginView: View {
     @StateObject private var loginViewModel = LoginViewModel()
     @EnvironmentObject var coordinator: NavigationCoordinator
     @State var selectedPrefix: String = "+34"
-    
+
     // Estado para el mensaje de error
     @State private var errorMessage: String? = nil
-    
+
     var isPhoneNumberValid: Bool {
         return loginViewModel.phoneNumber.count == 9
     }
-    
+
     var shouldShowLengthError: Bool {
         return !loginViewModel.phoneNumber.isEmpty && loginViewModel.phoneNumber.count < 9
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             TopAppBarComponentWithLogo()
@@ -41,25 +41,21 @@ struct LoginView: View {
                             selectedPrefix = newPrefix
                         }
                     )
-                    
-                    NumericTextFieldView(text: $loginViewModel.phoneNumber, placeholder: "Introduce tu número")
+
+                    NumericTextFieldView(text: $loginViewModel.phoneNumber, placeholder: "Introduce tu número", borderColor: loginViewModel.phoneBorderColor)
                         .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
-                        .onChange(of: loginViewModel.phoneNumber) { newValue in
-                            if !newValue.isEmpty && newValue.count < 9 {
-                                errorMessage = "El número debe tener 9 dígitos."
-                            } else {
-                                errorMessage = nil
-                            }
+                        .onChange(of: loginViewModel.phoneNumber) { _ in
+                            loginViewModel.validatePhoneNumber(prefix: selectedPrefix)
                         }
-                    
-                    if shouldShowLengthError {
-                        Text(errorMessage ?? "")
+
+                    if let phoneError = loginViewModel.phoneErrorMessage {
+                        Text(phoneError)
                             .font(.caption)
                             .foregroundColor(.red)
                             .padding(.top, 4)
                             .padding(.horizontal)
                     }
-                    
+
                     Button(action: {
                         let fullNumber = "\(selectedPrefix)\(loginViewModel.phoneNumber)"
 
@@ -71,23 +67,22 @@ struct LoginView: View {
                             loginViewModel.sendVerificationCode(to: fullNumber)
                         }
                     }){
-                        Text("Entrar")
+                        Text("Acceder")
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue)
+                            .background(loginViewModel.accessButtonColor)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
                     .disabled(!isPhoneNumberValid || loginViewModel.isLoading)
-                    .background(isPhoneNumberValid ? Color.blue : Color.gray.opacity(0.4))
-                    
+
                 } else {
                     TextField("Código SMS", text: $loginViewModel.verificationCode)
                         .keyboardType(.numberPad)
                         .padding()
                         .background(Color(UIColor.secondarySystemBackground))
                         .cornerRadius(8)
-                    
+
                     Button(action: {
                         loginViewModel.verifyCode {
                             coordinator.navigate(to: .welcome)
@@ -102,7 +97,7 @@ struct LoginView: View {
                     }
                     .disabled(loginViewModel.isLoading)
                 }
-                
+
                 if let errorMessage = loginViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -111,7 +106,7 @@ struct LoginView: View {
                         .transition(.opacity)
                         .animation(.easeInOut, value: errorMessage)
                 }
-                
+
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .center)
