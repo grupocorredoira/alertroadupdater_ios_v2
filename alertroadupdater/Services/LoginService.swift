@@ -42,7 +42,9 @@ class LoginService {
             let error = NSError(
                 domain: "FirebaseAuth",
                 code: -2,
-                userInfo: [NSLocalizedDescriptionKey: "No se encontró el ID de verificación en UserDefaults."]
+                //No se encontró el ID de verificación en UserDefaults, es decir, se envió solicitud a firebase, pero no
+                //se recibió correctamente el verification id, puede que por internet, puede que por número incorrecto
+                userInfo: [NSLocalizedDescriptionKey: "Error en el código de verificación, por favor, cierra la aplicación e inténtalo más tarde"]
             )
             completion(.failure(error))
             return

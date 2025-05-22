@@ -1,7 +1,7 @@
 /* General */
 "app_name" = "AlertRoadUpdater";
 "next_button" = "Siguiente";
-"no_internet" = "No hay conexión a Internet. Verifica tu conexión para continuar.";
+"no_internet_title" = "No hay conexión a Internet";
 "accept_button" = "Aceptar";
 "unknown" = "desconocido";
 "cancel_button" = "Cancelar";
@@ -20,7 +20,7 @@
 "login_title" = "Accede a tu cuenta";
 "login_instructions" = "Si no tienes una cuenta creada, al introducir tu teléfono móvil te enviaremos un SMS para registrarte";
 "phone_label" = "Teléfono";
-"no_internet_message" = "No hay conexión a Internet. Verifica tu conexión para acceder.";
+"no_internet_message" = "Verifica tu conexión para acceder";
 "login_button" = "Acceder";
 "checking_account" = "Comprobando cuenta…";
 "sms_waiting" = "Si no recibes el SMS en %1$d:%2$02d minutos";
@@ -133,6 +133,7 @@
 "done" = "¡HECHO!";
 "copy_password" = "Copia la siguiente contraseña:";
 "go_to_wifi_settings" = "Ir a ajustes Wi-Fi";
+"go_to_settings" = "Ir a ajustes";
 "password_copied" = "Contraseña copiada";
 "document_success" = "Documento %@ con versión: %@ cargado con éxito";
 "finish_and_close" = "Finalizar y cerrar";

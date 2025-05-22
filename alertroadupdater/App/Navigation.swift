@@ -60,9 +60,6 @@ struct NavGraph: View {
     @StateObject private var documentsViewModel: DocumentsViewModel
     @StateObject private var uploadDocumentsViewModel: UploadDocumentsViewModel
 
-    @StateObject private var networkStatusRepository = NetworkStatusRepository()
-    @StateObject private var networkStatusViewModel = NetworkStatusViewModel(networkStatusRepository: NetworkStatusRepository())
-
     @State private var connectionViewModel: ConnectionViewModel?
 
     @StateObject private var wifiSSIDManager = WiFiSSIDManager()
@@ -157,8 +154,7 @@ struct NavGraph: View {
                 ConnectionView(
                     title: "Conexión",
                     documentsViewModel: documentsViewModel,
-                    connectionViewModel: connectionViewModel,
-                    networkStatusViewModel: networkStatusViewModel
+                    connectionViewModel: connectionViewModel
                 ) { deviceName in
                     coordinator.navigate(to: .upload(deviceName: deviceName))
                 }

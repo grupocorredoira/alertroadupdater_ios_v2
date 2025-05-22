@@ -6,6 +6,7 @@ import UIKit
 
 /// `ConnectionManager` maneja la obtención del SSID y la apertura de ajustes de Wi-Fi en iOS.
 class ConnectionManager: ObservableObject {
+    static let shared = ConnectionManager()
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global(qos: .background)
 

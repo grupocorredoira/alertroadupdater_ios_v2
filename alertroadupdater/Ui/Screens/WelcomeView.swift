@@ -11,6 +11,8 @@ struct WelcomeView: View {
     @ObservedObject var permissionsViewModel: PermissionsViewModel
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @StateObject private var purchaseViewModel = PurchaseViewModel()
+    @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
+    @State private var showNetworkAlert = false
 
     var body: some View {
         VStack(spacing: 16) {
@@ -40,23 +42,32 @@ struct WelcomeView: View {
                     .padding(.horizontal)
 
                 Button(action: {
-                    Task {
-                        await purchaseViewModel.makePurchase()
+                    if networkMonitorViewModel.hasInternet {
+                        Task {
+                            await purchaseViewModel.makePurchase()
+                        }
+                    } else {
+                        showNetworkAlert = true
                     }
                 }) {
                     Text(purchaseViewModel.isPurchasing ? "Comprando..." : "Comprar servicio")
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(purchaseViewModel.purchaseButtonColor)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
                 .padding(.horizontal, 16)
                 .disabled(purchaseViewModel.isPurchasing)
+
             } else {
                 Button(action: {
-                    handleStartButtonTap()
-                    isCheckingUser = true
+                    if networkMonitorViewModel.hasInternet {
+                        handleStartButtonTap()
+                        isCheckingUser = true
+                    } else {
+                        showNetworkAlert = true
+                    }
                 }) {
                     Text("start_button".localized)
                         .frame(maxWidth: .infinity)
@@ -67,23 +78,6 @@ struct WelcomeView: View {
                 }
                 .padding(.horizontal, 16)
             }
-
-            //TODO - BORRAR, solo testing
-            // Para testear los pagos
-            /*
-            Button(action: {
-                handleStartButtonTap()
-                isCheckingUser = true
-            }) {
-                Text("start_button".localized)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-            .padding(.horizontal, 16)
-*/
 
             Spacer()
             Spacer()
@@ -103,9 +97,17 @@ struct WelcomeView: View {
             documentsViewModel.refreshDocuments()
             Task {
                 await purchaseViewModel.start()
+                await purchaseViewModel.refreshPaymentStatus()
+            }
+        }
+        .onChange(of: showNetworkAlert) { show in
+            if show {
+                NetworkAlertManager.showNoInternetDialog()
+                showNetworkAlert = false
             }
         }
     }
+
 
     private func handleStartButtonTap() {
         let status = CLLocationManager.authorizationStatus()

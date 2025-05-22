@@ -10,11 +10,11 @@ class PurchaseService: ObservableObject {
 
     private init() {}
 
-    private let productID = "comprar_servicio"
+    private let productID = "comprar_servicio_v2"
     private let firestore = Firestore.firestore()
 
     @Published var product: Product?
-    @Published var needsToPay: Bool = true
+    @Published var needsToPay: Bool = false
     @Published var isPurchasing: Bool = false
 
     // ✅ Cargar el producto de StoreKit
@@ -117,4 +117,21 @@ class PurchaseService: ObservableObject {
             print("Error al actualizar Firestore: \(error.localizedDescription)")
         }
     }
+
+    // ✅ Añadir función de escucha para transacciones pendientes
+    func listenForPendingTransactions() async {
+        for await result in Transaction.updates {
+            guard case .verified(let transaction) = result else { continue }
+            print("💳 Transacción pendiente verificada: \(transaction.id)")
+            await handleTransactionFromUpdate(transaction)
+        }
+    }
+
+    // ✅ Manejar transacción fuera del flujo normal de compra
+    func handleTransactionFromUpdate(_ transaction: StoreKit.Transaction) async {
+        await transaction.finish()
+        await updateFirestore(transactionID: transaction.id)
+        self.needsToPay = false
+    }
+
 }

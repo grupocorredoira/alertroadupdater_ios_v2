@@ -5,7 +5,7 @@ struct ConnectionView: View {
     var title: String
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @ObservedObject var connectionViewModel: ConnectionViewModel
-    @ObservedObject var networkStatusViewModel: NetworkStatusViewModel
+    @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
 
     var onNetworkSelected: (String) -> Void
 
@@ -119,11 +119,11 @@ struct ConnectionView: View {
         showLoadingDialog = true
         showDialog = false
 
-        guard networkStatusViewModel.hasInternet else {
+        guard networkMonitorViewModel.hasInternet else {
             showLoadingDialog = false
             // Muestra una alerta si no hay conexión
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                showNetworkErrorAlert()
+                NetworkAlertManager.showNoInternetDialog()
             }
             return
         }
@@ -160,13 +160,13 @@ struct ConnectionView: View {
         }
 
         let alert = UIAlertController(
-            title: "no_internet".localized,
+            title: "no_internet_title".localized,
             message: "no_internet_message".localized,
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "accept_button".localized, style: .cancel))
-        alert.addAction(UIAlertAction(title: "go_to_wifi_settings".localized, style: .default) { _ in
+        alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
+        alert.addAction(UIAlertAction(title: "go_to_wifi_settings".localized, style: .cancel) { _ in
             if let settingsURL = URL(string: UIApplication.openSettingsURLString),
                UIApplication.shared.canOpenURL(settingsURL) {
                 UIApplication.shared.open(settingsURL)
