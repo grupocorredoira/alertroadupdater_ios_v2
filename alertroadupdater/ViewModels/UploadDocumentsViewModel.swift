@@ -30,8 +30,8 @@ class UploadDocumentsViewModel: ObservableObject {
         //print("📥 Buscando documentos locales para deviceName: '\(deviceName ?? "nil")'")
 
         for doc in documents {
-            let stored = localRepository.isDocumentStored(documentId: doc.id)
             // TODO - WARNING: solved, es por los prints
+            let stored = localRepository.isDocumentStored(documentId: doc.id)
             //print("➡️ \(doc.deviceName) | ID: \(doc.id) | Guardado localmente: \(stored)")
         }
 
