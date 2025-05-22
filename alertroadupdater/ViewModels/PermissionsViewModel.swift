@@ -12,7 +12,7 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
     }
 
     func checkPermissions() {
-        let status = CLLocationManager.authorizationStatus()
+        let status = locationManager.authorizationStatus
         if status == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
         } else {

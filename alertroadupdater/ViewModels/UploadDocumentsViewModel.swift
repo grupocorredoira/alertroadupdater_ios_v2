@@ -31,6 +31,7 @@ class UploadDocumentsViewModel: ObservableObject {
 
         for doc in documents {
             let stored = localRepository.isDocumentStored(documentId: doc.id)
+            // TODO - WARNING: solved, es por los prints
             //print("➡️ \(doc.deviceName) | ID: \(doc.id) | Guardado localmente: \(stored)")
         }
 
