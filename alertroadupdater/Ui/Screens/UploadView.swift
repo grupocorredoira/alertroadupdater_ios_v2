@@ -251,7 +251,7 @@ struct UploadDocumentRowView: View {
         VStack(alignment: .leading) {
             Text(document.type).font(.headline)
             Text(document.deviceName).font(.subheadline)
-            Text("document_version".localized.replacingOccurrences(of: "%1$s", with: document.version))
+            Text(String(format: "document_version".localized, document.version))
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
