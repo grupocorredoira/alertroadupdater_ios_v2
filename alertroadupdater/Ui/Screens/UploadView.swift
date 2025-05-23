@@ -125,7 +125,7 @@ struct UploadView: View {
                 .padding(.top)
 
             if let password = password {
-                passwordCopyView
+                passwordCopyView(password: password)
             } else {
                 Text("unknown_password".localized)
                     .font(.title3)
@@ -141,21 +141,17 @@ struct UploadView: View {
         .padding()
     }
 
-    private var passwordCopyView: some View {
+    private func passwordCopyView(password: String) -> some View {
         HStack(spacing: 8) {
-            Text(password ?? "")
+            Text(password)
                 .font(.title3)
                 .bold()
 
             Button(action: {
                 UIPasteboard.general.string = password
-                withAnimation {
-                    showToast = true
-                }
+                withAnimation { showToast = true }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation {
-                        showToast = false
-                    }
+                    withAnimation { showToast = false }
                 }
             }) {
                 Image(systemName: "doc.on.doc")
