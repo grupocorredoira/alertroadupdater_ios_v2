@@ -70,7 +70,7 @@
 /* Connection Screen */
 "connection_title" = "Conexión";
 "step_one" = "Paso 1: encender Wi-Fi del dispositivo Alert Road";
-"step_two" = "Paso 2: encender Wi-Fi del teléfono. Revisa si alguna de estas redes aparece como disponible. Selecciónala para descargar los documentos correspondientes";
+"step_two" = "Paso 2: encender Wi-Fi del teléfono. Revisa si alguna de estas redes aparece como disponible y selecciónala";
 "step_three" = "Paso 3: detectar dispositivo";
 "help_button" = "Ver cómo hacerlo";
 "wifi_enabled" = "Wi-Fi encendido";

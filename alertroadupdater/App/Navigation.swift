@@ -96,9 +96,18 @@ struct NavGraph: View {
                 print("Terms aceptados: \(prefs.getIsTermsAccepted())")
                 print("Privacy aceptados: \(prefs.getIsPrivacyAccepted())")
 
+                // ✅ Si el usuario ya está autenticado
                 if isLoggedIn && coordinator.current == nil {
+                    // ⚠️ Guardar número de teléfono en preferences si no está guardado
+                    if prefs.getPhoneNumberWithPrefix().isEmpty,
+                       let phone = Auth.auth().currentUser?.phoneNumber {
+                        print("📲 Guardando número de teléfono: \(phone)")
+                        prefs.savePhoneNumberWithPrefix(phone)
+                    }
+
                     coordinator.navigate(to: .welcome)
                 }
+
                 if connectionViewModel == nil {
                     connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
                 }

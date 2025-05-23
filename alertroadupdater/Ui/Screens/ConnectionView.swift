@@ -28,7 +28,7 @@ struct ConnectionView: View {
                 coordinator.pop()
             }
 
-            Spacer()
+            //Spacer()
 
             Text("step_one".localized)
                 .font(.headline)
