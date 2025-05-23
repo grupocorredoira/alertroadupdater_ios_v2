@@ -110,7 +110,7 @@ struct WelcomeView: View {
 
 
     private func handleStartButtonTap() {
-        let status = CLLocationManager.authorizationStatus()
+        let status = permissionsViewModel.locationAuthorizationStatus
 
         if status == .authorizedWhenInUse || status == .authorizedAlways {
             coordinator.navigate(to: .connection)

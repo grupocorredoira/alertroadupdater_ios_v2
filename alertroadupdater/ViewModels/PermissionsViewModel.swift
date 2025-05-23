@@ -2,7 +2,7 @@ import CoreLocation
 import SwiftUI
 
 class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
-    private var locationManager = CLLocationManager()
+    private let locationManager = CLLocationManager()
 
     @Published var hasLocationPermission = false
 
@@ -11,8 +11,13 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
         locationManager.delegate = self
     }
 
+    // Acceso seguro al estado actual de permisos
+    var locationAuthorizationStatus: CLAuthorizationStatus {
+        locationManager.authorizationStatus
+    }
+
     func checkPermissions() {
-        let status = locationManager.authorizationStatus
+        let status = locationAuthorizationStatus
         if status == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
         } else {
@@ -24,4 +29,3 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
         hasLocationPermission = (status == .authorizedWhenInUse || status == .authorizedAlways)
     }
 }
-

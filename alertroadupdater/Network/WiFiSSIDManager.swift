@@ -14,7 +14,7 @@ class WiFiSSIDManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     func requestLocationPermission() {
-        let status = CLLocationManager.authorizationStatus()
+        let status = locationManager.authorizationStatus
         print("📍 Estado de permisos de ubicación: \(status.rawValue)")
 
         if status == .notDetermined {
