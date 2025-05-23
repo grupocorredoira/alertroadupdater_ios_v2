@@ -13,6 +13,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 
     // ✅ Necesario para verificación por SMS
+    /// TODO - WARNING: solved. Lo dejamos así, es que hay que hacer algo con el return, pero no hace falta
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
