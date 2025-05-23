@@ -177,13 +177,20 @@ struct ConnectionView: View {
     }
 
     private func showDownloadErrorAlert() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootVC = windowScene.windows.first?.rootViewController else {
+            print("❌ No se pudo obtener la ventana principal para mostrar el alert")
+            return
+        }
+
         let alert = UIAlertController(
             title: "error_dialog_title".localized,
             message: "error_loading_documents".localized,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
-        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+
+        rootVC.present(alert, animated: true)
     }
 }
 
