@@ -92,13 +92,22 @@ struct NavGraph: View {
                         .transition(.slide)
                 }
             }
-            .onAppear {
-                print("Terms aceptados: \(prefs.getIsTermsAccepted())")
-                print("Privacy aceptados: \(prefs.getIsPrivacyAccepted())")
+            .task {
+                // Esto tiene que seguir este orden, porque si connectionViewModel no va primero, no cargará correctamente
+                // la pantalla. Hay que poner los terminos para que siempre verifique y sino pregunte. El sleep es para que
+                // a firebase le de tiempo al cargar
+                if connectionViewModel == nil {
+                    connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
+                }
 
-                // ✅ Si el usuario ya está autenticado
+                guard prefs.getIsTermsAccepted(), prefs.getIsPrivacyAccepted() else {
+                    print("⛔️ No se han aceptado términos o privacidad, no se navega")
+                    return
+                }
+
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
+
                 if isLoggedIn && coordinator.current == nil {
-                    // ⚠️ Guardar número de teléfono en preferences si no está guardado
                     if prefs.getPhoneNumberWithPrefix().isEmpty,
                        let phone = Auth.auth().currentUser?.phoneNumber {
                         print("📲 Guardando número de teléfono: \(phone)")
@@ -106,10 +115,6 @@ struct NavGraph: View {
                     }
 
                     coordinator.navigate(to: .welcome)
-                }
-
-                if connectionViewModel == nil {
-                    connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
                 }
             }
         }
