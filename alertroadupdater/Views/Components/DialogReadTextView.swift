@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DialogReadTextComponent: View {
+struct DialogReadTextView: View {
     var showDialog: Bool
     var title: String
     var text: String

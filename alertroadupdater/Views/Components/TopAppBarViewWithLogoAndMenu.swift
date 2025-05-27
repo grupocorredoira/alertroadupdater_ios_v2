@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TopAppBarComponentWithLogoAndMenu: View {
+struct TopAppBarViewWithLogoAndMenu: View {
     var showMenu: Bool = true
     var onMenuClick: () -> Void = {}
 

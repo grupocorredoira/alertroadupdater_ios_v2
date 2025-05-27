@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TopAppBarComponentWithLogo: View {
+struct TopAppBarViewWithLogo: View {
 
     var body: some View {
         HStack {

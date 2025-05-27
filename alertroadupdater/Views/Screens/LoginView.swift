@@ -21,7 +21,7 @@ struct LoginView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TopAppBarComponentWithLogo()
+            TopAppBarViewWithLogo()
 
             Spacer()
 
