@@ -195,5 +195,14 @@ class LoginViewModel: ObservableObject {
             }
         }()
     }
-    
+
+    func reset() {
+        isCodeSent = false
+        errorMessage = nil
+        phoneErrorMessage = nil
+        codeErrorMessage = nil
+        isCodeValid = false
+    }
+
+
 }

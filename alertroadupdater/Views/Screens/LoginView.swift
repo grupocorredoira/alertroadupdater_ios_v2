@@ -6,7 +6,7 @@ struct LoginView: View {
     @EnvironmentObject var coordinator: NavigationCoordinator
     @State var selectedPrefix: String = "+34"
     @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
-
+    @Environment(\.scenePhase) var scenePhase
 
     // Estado para el mensaje de error
     @State private var errorMessage: String? = nil
@@ -139,5 +139,11 @@ struct LoginView: View {
         .padding(.top, 8)
         .navigationBarHidden(true)
         .hideKeyboardOnTap()
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .background {
+                print("🔒 App en segundo plano, reseteando estado de login")
+                loginViewModel.reset()
+            }
+        }
     }
 }
