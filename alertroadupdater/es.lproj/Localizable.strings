@@ -99,7 +99,7 @@
 "error_loading_documents" = "Error cargando documentos: %@";
 "download_button" = "Descargar";
 "downloading_button" = "Descargando %@d%%";
-"document_version" = "Versión: %@";
+"document_version" = "Versión";
 "status_label" = "Estado: %@";
 "document_status" = "Estado: %@";
 "document_status_available" = "Disponible para descargar";

@@ -38,8 +38,10 @@ struct UploadView: View {
     // la condición o no
     let ssidCheckTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
+
     var body: some View {
         ZStack {
+
             VStack(alignment: .leading, spacing: 16) {
                 CustomNavigationBar(
                     title: "upload_available".localized,
@@ -247,11 +249,12 @@ struct UploadDocumentRowView: View {
         VStack(alignment: .leading) {
             Text(document.type).font(.headline)
             Text(document.deviceName).font(.subheadline)
-            Text(String(format: "document_version".localized, document.version))
+            Text("\("document_version".localized): \(document.version.isEmpty ? "última" : document.version)")
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
     }
+
 
     /// Botón de envío con estilo
     private var uploadButton: some View {
