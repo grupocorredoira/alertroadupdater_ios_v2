@@ -87,7 +87,7 @@ class LoginViewModel: ObservableObject {
                 case .success:
                     guard let uid = Auth.auth().currentUser?.uid,
                           let phone = Auth.auth().currentUser?.phoneNumber else {
-                        self.errorMessage = "Error: no se encontró UID o número"
+                        self.errorMessage = "user_data_missing".localized
                         return
                     }
                     
@@ -100,7 +100,7 @@ class LoginViewModel: ObservableObject {
                             self.authService.createUser(uid: uid, phoneNumber: phone) { error in
                                 DispatchQueue.main.async {
                                     if let error = error {
-                                        self.errorMessage = "Error al crear usuario: \(error.localizedDescription)"
+                                        self.errorMessage = String(format: "user_creation_error".localized, error.localizedDescription)
                                     } else {
                                         print("✅ Usuario creado correctamente")
                                         PreferencesManager.shared.savePhoneNumberWithPrefix(phone)
@@ -143,22 +143,22 @@ class LoginViewModel: ObservableObject {
             switch prefix {
             case "+351", "+33":
                 let valid = sanitized.count == 9
-                return (valid, valid ? nil : "El número debe tener 9 dígitos")
-                
+                return (valid, valid ? nil : "number_must_have_9_digits".localized)
+
             case "+34":
                 let valid = sanitized.count == 9 && (sanitized.hasPrefix("6") || sanitized.hasPrefix("7"))
                 if !valid {
                     if sanitized.count != 9 {
-                        return (false, "El número móvil debe tener 9 dígitos")
+                        return (false, "es_mobile_must_have_9_digits".localized)
                     } else {
-                        return (false, "Con el prefijo +34 el teléfono debe comenzar con 6 o 7")
+                        return (false, "es_mobile_must_start_with_6_or_7".localized)
                     }
                 }
                 return (true, nil)
                 
             default:
                 let valid = sanitized.count >= 7
-                return (valid, valid ? nil : "El número debe tener al menos 9 dígitos.")
+                return (valid, valid ? nil : "number_must_have_at_least_9_digits".localized)
             }
         }()
         
@@ -184,8 +184,8 @@ class LoginViewModel: ObservableObject {
         let isValid = sanitized.count == 6
         self.verificationCode = sanitized
         self.isCodeValid = isValid
-        self.codeErrorMessage = isValid ? nil : "El código debe tener 6 dígitos"
-        
+        self.codeErrorMessage = isValid ? nil : "code_must_have_6_digits".localized
+
         self.codeBorderColor = {
             if sanitized.isEmpty {
                 return UIColor.gray

@@ -9,14 +9,14 @@ struct PermissionBottomSheet: View {
     var body: some View {
         if isVisible {
             VStack(spacing: 16) {
-                Text("Se requiere permiso")
+                Text("permission_required_title".localized)
                     .font(.headline)
 
                 Text(permissionMessage)
                     .font(.body)
                     .multilineTextAlignment(.center)
 
-                Button("Conceder Permiso", action: {
+                Button("grant_permission_button".localized, action: {
                     onGrantPermission()
                     onDismiss()
                 })
@@ -26,7 +26,7 @@ struct PermissionBottomSheet: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
 
-                Button("Cancelar", action: onDismiss)
+                Button("cancel_button".localized, action: onDismiss)
                     .padding()
             }
             .padding()
