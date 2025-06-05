@@ -1,5 +1,10 @@
 import SwiftUI
 
+// NO BORRAR
+/// clase para un futuro por si hay que reenviar el código, de momento en ios no es necesario
+
+
+/*
 struct VerifyCodeInputComponent: View {
     var onCodeComplete: (String) -> Void = { _ in }
     let numDigits = 6 // Número de dígitos del código
@@ -50,3 +55,4 @@ struct VerifyCodeInputComponent: View {
         }
     }
 }
+*/

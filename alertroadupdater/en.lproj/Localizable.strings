@@ -1,0 +1,149 @@
+/* General */
+"app_name" = "AlertRoadUpdater";
+"next_button" = "Next";
+"no_internet_title" = "No Internet connection";
+"accept_button" = "Accept";
+"unknown" = "unknown";
+"cancel_button" = "Cancel";
+
+/* Términos y Condiciones Screen */
+"terms_title" = "Terms and Conditions";
+"terms_content" = "These terms govern the use of the Alert Road Updater app. By using the app, you agree to abide by these conditions.\n\n1. Use of the app\n• The app requires the registration of a valid phone number for authentication.\n• The app is intended exclusively for adults.\n\n2. Trial period and licenses\n• The app is free during an initial one-year trial period from the date of registration.\n• At the end of the trial period, the user must purchase a license to continue using the app.\n\n3. Personal data\n• We collect and process data such as your phone number and registration and purchase dates to authenticate the user and manage licenses.\n• This data is essential for the operation of the app and cannot be deleted while a contractual relationship is active.\n\n4. Notifications\n• Alert Road Updater will send notifications only to enforce critical app updates.\n\n5. User responsibilities\n• The user is responsible for providing truthful information during registration.\n• The app may not be used for illegal purposes or in ways that violate the rights of third parties.\n\n6. Liability limitations\n• We are not responsible for technical failures, data loss, or service interruptions caused by third parties or by misuse of the app.\n• The company does not guarantee the continuous operation of the app.\n\n7. Modifications\nWe reserve the right to modify these terms by notifying users through a notice in the app.\n\n8. Governing law and jurisdiction\nThese terms are governed by the laws of Spain. Any dispute will be resolved in the competent courts of Lugo.\n\n9. Contact\nFor questions about these terms, you can write to us at infoalertroad@gmail.com.";
+"accept_terms_button" = "Accept Terms";
+
+/* Política de Privacidad Screen */
+"privacy_title" = "Privacy Policy";
+"privacy_content" = "In Alert Road Updater, we are committed to protecting our users' privacy. This policy explains how we collect, use and protect your personal information.\n\nData we collect\n• Mobile phone number: Used for account authentication and linkage.\n• Important dates: Registration date and trial period expiration date.\n• Unique purchase code: Associated with transactions made to acquire the service.\n\nPurpose of processing\n• User authentication and app access.\n• Recording and validation of use during the one-year trial period.\n• Management of usage licenses and purchases.\n• Error logging to improve functionality via Crashlytics.\n\nData retention\n• Data is stored in Firebase, which complies with high security and protection standards.\n• We retain the data while the user uses the app and for one year after the last activity, or as long as required for legal or contractual purposes.\n\nConsent\nBy using the app and registering with your phone number, you give your explicit consent for the collection and use of your data according to this policy.\n\nUser rights\nYou can exercise your rights of access, rectification and objection by sending an email to infoalertroad@gmail.com. However, it is not possible to delete the account due to license management policies.\n\nInformation protection\nWe use Firebase to ensure the security of stored data. We implement technical and organizational security measures to protect personal information from unauthorized access, loss or damage.\n\nModifications\nWe reserve the right to update this policy at any time. We will notify users of significant changes through a notice within the app.\n\nContact\nIf you have questions about this policy, you can write to us at infoalertroad@gmail.com.";
+"accept_privacy_button" = "Accept Privacy Policy";
+
+/* Login Screen */
+"login_title" = "Sign in to your account";
+"login_instructions" = "If you don’t have an account, enter your mobile phone and we’ll send you an SMS to register";
+"phone_label" = "Phone";
+"no_internet_message" = "Check your connection to sign in";
+"login_button" = "Sign In";
+"checking_account" = "Checking account…";
+"sms_waiting" = "If you don’t receive the SMS in %1$d:%2$02d minutes";
+"sms_no_waiting" = "If you don’t receive the SMS,";
+"click_here" = "tap here";
+"toast_wait" = "Please wait until 3 minutes have passed";
+"phone_placeholder" = "Enter your number";
+"sms_code_placeholder" = "SMS Code";
+"sending_sms" = "Sending SMS...";
+
+/* Verification Screen */
+"verification_title" = "Verification";
+"verification_instructions" = "We will send you an SMS. Then enter the verification code that appears in the message:";
+"verify_button" = "Verify";
+"verifying_title" = "Verifying";
+"verifying_message" = "Verifying the code, do not close the app";
+"clean_button" = "Clear";
+
+/* Welcome Screen */
+"welcome_title" = "Welcome";
+"registered_phone" = "Registered phone: %@";
+"start_button" = "Start";
+"access_required_title" = "Access required";
+"access_required_message" = "The 1-year trial period has ended, you need to purchase the service to continue.";
+"buy_button" = "Buy";
+"starting_message" = "Starting…";
+"user_error_message" = "Error retrieving user, please check your internet connection or close and reopen the app";
+"auth_error_message" = "Authentication error, please check your internet connection or close and reopen the app";
+"billing_connection_error_message" = "Error connecting to the billing service";
+
+/* Settings Screen */
+"settings_label" = "Settings";
+"user_preferences" = "User preferences";
+"privacy_policy_option" = "Privacy Policy";
+"terms_conditions_option" = "Terms and Conditions";
+"delete_files_option" = "Delete files";
+"disconnect_option" = "Disconnect";
+"version_code_text" = "Version: %@(%@)";
+"confirm_disconnect_title" = "Confirm disconnect";
+"confirm_disconnect_message" = "To avoid issues with your account, we advise not signing out. Are you sure you want to sign out?";
+"yes_button" = "Yes";
+"no_button" = "No";
+"no_files_in_memory" = "No files in memory";
+"files_delete_correctly" = "Files deleted successfully";
+"files_delete_error" = "Error deleting some files:\n%@";
+"no_files" = "No files in memory";
+"delete_success" = "Files deleted successfully";
+"delete_error" = "Error deleting some files: ";
+"disconnect_title" = "Are you sure you want to sign out?";
+"disconnect_message" = "To avoid problems with your account, we recommend not logging out. Are you sure you want to sign out?";
+"logout_button" = "Sign out";
+"cancel_button" = "Cancel";
+
+/* Connection Screen */
+"connection_title" = "Connection";
+"step_one" = "Step 1: turn on Alert Road device Wi-Fi";
+"step_two" = "Step 2: turn on the phone’s Wi-Fi. Check if any of these networks appears available and select it";
+"step_three" = "Step 3: detect device";
+"help_button" = "See how to do it";
+"wifi_enabled" = "Wi-Fi enabled";
+"enable_wifi" = "Turn on Wi-Fi";
+"detect_device" = "Detect device";
+"device_found" = "Device found";
+"connection_issues" = "Connection issues, try again";
+"device_not_found" = "If none of these networks appears, please check step 1";
+"device_name" = "Device: %@";
+"wifi_network" = "Wi-Fi network: %@";
+"detecting_devices" = "Detecting devices…";
+"please_wait" = "Please wait %@d seconds";
+"updating_documents" = "Updating documents…\nThis may take a few minutes, please wait";
+
+/* Permissions general */
+"permission_location" = "Location access is required to locate nearby devices";
+"permission_write_settings" = "Access is required to configure the system and perform Wi-Fi actions";
+"permission_generic" = "A permission is required.";
+"permission_required" = "Permission required";
+"grant_permission" = "Grant permission";
+
+/* Documents Screen */
+"documents_title" = "Documents";
+"step_documents" = "Documents available for the device: %@";
+"download_required" = "You need to download a file to continue";
+"error_loading_documents" = "Error loading documents, please check your internet connection";
+"download_button" = "Download";
+"downloading_button" = "Downloading %@d%%";
+"document_version" = "Version";
+"status_label" = "Status: %@";
+"document_status" = "Status: %@";
+"document_status_available" = "Available to download";
+"document_status_downloaded" = "Downloaded";
+"document_status_downloading" = "Downloading…";
+
+/* Upload Screen */
+"upload_screen_title" = "Send files";
+"connect_to_network" = "Connect to the Wi-Fi network:";
+"connect_to_device" = "Connected to";
+"documents_to_send" = "Documents available to send:";
+"upload_success" = "File %@ – version %@ uploaded successfully.";
+"upload_error" = "Error uploading file %@ – version %@";
+"sending_file" = "Sending file";
+"progress_completed" = "%1$d%% completed";
+"dont_close_app" = "Please do not close or minimize the app until the upload finishes.";
+"error_dialog_title" = "Error";
+"what_to_do" = "What would you like to do?";
+"close_app" = "Close app";
+"go_to_home" = "Return to home";
+"connected" = "Connected";
+"connect" = "Connect";
+"finish_button" = "Finish";
+"close_button" = "Close";
+"upload_progress" = "Progress: %1$d%%";
+"upload_available" = "Send";
+"upload_in_progress" = "Sending… %1$d%%";
+"upload_completed" = "Sent";
+"upload_unknown_status" = "Unknown status";
+"unknown_password" = "No password found";
+"done" = "DONE!";
+"copy_password" = "Copy the following password:";
+"go_to_wifi_settings" = "Go to Wi-Fi settings";
+"go_to_settings" = "Go to settings";
+"password_copied" = "Password copied";
+"document_success" = "Document %@ with version: %@ uploaded successfully";
+"finish_and_close" = "Finish and close";
+"no_internet_warning" = "Remember you are WITHOUT INTERNET! Disconnect from the %@ network";
+"version_text" = "Version: %@";
+"socket_error" = "The document could not be sent, please try again later";

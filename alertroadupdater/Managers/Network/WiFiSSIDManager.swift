@@ -1,6 +1,6 @@
 import SwiftUI
 import CoreLocation
-import SystemConfiguration.CaptiveNetwork // ✅ Este es el framework correcto
+import SystemConfiguration.CaptiveNetwork
 
 class WiFiSSIDManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()

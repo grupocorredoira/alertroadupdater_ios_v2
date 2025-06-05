@@ -15,37 +15,35 @@ struct SettingsView: View {
 
     var body: some View {
 
-        ZStack { // Añado fondo gris uniforme
+        ZStack {
             Color.gray.opacity(0.1)
                 .ignoresSafeArea()
             VStack(spacing: 16) {
                 CustomNavigationBar(
-                    title: "Ajustes",
+                    title: "settings_label".localized,
                     showBackButton: true
                 ) {
                     coordinator.pop()
                 }
 
-                List {
-                    Section(header: Text("Preferencias de usuario").font(.headline)) {
-                        SettingsOption(title: "Política de Privacidad") {
-                            showPrivacyPolicyDialog = true
-                        }
-                        SettingsOption(title: "Términos y Condiciones") {
-                            showTermsDialog = true
-                        }
-                        SettingsOption(title: "Eliminar archivos locales") {
-                            deleteLocalFiles()
-                        }
-                        SettingsOption(title: "Cerrar sesión") {
-                            showDialogSafeDisconnect = true
-                        }
+                Section(header: Text("user_preferences".localized).font(.headline)) {
+                    SettingsOption(title: "privacy_policy_option".localized) {
+                        showPrivacyPolicyDialog = true
+                    }
+                    SettingsOption(title: "terms_conditions_option".localized) {
+                        showTermsDialog = true
+                    }
+                    SettingsOption(title: "delete_files_option".localized) {
+                        deleteLocalFiles()
+                    }
+                    SettingsOption(title: "disconnect_option".localized) {
+                        showDialogSafeDisconnect = true
                     }
                 }
 
                 Spacer()
 
-                Text("Versión: \(versionName) (\(versionCode))")
+                Text(String(format: "version_code_text".localized, versionName, versionCode))
                     .font(.footnote)
                     .padding()
             }
@@ -62,10 +60,6 @@ struct SettingsView: View {
                     }
                 }
             }
-
-            // ✅ Ya no usamos .sheet ni NavigationView aquí
-            //.navigationTitle("Ajustes")
-            //.navigationBarTitleDisplayMode(.inline)
             .padding(.top, 8)
             .navigationBarHidden(true)
             .onAppear {
@@ -87,11 +81,11 @@ struct SettingsView: View {
     @ViewBuilder
     private func disconnectDialog() -> some View {
         VStack() {
-            Text("¿Seguro que quieres cerrar sesión?")
+            Text("disconnect_title".localized)
                 .font(.headline)
                 .padding()
 
-            Text("Para evitar problemas con tu cuenta, aconsejamos no cerrrar sesión, ¿estás seguro que deseas salir de tu cuenta?")
+            Text("disconnect_message".localized)
                 .font(.subheadline)
                 .padding()
 
@@ -101,27 +95,25 @@ struct SettingsView: View {
                     showDialogSafeDisconnect = false
                     coordinator.popTo(.login)
                 }) {
-                    Text("Cerrar sesión")
+                    Text("logout_button".localized)
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.gray.opacity(0.3))
-                    //.background(Color.red)
                         .cornerRadius(10)
                 }
 
                 Button(action: {
                     showDialogSafeDisconnect = false
                 }) {
-                    Text("Cancelar")
+                    Text("cancel_button".localized)
                         .foregroundColor(.black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .frame(maxWidth: .infinity)
                         .padding()
-                    //.background(Color.gray.opacity(0.3))
                         .background(Color.red)
                         .cornerRadius(10)
                 }

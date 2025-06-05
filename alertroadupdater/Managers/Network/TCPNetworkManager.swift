@@ -1,5 +1,8 @@
 import Foundation
 
+/// Clase encargada de gestionar la conexión TCP y el envío de archivos a un dispositivo remoto
+/// siguiendo un protocolo personalizado basado en paquetes con CRC y confirmaciones.
+/// Utiliza `SimpleSocket` para la comunicación de bajo nivel.
 class TCPNetworkManager {
     var onProgress: ((Int) -> Void)?
     var onComplete: (() -> Void)?

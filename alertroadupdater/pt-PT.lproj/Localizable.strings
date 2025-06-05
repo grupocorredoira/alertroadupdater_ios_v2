@@ -27,23 +27,6 @@
 "sms_no_waiting" = "Si no recibes el SMS,";
 "click_here" = "pulsa aquí";
 "toast_wait" = "Por favor, espera hasta que hayan pasado 3 minutos";
-"phone_placeholder" = "Introduce tu número";
-"sms_code_placeholder" = "Código SMS";
-"sending_sms" = "Enviando SMS...";
-//viewmodel
-"network_error" = "Error de red, comprueba tu conexión a internet";
-"too_many_requests" = "Has hecho demasiados intentos, inténtalo de nuevo en 24 horas";
-"invalid_verification_code" = "El código introducido no es válido. Revisa el SMS e inténtalo otra vez.";
-"invalid_phone_number" = "El número de teléfono no es válido. Revisa el formato.";
-"user_data_missing" = "Error: no se encontró UID o número";
-"user_creation_error" = "Error al crear usuario: %@";
-"number_must_have_9_digits" = "El número debe tener 9 dígitos";
-"es_mobile_must_have_9_digits" = "El número móvil debe tener 9 dígitos";
-"es_mobile_must_start_with_6_or_7" = "Con el prefijo +34 el teléfono debe comenzar con 6 o 7";
-"number_must_have_at_least_9_digits" = "El número debe tener al menos 9 dígitos.";
-"code_must_have_6_digits" = "El código debe tener 6 dígitos";
-
-
 
 /* Verification Screen */
 "verification_title" = "Verificación";
@@ -83,14 +66,6 @@
 "no_files" = "No hay archivos en memoria";
 "delete_success" = "Archivos borrados correctamente";
 "delete_error" = "Error al borrar algunos archivos: ";
-"disconnect_title" = "¿Seguro que quieres cerrar sesión?";
-"disconnect_message" = "Para evitar problemas con tu cuenta, aconsejamos no cerrrar sesión, ¿estás seguro que deseas salir de tu cuenta?";
-"logout_button" = "Cerrar sesión";
-"cancel_button" = "Cancelar";
-"delete_no_files" = "No hay archivos para eliminar";
-"delete_success" = "Archivos eliminados con éxito";
-"delete_error_prefix" = "Error eliminando archivos:\n";
-"error_downloading_files" = "Error al descargar algunos archivos. Inténtalo de nuevo.";
 
 /* Connection Screen */
 "connection_title" = "Conexión";
@@ -108,7 +83,7 @@
 "wifi_network" = "Red Wi-Fi: %@";
 "detecting_devices" = "Detectando dispositivos…";
 "please_wait" = "Por favor, espera %@d segundos";
-"updating_documents" = "Actualizando documentos…\nEsto puede tardar unos minutos, mantente a la espera";
+"updating_documents" = "Actualizando documentos…";
 
 /* Permissions general */
 "permission_location" = "Se requiere acceso a la ubicación para poder localizar dispositivos cercanos";
@@ -121,7 +96,7 @@
 "documents_title" = "Documentos";
 "step_documents" = "Documentos disponibles para el dispositivo: %@";
 "download_required" = "Necesitas descargar algún archivo para continuar";
-"error_loading_documents" = "Error cargando documentos, revisa tu conexión a internet";
+"error_loading_documents" = "Erro ao carregar os documentos, verifica a tua ligação à internet";
 "download_button" = "Descargar";
 "downloading_button" = "Descargando %@d%%";
 "document_version" = "Versión";
@@ -164,7 +139,3 @@
 "finish_and_close" = "Finalizar y cerrar";
 "no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %@";
 "version_text" = "Versión: %@";
-"socket_error" = "no se ha podido enviar el documento, vuelve a intentarlo más tarde";
-"download_status_available" = "Disponible para descargar";
-"download_status_downloaded" = "Descargado";
-"download_status_downloading" = "Descargando... %d%%";

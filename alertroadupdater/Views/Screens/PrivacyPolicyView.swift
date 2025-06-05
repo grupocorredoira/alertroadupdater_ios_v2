@@ -25,9 +25,9 @@ struct PrivacyPolicyView: View {
                             coordinator.navigate(to: .login)
                         }
                         .buttonStyle(.borderedProminent)
-                        .frame(maxWidth: .infinity) // Ocupa todo el ancho disponible
+                        .frame(maxWidth: .infinity)
                         .padding(.top, 20)
-                        .multilineTextAlignment(.center) // Centra el texto si ocupa más de una línea
+                        .multilineTextAlignment(.center)
                     }
                     .padding()
                 }

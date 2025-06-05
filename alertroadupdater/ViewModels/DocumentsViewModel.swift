@@ -133,10 +133,10 @@ class DocumentsViewModel: ObservableObject {
 
         dispatchGroup.notify(queue: .main) {
             if errors.isEmpty {
-                self.downloadError = nil // ✅ Si todo salió bien, no hay error.
+                self.downloadError = nil
                 completion(.success(()))
             } else {
-                self.downloadError = "Error al descargar algunos archivos. Inténtalo de nuevo." // ✅ Mensaje de error
+                self.downloadError = "error_downloading_files".localized
                 completion(.failure(errors.first!))
             }
         }
@@ -167,11 +167,12 @@ class DocumentsViewModel: ObservableObject {
     func deleteAllLocalFiles() -> String {
         switch localRepository.deleteAllDocuments() {
         case .noFiles:
-            return "No hay archivos para eliminar"
+            // 🔁 Localización del mensaje
+            return "delete_no_files".localized
         case .success:
-            return "Archivos eliminados con éxito"
+            return "delete_success".localized
         case .error(let failedFiles):
-            return "Error eliminando archivos:\n" + failedFiles.joined(separator: "\n")
+            return "delete_error_prefix".localized + failedFiles.joined(separator: "\n")
         }
     }
 }
@@ -186,11 +187,11 @@ enum DocumentDownloadStatus {
     func toReadableString() -> String {
         switch self {
         case .available:
-            return "Disponible para descargar"
+            return "download_status_available".localized
         case .downloaded:
-            return "Descargado"
+            return "download_status_downloaded".localized
         case .downloading(let progress):
-            return "Descargando... \(progress)%"
+            return String(format: "download_status_downloading".localized, progress)
         }
     }
 }

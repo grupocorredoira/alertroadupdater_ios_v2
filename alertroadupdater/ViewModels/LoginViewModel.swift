@@ -118,18 +118,19 @@ class LoginViewModel: ObservableObject {
         }
     }
     
+    // Dentro de mapFirebaseError(_:)
     private func mapFirebaseError(_ error: Error) -> String {
         let nsError = error as NSError
-        
+
         switch nsError.code {
         case AuthErrorCode.networkError.rawValue:
-            return "Error de red, comprueba tu conexión a internet"
+            return "network_error".localized // 🔁 Localizado
         case AuthErrorCode.tooManyRequests.rawValue:
-            return "Has hecho demasiados intentos, inténtalo de nuevo en 24 horas"
+            return "too_many_requests".localized // 🔁 Localizado
         case AuthErrorCode.invalidVerificationCode.rawValue:
-            return "El código introducido no es válido. Revisa el SMS e inténtalo otra vez."
+            return "invalid_verification_code".localized // 🔁 Localizado
         case AuthErrorCode.invalidPhoneNumber.rawValue:
-            return "El número de teléfono no es válido. Revisa el formato."
+            return "invalid_phone_number".localized // 🔁 Localizado
         default:
             return nsError.localizedDescription
         }

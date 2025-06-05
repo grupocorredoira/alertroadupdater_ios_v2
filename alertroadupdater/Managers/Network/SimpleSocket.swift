@@ -1,5 +1,8 @@
 import Foundation
 
+/// Clase que gestiona una conexión TCP simple mediante `InputStream` y `OutputStream`.
+/// Proporciona métodos para conectarse a un host, enviar y recibir datos, y cerrar la conexión.
+/// Pensada para conexiones directas con dispositivos en red local.
 class SimpleSocket {
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
@@ -16,7 +19,7 @@ class SimpleSocket {
         guard let inputStream = input, let outputStream = output else {
             let code = -101
             let description = "No se pudieron obtener los flujos de entrada/salida"
-            let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+            let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
@@ -31,12 +34,13 @@ class SimpleSocket {
         outputStream.open()
 
         // ❌ Error -102: Timeout al abrir los streams
+        // Seguramente el documento esté corrompido, no se ha construido bien
         let startTime = Date()
         while inputStream.streamStatus != .open || outputStream.streamStatus != .open {
             if Date().timeIntervalSince(startTime) > timeout {
                 let code = -102
                 let description = "Timeout al abrir los flujos de datos"
-                let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+                let message = "Error \(code): " + "socket_error".localized
                 print("❌ [SimpleSocket] \(description)")
                 throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
             }
@@ -51,7 +55,7 @@ class SimpleSocket {
         guard let outputStream = outputStream else {
             let code = -103
             let description = "OutputStream no disponible"
-            let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+            let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
@@ -64,7 +68,7 @@ class SimpleSocket {
         if bytesWritten <= 0 {
             let code = -104
             let description = "No se pudieron escribir los datos"
-            let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+            let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
@@ -77,7 +81,7 @@ class SimpleSocket {
         guard let inputStream = inputStream else {
             let code = -105
             let description = "InputStream no disponible"
-            let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+            let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
@@ -89,7 +93,7 @@ class SimpleSocket {
         if bytesRead < 0 {
             let code = -106
             let description = "Error al leer del socket"
-            let message = "Error [\(code)]: vuelve a intentarlo o prueba a cerrar y a abrir la aplicación e intentarlo más tarde."
+            let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
