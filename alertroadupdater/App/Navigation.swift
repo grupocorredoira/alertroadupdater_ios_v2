@@ -59,11 +59,14 @@ struct NavGraph: View {
 
     @StateObject private var documentsViewModel: DocumentsViewModel
     @StateObject private var uploadDocumentsViewModel: UploadDocumentsViewModel
+    @StateObject private var settingsViewModel: SettingsViewModel
 
     @State private var connectionViewModel: ConnectionViewModel?
 
     @StateObject private var wifiSSIDManager = WiFiSSIDManager()
     @StateObject private var permissionsViewModel = PermissionsViewModel()
+
+
 
     private var isLoggedIn: Bool {
         Auth.auth().currentUser != nil
@@ -76,9 +79,11 @@ struct NavGraph: View {
             localRepository: sharedLocalRepository,
             documentsViewModel: documentsVM
         )
+        let settingsVM = SettingsViewModel()
 
         _documentsViewModel = StateObject(wrappedValue: documentsVM)
         _uploadDocumentsViewModel = StateObject(wrappedValue: uploadVM)
+        _settingsViewModel = StateObject(wrappedValue: settingsVM)
     }
 
     var body: some View {
@@ -161,7 +166,9 @@ struct NavGraph: View {
             )
 
         case .settings:
-            SettingsView(documentsViewModel: documentsViewModel)
+            SettingsView(
+                documentsViewModel: documentsViewModel,
+                settingsViewModel: settingsViewModel)
 
         case .connection:
             if let connectionViewModel = connectionViewModel {

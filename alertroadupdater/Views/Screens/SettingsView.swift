@@ -3,12 +3,14 @@ import FirebaseAuth
 
 struct SettingsView: View {
     @ObservedObject var documentsViewModel: DocumentsViewModel
+    @ObservedObject var settingsViewModel: SettingsViewModel
     @State private var showDialogSafeDisconnect = false
     @State private var showPrivacyPolicyDialog = false
     @State private var showTermsDialog = false
     @State private var showToastDeleteLocalFiles = false
     @State private var toastMessageDeleteLocalFiles = ""
     @EnvironmentObject var coordinator: NavigationCoordinator
+    @State private var showPermissionBottomSheet = false
 
     let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
     let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
@@ -27,6 +29,13 @@ struct SettingsView: View {
                 }
 
                 Section(header: Text("user_preferences".localized).font(.headline)) {
+                    ToggleOptionView(
+                        title: "Notificaciones".localized,
+                        description: "Recibir notificaciones cuando se actualice la base de datos de radares".localized,
+                        isOn: $settingsViewModel.notificationsEnabled
+                    ) { newValue in
+                        settingsViewModel.toggleNotifications(newValue)
+                    }
                     SettingsOption(title: "privacy_policy_option".localized) {
                         showPrivacyPolicyDialog = true
                     }
@@ -69,6 +78,23 @@ struct SettingsView: View {
                 print("👋 SettingsView desapareció")
             }
             .toast(message: toastMessageDeleteLocalFiles, icon: "trash", isShowing: $showToastDeleteLocalFiles)
+            .onReceive(settingsViewModel.$showPermissionBottomSheet) { value in
+                showPermissionBottomSheet = value
+            }
+
+            PermissionBottomSheet(
+                isVisible: showPermissionBottomSheet,
+                onDismiss: {
+                    showPermissionBottomSheet = false
+                    settingsViewModel.showPermissionBottomSheet = false
+                },
+                onGrantPermission: {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                },
+                permissionMessage: "permission_notifications_denied_message".localized
+            )
         }
     }
 

@@ -106,6 +106,20 @@ struct WelcomeView: View {
                 await purchaseViewModel.start()
                 await purchaseViewModel.refreshPaymentStatus()
             }
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                    if settings.authorizationStatus == .notDetermined {
+                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+                            if let error = error {
+                                print("❌ Error al solicitar permiso de notificaciones: \(error.localizedDescription)")
+                            } else {
+                                print(granted ? "🔔 Permiso concedido" : "🔕 Usuario rechazó el permiso")
+                            }
+                        }
+                    } else {
+                        print("🔍 Estado de permiso ya gestionado: \(settings.authorizationStatus.rawValue)")
+                    }
+                }
+
         }
         .onChange(of: showNetworkAlert) { show in
             if show {
