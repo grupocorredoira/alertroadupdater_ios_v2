@@ -13,6 +13,21 @@ final class SettingsViewModel: ObservableObject {
         self.notificationsRepository = notificationsRepository
         self.notificationsEnabled = notificationsRepository.isNotificationsEnabled()
         print("🔔 Notificaciones activadas al iniciar SettingsViewModel: \(self.notificationsEnabled)")
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+                DispatchQueue.main.async {
+                    switch settings.authorizationStatus {
+                    case .authorized, .provisional:
+                        self?.notificationsEnabled = notificationsRepository.isNotificationsEnabled()
+                        print("🔔 Permiso concedido. Estado guardado: \(self?.notificationsEnabled ?? false)")
+                    case .notDetermined, .denied:
+                        self?.notificationsEnabled = false
+                        print("🔕 Permiso NO concedido. Notificaciones desactivadas.")
+                    @unknown default:
+                        self?.notificationsEnabled = false
+                        print("⚠️ Estado desconocido del permiso. Asumimos desactivado.")
+                    }
+                }
+            }
     }
 
     func toggleNotifications(_ enable: Bool) {

@@ -6,26 +6,34 @@ final class NotificationsRepository {
     private let userDefaultsKey = "notificationsEnabled"
 
     func isNotificationsEnabled() -> Bool {
-        return UserDefaults.standard.bool(forKey: userDefaultsKey)
+        let enabled = UserDefaults.standard.bool(forKey: userDefaultsKey)
+        print("🔍 isNotificationsEnabled -> \(enabled)")
+        return enabled
     }
 
     func setNotificationsEnabled(_ enabled: Bool, completion: @escaping (Bool) -> Void) {
         if enabled {
+            print("📡 Intentando suscribirse al topic '\(topic)'...")
             Messaging.messaging().subscribe(toTopic: topic) { error in
-                if error == nil {
+                if let error = error {
+                    print("❌ Error al suscribirse al topic: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("✅ Suscripción al topic completada con éxito.")
                     UserDefaults.standard.set(true, forKey: self.userDefaultsKey)
                     completion(true)
-                } else {
-                    completion(false)
                 }
             }
         } else {
+            print("📴 Intentando cancelar la suscripción al topic '\(topic)'...")
             Messaging.messaging().unsubscribe(fromTopic: topic) { error in
-                if error == nil {
+                if let error = error {
+                    print("❌ Error al cancelar la suscripción: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("✅ Cancelación de suscripción al topic completada con éxito.")
                     UserDefaults.standard.set(false, forKey: self.userDefaultsKey)
                     completion(true)
-                } else {
-                    completion(false)
                 }
             }
         }
@@ -35,5 +43,4 @@ final class NotificationsRepository {
         UserDefaults.standard.set(granted, forKey: userDefaultsKey)
         print("💾 Estado de permiso notificaciones actualizado desde AppDelegate: \(granted)")
     }
-
 }

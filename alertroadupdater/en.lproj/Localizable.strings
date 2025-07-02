@@ -50,6 +50,11 @@
 "user_error_message" = "Error retrieving user, please check your internet connection or close and reopen the app";
 "auth_error_message" = "Authentication error, please check your internet connection or close and reopen the app";
 "billing_connection_error_message" = "Error connecting to the billing service";
+//Permissions
+"notifications_permission_title" = "Notification permission";
+"notifications_permission_body" = "This permission is needed to notify you when there are updates to the documents";
+"grant_permission_button" = "Grant Permission";
+"cancel_button" = "Cancel";
 
 /* Settings Screen */
 "settings_label" = "Settings";

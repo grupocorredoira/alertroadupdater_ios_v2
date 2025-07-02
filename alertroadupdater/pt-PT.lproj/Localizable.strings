@@ -47,6 +47,11 @@
 "user_error_message" = "Error al buscar el usuario, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
 "auth_error_message" = "Error de autenticación, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
 "billing_connection_error_message" = "Error al conectar con el servicio de facturación";
+//Permissions
+"notifications_permission_title" = "Permissão de notificações";
+"notifications_permission_body" = "Esta permissão é necessária para te informar quando houver atualizações nos documentos";
+"grant_permission_button" = "Conceder permissão";
+"cancel_button" = "Cancelar";
 
 /* Settings Screen */
 "settings_label" = "Ajustes";

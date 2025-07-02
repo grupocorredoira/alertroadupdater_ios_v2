@@ -65,7 +65,8 @@
 "auth_error_message" = "Error de autenticación, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
 "billing_connection_error_message" = "Error al conectar con el servicio de facturación";
 //Permisos
-"permission_required_title" = "Se requiere permiso";
+"notifications_permission_title" = "Permiso de notificaciones";
+"notifications_permission_body" = "Se necesita este permiso para poder informarte cuando haya actualizaciones de los documentos";
 "grant_permission_button" = "Conceder Permiso";
 "cancel_button" = "Cancelar";
 

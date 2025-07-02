@@ -82,7 +82,7 @@ struct SettingsView: View {
                 showPermissionBottomSheet = value
             }
 
-            PermissionBottomSheet(
+            NotificationsPermissionBottomSheet(
                 isVisible: showPermissionBottomSheet,
                 onDismiss: {
                     showPermissionBottomSheet = false
@@ -93,7 +93,7 @@ struct SettingsView: View {
                         UIApplication.shared.open(url)
                     }
                 },
-                permissionMessage: "permission_notifications_denied_message".localized
+                permissionMessage: "notifications_permission_body".localized
             )
         }
     }
