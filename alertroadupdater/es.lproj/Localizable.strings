@@ -96,6 +96,8 @@
 "delete_success" = "Archivos eliminados con éxito";
 "delete_error_prefix" = "Error eliminando archivos:\n";
 "error_downloading_files" = "Error al descargar algunos archivos. Inténtalo de nuevo.";
+"notifications_title" = "Notificaciones";
+"notifications_description" = "Recibir notificaciones cuando se actualice la base de datos de radares";
 
 /* Connection Screen */
 "connection_title" = "Conexión";
