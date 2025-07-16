@@ -170,6 +170,7 @@
 "no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %@";
 "version_text" = "Versión: %@";
 "socket_error" = "no se ha podido enviar el documento, vuelve a intentarlo más tarde";
+"socket_error_timeout" = "ha ocurrido un error inesperado, no se ha podido enviar el documento, vuelve a intentarlo más tarde";
 "download_status_available" = "Disponible para descargar";
 "download_status_downloaded" = "Descargado";
 "download_status_downloading" = "Descargando... %d%%";

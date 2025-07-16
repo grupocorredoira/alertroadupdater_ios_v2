@@ -219,7 +219,7 @@ struct WifiNetworksView: View {
     @Binding var showDialog: Bool
 
     var body: some View {
-        let wifiNetworks = documentsViewModel.getAllSSIDs()
+        let wifiNetworks = documentsViewModel.getAllSSIDsWithoutUnderscore()
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {

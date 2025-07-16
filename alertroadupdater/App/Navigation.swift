@@ -5,13 +5,13 @@ import FirebaseAuth
 class NavigationCoordinator: ObservableObject {
     @Published var path: [Screen] = [] {
         didSet {
-            print("🧭 Stack actual:", path)
+            //print("🧭 Stack actual:", path)
         }
     }
 
     func navigate(to screen: Screen) {
         path.append(screen)
-        print("➡️ navigate(to: \(screen))")
+        //print("➡️ navigate(to: \(screen))")
     }
 
     func pop() {
@@ -38,7 +38,7 @@ class NavigationCoordinator: ObservableObject {
             print("🆕 pushIfNeeded(\(screen)) desde: \(Thread.callStackSymbols.joined(separator: "\n"))")
             path.append(screen)
         } else {
-            print("⏩ pushIfNeeded ignorado, ya estaba en el stack: \(screen)")
+            //print("⏩ pushIfNeeded ignorado, ya estaba en el stack: \(screen)")
         }
     }
 

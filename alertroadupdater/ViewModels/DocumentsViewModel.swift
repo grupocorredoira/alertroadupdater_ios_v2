@@ -68,6 +68,22 @@ class DocumentsViewModel: ObservableObject {
         return uniqueSSIDs
     }
 
+    /// Obtiene una lista de SSIDs únicos sin barra baja, manteniendo el orden original.
+    func getAllSSIDsWithoutUnderscore() -> [String] {
+        var seen = Set<String>()
+        var filteredSSIDs: [String] = []
+
+        for document in documents {
+            let ssid = document.ssid
+            if !ssid.contains("_") && !seen.contains(ssid) {
+                seen.insert(ssid)
+                filteredSSIDs.append(ssid)
+            }
+        }
+
+        return filteredSSIDs
+    }
+
     /// Busca la contraseña asociada a un SSID.
     func getPasswordForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.password

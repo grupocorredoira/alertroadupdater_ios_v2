@@ -7,6 +7,9 @@ class SimpleSocket {
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
 
+    // 🆕 Timeout global para lectura y escritura (en segundos)
+    var readWriteTimeout: TimeInterval = 15 // 🆕
+
     func connect(host: String, port: Int, timeout: TimeInterval) throws {
         print("🔌 [SimpleSocket] Intentando conectar con \(host):\(port)")
 
@@ -34,7 +37,6 @@ class SimpleSocket {
         outputStream.open()
 
         // ❌ Error -102: Timeout al abrir los streams
-        // Seguramente el documento esté corrompido, no se ha construido bien
         let startTime = Date()
         while inputStream.streamStatus != .open || outputStream.streamStatus != .open {
             if Date().timeIntervalSince(startTime) > timeout {
@@ -60,20 +62,39 @@ class SimpleSocket {
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
 
-        let bytesWritten = data.withUnsafeBytes {
-            outputStream.write($0.bindMemory(to: UInt8.self).baseAddress!, maxLength: data.count)
+        let startTime = Date() // 🆕
+        var totalBytesWritten = 0 // 🆕
+
+        while totalBytesWritten < data.count && Date().timeIntervalSince(startTime) < readWriteTimeout { // 🆕
+            if outputStream.hasSpaceAvailable {
+                let remainingData = data.subdata(in: totalBytesWritten..<data.count) // 🆕
+                let bytesWritten = remainingData.withUnsafeBytes {
+                    outputStream.write($0.bindMemory(to: UInt8.self).baseAddress!, maxLength: remainingData.count)
+                }
+
+                if bytesWritten <= 0 {
+                    let code = -104
+                    let description = "No se pudieron escribir los datos"
+                    let message = "Error \(code): " + "socket_error".localized
+                    print("❌ [SimpleSocket] \(description)")
+                    throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
+                }
+
+                totalBytesWritten += bytesWritten // 🆕
+            }
+
+            RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.05)) // 🆕
         }
 
-        // ❌ Error -104: No se pudieron escribir los datos
-        if bytesWritten <= 0 {
-            let code = -104
-            let description = "No se pudieron escribir los datos"
+        if totalBytesWritten < data.count { // 🆕
+            let code = -108
+            let description = "Timeout al escribir datos en el socket"
             let message = "Error \(code): " + "socket_error".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }
 
-        print("📤 [SimpleSocket] Escribió \(bytesWritten) bytes")
+        print("📤 [SimpleSocket] Escribió \(totalBytesWritten) bytes")
     }
 
     func read(length: Int) throws -> Data {
@@ -87,13 +108,32 @@ class SimpleSocket {
         }
 
         var buffer = [UInt8](repeating: 0, count: length)
-        let bytesRead = inputStream.read(&buffer, maxLength: length)
+        let startTime = Date() // 🆕
+        var bytesRead = 0 // 🆕
+
+        while bytesRead == 0 && Date().timeIntervalSince(startTime) < readWriteTimeout { // 🆕
+            if inputStream.hasBytesAvailable {
+                bytesRead = inputStream.read(&buffer, maxLength: length)
+                break
+            }
+
+            RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.05)) // 🆕
+        }
 
         // ❌ Error -106: Error al leer del socket
+        // ❌ Error -107: Error timeout, puede que tenga que repetir varias veces el intento
         if bytesRead < 0 {
             let code = -106
             let description = "Error al leer del socket"
             let message = "Error \(code): " + "socket_error".localized
+            print("❌ [SimpleSocket] \(description)")
+            throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
+        }
+
+        if bytesRead == 0 { // 🆕
+            let code = -107
+            let description = "Timeout al leer datos del socket"
+            let message = "Error \(code): " + "socket_error_timeout".localized
             print("❌ [SimpleSocket] \(description)")
             throw NSError(domain: "SimpleSocket", code: code, userInfo: [NSLocalizedDescriptionKey: message])
         }

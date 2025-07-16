@@ -30,6 +30,18 @@
 "phone_placeholder" = "Enter your number";
 "sms_code_placeholder" = "SMS Code";
 "sending_sms" = "Sending SMS...";
+//viewmodel
+"network_error" = "Network error, please check your internet connection";
+"too_many_requests" = "You've made too many attempts, please try again in 24 hours";
+"invalid_verification_code" = "The code you entered is invalid. Check the SMS and try again.";
+"invalid_phone_number" = "The phone number is invalid. Please check the format.";
+"user_data_missing" = "Error: UID or phone number not found";
+"user_creation_error" = "Error creating user: %@";
+"number_must_have_9_digits" = "The number must have 9 digits";
+"es_mobile_must_have_9_digits" = "The mobile number must have 9 digits";
+"es_mobile_must_start_with_6_or_7" = "With prefix +34, the number must start with 6 or 7";
+"number_must_have_at_least_9_digits" = "The number must have at least 9 digits.";
+"code_must_have_6_digits" = "The code must have 6 digits";
 
 /* Verification Screen */
 "verification_title" = "Verification";
@@ -152,3 +164,7 @@
 "no_internet_warning" = "Remember you are WITHOUT INTERNET! Disconnect from the %@ network";
 "version_text" = "Version: %@";
 "socket_error" = "The document could not be sent, please try again later";
+"socket_error_timeout" = "An unexpected error occurred. The document could not be sent. Please try again later.";
+"download_status_available" = "Available for download";
+"download_status_downloaded" = "Downloaded";
+"download_status_downloading" = "Downloading... %d%%";

@@ -27,6 +27,18 @@
 "sms_no_waiting" = "Si no recibes el SMS,";
 "click_here" = "pulsa aquí";
 "toast_wait" = "Por favor, espera hasta que hayan pasado 3 minutos";
+//viewmodel
+"network_error" = "Erro de rede, verifica a tua ligação à internet";
+"too_many_requests" = "Fizeste demasiadas tentativas, tenta novamente dentro de 24 horas";
+"invalid_verification_code" = "O código inserido não é válido. Verifica o SMS e tenta novamente.";
+"invalid_phone_number" = "O número de telefone não é válido. Verifica o formato.";
+"user_data_missing" = "Erro: UID ou número não encontrado";
+"user_creation_error" = "Erro ao criar utilizador: %@";
+"number_must_have_9_digits" = "O número deve ter 9 dígitos";
+"es_mobile_must_have_9_digits" = "O número de telemóvel deve ter 9 dígitos";
+"es_mobile_must_start_with_6_or_7" = "Com o prefixo +34, o número deve começar por 6 ou 7";
+"number_must_have_at_least_9_digits" = "O número deve ter pelo menos 9 dígitos.";
+"code_must_have_6_digits" = "O código deve ter 6 dígitos";º
 
 /* Verification Screen */
 "verification_title" = "Verificación";
@@ -144,3 +156,8 @@
 "finish_and_close" = "Finalizar y cerrar";
 "no_internet_warning" = "¡Recuerda que estás SIN INTERNET! Desconéctate de la red %@";
 "version_text" = "Versión: %@";
+"socket_error" = "Não foi possível enviar o documento, por favor tenta novamente mais tarde";
+"socket_error_timeout" = "Ocorreu um erro inesperado. Não foi possível enviar o documento. Por favor, tenta novamente mais tarde.";
+"download_status_available" = "Disponível para transferência";
+"download_status_downloaded" = "Transferido";
+"download_status_downloading" = "A transferir... %d%%";
