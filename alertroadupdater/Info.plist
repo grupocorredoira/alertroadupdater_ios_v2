@@ -5,6 +5,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Esta app necesita tu ubicación para verificar la red Wi-Fi</string>
 
+	<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
+
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
