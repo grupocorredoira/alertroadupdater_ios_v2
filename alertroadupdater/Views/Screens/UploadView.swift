@@ -11,9 +11,9 @@ struct UploadView: View {
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @ObservedObject var uploadDocumentsViewModel : UploadDocumentsViewModel
     @ObservedObject var wifiSSIDManager: WiFiSSIDManager
+    @ObservedObject var permissionsViewModel: PermissionsViewModel
 
     // MARK: - StateObject (propiedades propias de la vista)
-    @StateObject private var wifiManager = WiFiSSIDManager()
 
     // MARK: - State
     @State private var showToast = false
@@ -23,6 +23,8 @@ struct UploadView: View {
     // 🆕 Estado global del diálogo
     @State private var activeUpload: (Document, Int)? = nil
     @EnvironmentObject var coordinator: NavigationCoordinator
+
+    @Environment(\.scenePhase) private var scenePhase
 
     // MARK: - Computed properties
     var ssidSelected: String {
@@ -41,7 +43,6 @@ struct UploadView: View {
 
     var body: some View {
         ZStack {
-
             VStack(alignment: .leading, spacing: 16) {
                 CustomNavigationBar(
                     title: "upload_available".localized,
@@ -49,7 +50,7 @@ struct UploadView: View {
                 ) {
                     coordinator.pop()
                 }
-                if wifiManager.ssid == ssidSelected {
+                if wifiSSIDManager.ssid == ssidSelected {
                     connectedView
                 } else {
                     notConnectedView
@@ -58,7 +59,6 @@ struct UploadView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.top, 8)
             .navigationBarHidden(true)
-
             if let (document, progress) = activeUpload {
                 UploadProgressDialog(
                     document: document,
@@ -69,22 +69,64 @@ struct UploadView: View {
             }
         }
         .onReceive(ssidCheckTimer) { _ in
-            wifiManager.fetchSSID()
+            wifiSSIDManager.fetchSSID()
         }
-        .alert(isPresented: $showPermissionDenied) {
-            Alert(
-                title: Text("permission_required".localized),
-                message: Text("permission_location".localized),
-                dismissButton: .default(Text("accept_button".localized))
-            )
-        }
-
         .onAppear {
-            wifiSSIDManager.requestLocationPermission()
+            // ✅ Verificar permisos y obtener SSID si están disponibles
+            permissionsViewModel.checkLocationPermissions()
+
+            // ✅ Intentar obtener SSID si ya hay permisos
+            if permissionsViewModel.hasLocationPermission && permissionsViewModel.isLocationServicesEnabled {
+                wifiSSIDManager.fetchSSID()
+            }
+
             loadFileNames()
             let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
             print("📁 Archivos en disco: \(actualFiles)")
             coordinator.pushIfNeeded(.upload(deviceName: deviceName))
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active {
+                print("🔙 App volvió a primer plano: re-chequeando permisos de localización")
+
+                // ✅ Verificar permisos usando el PermissionsViewModel
+                permissionsViewModel.checkLocationPermissions()
+
+                // ✅ Solo obtener SSID si hay permisos disponibles
+                if permissionsViewModel.hasLocationPermission && permissionsViewModel.isLocationServicesEnabled {
+                    wifiSSIDManager.fetchSSID()
+                }
+            }
+        }
+        // ✅ Observar cambios en los permisos para obtener SSID automáticamente
+        .onChange(of: permissionsViewModel.hasLocationPermission) { hasPermission in
+            if hasPermission && permissionsViewModel.isLocationServicesEnabled {
+                print("✅ Permisos concedidos - obteniendo SSID")
+                wifiSSIDManager.fetchSSID()
+            }
+        }
+        .onChange(of: permissionsViewModel.isLocationServicesEnabled) { isEnabled in
+            if isEnabled && permissionsViewModel.hasLocationPermission {
+                print("✅ Servicios de localización habilitados - obteniendo SSID")
+                wifiSSIDManager.fetchSSID()
+            }
+        }
+        // ✅ Alertas centralizadas desde PermissionsViewModel (eliminar la anterior)
+        .alert("Servicios de localización deshabilitados", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
+            Button("Abrir Configuración") {
+                permissionsViewModel.openAppSettings()
+            }
+            Button("cancel_button".localized, role: .cancel) {}
+        } message: {
+            Text("Para obtener información de la red WiFi, necesitas habilitar los servicios de localización en Configuración > Privacidad y Seguridad > Servicios de Localización")
+        }
+        .alert("permission_required".localized, isPresented: $permissionsViewModel.showLocationPermissionAlert) {
+            Button("go_to_settings".localized) {
+                permissionsViewModel.openAppSettings()
+            }
+            Button("cancel_button".localized, role: .cancel) {}
+        } message: {
+            Text("permission_location".localized)
         }
     }
 

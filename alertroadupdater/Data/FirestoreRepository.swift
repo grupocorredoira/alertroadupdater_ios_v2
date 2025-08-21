@@ -5,7 +5,7 @@ import Combine
 class FirestoreRepository: ObservableObject {
     static private var _allDocuments: [Document]?
     private let db = Firestore.firestore()
-    private let collectionName = "documents" // FIREBASE_DOCUMENTS_COLLECTION_NAME
+    private let collectionName = AppConstants.firebaseDocumentsInfoCollectionName
     private var cancellables = Set<AnyCancellable>()
 
     static var allDocuments: [Document]? {

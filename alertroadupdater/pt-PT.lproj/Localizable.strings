@@ -100,7 +100,7 @@
 /* Connection Screen */
 "connection_title" = "Ligação";
 "step_one" = "Passo 1: ligar o Wi-Fi do dispositivo Alert Road";
-"step_two" = "Passo 2: ligar o Wi-Fi do telemóvel. Verifique se alguma destas redes aparece como disponível e selecione-a";
+"step_two" = "Passo 2: ligar o Wi-Fi do telemóvel. Indica qual das seguintes redes aparece como disponível (não te ligues ainda)";
 "step_three" = "Passo 3: detetar dispositivo";
 "help_button" = "Ver como fazer";
 "wifi_enabled" = "Wi-Fi ligado";
@@ -116,7 +116,7 @@
 "updating_documents" = "A atualizar documentos…\nIsto pode demorar alguns minutos, por favor, aguarde";
 
 /* Permissions general */
-"permission_location" = "É necessário acesso à localização para poder localizar dispositivos próximos";
+"permission_location" = "É necessário acesso à localização para verificar a ligação ao dispositivo Alert Road";
 "permission_write_settings" = "É necessário acesso para configurar o sistema e realizar ações com o Wi-Fi";
 "permission_generic" = "É necessária uma permissão.";
 "permission_required" = "Permissão Necessária";

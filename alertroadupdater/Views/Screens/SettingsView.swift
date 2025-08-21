@@ -74,9 +74,6 @@ struct SettingsView: View {
             .onAppear {
                 coordinator.pushIfNeeded(.settings)
             }
-            .onDisappear {
-                print("👋 SettingsView desapareció")
-            }
             .toast(message: toastMessageDeleteLocalFiles, icon: "trash", isShowing: $showToastDeleteLocalFiles)
             .onReceive(settingsViewModel.$showPermissionBottomSheet) { value in
                 showPermissionBottomSheet = value

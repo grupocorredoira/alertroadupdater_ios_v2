@@ -15,8 +15,13 @@ struct ConnectionView: View {
 
     @EnvironmentObject var coordinator: NavigationCoordinator
 
+    //@StateObject private var wifiSSIDManager = WiFiSSIDManager()
+
     var deviceName: String? {
-        documentsViewModel.getDeviceNameForSSID(selectedNetwork!)!
+        if let ssid = selectedNetwork {
+            return documentsViewModel.getDeviceNameForSSID(ssid)
+        }
+        return nil
     }
 
     var body: some View {

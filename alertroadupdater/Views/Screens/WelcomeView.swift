@@ -99,27 +99,26 @@ struct WelcomeView: View {
                 print("📲 Guardando número de usuario autenticado:", phone)
                 PreferencesManager.shared.savePhoneNumberWithPrefix(phone)
             }
-            wifiSSIDManager.requestLocationPermission()
             coordinator.pushIfNeeded(.welcome)
             documentsViewModel.refreshDocuments()
             Task {
                 await purchaseViewModel.start()
                 await purchaseViewModel.refreshPaymentStatus()
             }
+            permissionsViewModel.checkLocationServicesEnabled()
             UNUserNotificationCenter.current().getNotificationSettings { settings in
-                    if settings.authorizationStatus == .notDetermined {
-                        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-                            if let error = error {
-                                print("❌ Error al solicitar permiso de notificaciones: \(error.localizedDescription)")
-                            } else {
-                                print(granted ? "🔔 Permiso concedido" : "🔕 Usuario rechazó el permiso")
-                            }
+                if settings.authorizationStatus == .notDetermined {
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+                        if let error = error {
+                            print("❌ Error al solicitar permiso de notificaciones: \(error.localizedDescription)")
+                        } else {
+                            print(granted ? "🔔 Permiso concedido" : "🔕 Usuario rechazó el permiso")
                         }
-                    } else {
-                        print("🔍 Estado de permiso ya gestionado: \(settings.authorizationStatus.rawValue)")
                     }
+                } else {
+                    print("🔍 Estado de permiso ya gestionado: \(settings.authorizationStatus.rawValue)")
                 }
-
+            }
         }
         .onChange(of: showNetworkAlert) { show in
             if show {
@@ -127,26 +126,28 @@ struct WelcomeView: View {
                 showNetworkAlert = false
             }
         }
-    }
-
-
-    private func handleStartButtonTap() {
-        let status = permissionsViewModel.locationAuthorizationStatus
-
-        if status == .authorizedWhenInUse || status == .authorizedAlways {
-            coordinator.navigate(to: .connection)
-        } else if status == .notDetermined {
-            permissionsViewModel.checkPermissions()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                if permissionsViewModel.hasLocationPermission {
-                    coordinator.navigate(to: .connection)
-                } else {
-                    snackbarMessage = "permission_location".localized
-                }
+        // ✅ Alertas centralizadas desde PermissionsViewModel
+        .alert("Loocalización deshabilitada", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
+            Button("Abrir Ajustes") {
+                permissionsViewModel.openAppSettings()
             }
-        } else {
-            snackbarMessage = "permission_location".localized
+        } message: {
+            Text("Es necesario habilitar el servicio para poder conectarte con tu Alert Road. Puedes hacerlo en Ajustes > Privacidad y Seguridad > Localización")
         }
     }
+
+    private func handleStartButtonTap() {
+        // ✅ Llamar siempre a la función que actualiza el estado de localización
+        permissionsViewModel.checkLocationServicesEnabled()
+
+        if permissionsViewModel.isLocationServicesEnabled {
+            // ✅ Localización activada → continuar
+            coordinator.navigate(to: .connection)
+        } else {
+            // ❌ Localización desactivada → mostrar alerta/mensaje
+            snackbarMessage = "Los servicios de localización están deshabilitados"
+            permissionsViewModel.showLocationServicesEnabledAlert = true
+        }
+    }
+
 }

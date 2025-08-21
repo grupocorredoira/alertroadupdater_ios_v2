@@ -101,6 +101,7 @@ struct NavGraph: View {
                 // Esto tiene que seguir este orden, porque si connectionViewModel no va primero, no cargará correctamente
                 // la pantalla. Hay que poner los terminos para que siempre verifique y sino pregunte. El sleep es para que
                 // a firebase le de tiempo al cargar
+                wifiSSIDManager.permissionsViewModel = permissionsViewModel
                 if connectionViewModel == nil {
                     connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
                 }
@@ -186,7 +187,8 @@ struct NavGraph: View {
                 deviceName: deviceName,
                 documentsViewModel: documentsViewModel,
                 uploadDocumentsViewModel: uploadDocumentsViewModel,
-                wifiSSIDManager: wifiSSIDManager
+                wifiSSIDManager: wifiSSIDManager,
+                permissionsViewModel: permissionsViewModel
             )
         }
     }

@@ -109,7 +109,7 @@ class DocumentsViewModel: ObservableObject {
                             // 📦 Ruta esperada de almacenamiento local
                             let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                             // TODO - WARNING: solved, es por los prints
-                            let destinationURL = documentsDir.appendingPathComponent("Documents").appendingPathComponent(documentId)
+                            let destinationURL = documentsDir.appendingPathComponent(AppConstants.deviceStorageDocumentsFolder).appendingPathComponent(documentId)
                             //print("✅ [downloadFileAndWait] Documento '\(documentId)' guardado en: \(destinationURL.path)")
 
                             completion(.success(()))

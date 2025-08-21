@@ -102,7 +102,7 @@
 /* Connection Screen */
 "connection_title" = "Conexión";
 "step_one" = "Paso 1: encender Wi-Fi del dispositivo Alert Road";
-"step_two" = "Paso 2: encender Wi-Fi del teléfono. Revisa si alguna de estas redes aparece como disponible y selecciónala";
+"step_two" = "Paso 2: encender Wi-Fi del teléfono. Indica cuál de las siguientes redes aparece como disponible (no te conectes todavía)";
 "step_three" = "Paso 3: detectar dispositivo";
 "help_button" = "Ver cómo hacerlo";
 "wifi_enabled" = "Wi-Fi encendido";
@@ -118,7 +118,7 @@
 "updating_documents" = "Actualizando documentos…\nEsto puede tardar unos minutos, mantente a la espera";
 
 /* Permissions general */
-"permission_location" = "Se requiere acceso a la ubicación para poder localizar dispositivos cercanos";
+"permission_location" = "Se requiere acceso a la ubicación para poder comprobar la conexión al dispositivo Alert Road";
 "permission_write_settings" = "Se requiere acceso para configurar el sistema y realizar acciones con el Wi-Fi";
 "permission_generic" = "Se requiere un permiso.";
 "permission_required" = "Permiso requerido";
