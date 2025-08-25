@@ -20,7 +20,11 @@ struct WelcomeView: View {
             TopAppBarViewWithLogoAndMenu(
                 showMenu: true,
                 onMenuClick: {
-                    coordinator.navigate(to: .settings)
+                    if networkMonitorViewModel.hasInternet {
+                        coordinator.navigate(to: .settings)
+                    } else {
+                        showNetworkAlert = true
+                    }
                 }
             )
 
