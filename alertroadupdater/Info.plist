@@ -5,6 +5,9 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Esta app necesita tu ubicación para verificar la red Wi-Fi</string>
 
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Se necesita acceso a la red local para conectar con tu dispositivo Alert Road</string>
+
 	<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 
