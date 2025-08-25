@@ -9,7 +9,10 @@ struct LoginView: View {
     @Environment(\.scenePhase) var scenePhase
 
     // Estado para el mensaje de error
-    @State private var errorMessage: String? = nil
+    //@State private var errorMessage: String? = nil
+
+    // 🔔 NUEVO: control del alert de “sin Internet”
+    @State private var showNoInternetAlert: Bool = false
 
     var isPhoneNumberValid: Bool {
         return loginViewModel.phoneNumber.count == 9
@@ -149,6 +152,18 @@ struct LoginView: View {
         .padding(.top, 8)
         .navigationBarHidden(true)
         .hideKeyboardOnTap()
+        // 🔔 Se escucha el cambio de conectividad para lanzar el alert
+        .onReceive(networkMonitorViewModel.$hasInternet.removeDuplicates()) { hasInternet in
+            if !hasInternet {
+                showNoInternetAlert = true
+            }
+        }
+        // 🔔 Alert nativo
+        .alert("no_internet_title".localized, isPresented: $showNoInternetAlert) {
+            Button("accept_button".localized, role: .cancel) { }
+        } message: {
+            Text("no_internet_message".localized) // crea este string si no lo tienes
+        }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .background {
                 print("🔒 App en segundo plano, reseteando estado de login")

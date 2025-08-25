@@ -13,6 +13,8 @@ struct ConnectionView: View {
     @State private var showDialog = false
     @State private var showLoadingDialog = false
 
+    @State private var showNetworkAlert = false 
+
     @EnvironmentObject var coordinator: NavigationCoordinator
 
     //@StateObject private var wifiSSIDManager = WiFiSSIDManager()
