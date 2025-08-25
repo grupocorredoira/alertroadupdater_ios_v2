@@ -8,6 +8,12 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Se necesita acceso a la red local para conectar con tu dispositivo Alert Road</string>
 
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_http._tcp</string>
+		<string>_tcp</string>
+	</array>
+
 	<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
 

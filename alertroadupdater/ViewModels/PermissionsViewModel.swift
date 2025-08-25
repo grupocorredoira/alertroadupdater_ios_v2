@@ -1,5 +1,6 @@
 import CoreLocation
 import SwiftUI
+import Network
 
 class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
@@ -9,6 +10,9 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
     @Published var isLocationServicesEnabled = false
     @Published var showLocationPermissionAlert = false
     @Published var showLocationServicesEnabledAlert = false
+
+    @Published var showLocalNetworkAlert: Bool = false
+        @Published var localNetworkError: String? = nil
 
     override init() {
         super.init()
@@ -73,4 +77,38 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
             self.showLocationPermissionAlert = (status == .denied || status == .restricted)
         }
     }
+
+    // MARK: - Method para solicitar permiso de envío antes de abrir el socket
+    func requestLocalNetworkPermission(host: String, port: UInt16) {
+        print("❌ entro a requestLocalNetworkPermission")
+            guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+                DispatchQueue.main.async {
+                    self.localNetworkError = "Puerto inválido"
+                    self.showLocalNetworkAlert = true
+                }
+                return
+            }
+
+            let connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: .tcp)
+
+            connection.stateUpdateHandler = { state in
+                switch state {
+                case .ready:
+                    print("✅ Permiso concedido: acceso a \(host):\(port)")
+                    connection.cancel()
+                case .failed(let error):
+                    print("❌ Error permiso red local: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.localNetworkError = error.localizedDescription
+                        self.showLocalNetworkAlert = true
+                    }
+                    connection.cancel()
+                default:
+                    break
+                }
+            }
+
+            connection.start(queue: .global())
+        }
+    
 }

@@ -35,6 +35,14 @@ struct UploadView: View {
         documentsViewModel.getPasswordForSSID(ssidSelected)
     }
 
+    private var ipSelected: String {
+        documentsViewModel.getIPForDeviceName(deviceName)
+    }
+
+    private var portSelected: UInt16 {
+        documentsViewModel.getPortForDeviceName(deviceName)
+    }
+
     // MARK: - Timers, Publishers, etc.
     // TODO: revisar porque está ejecutando todos los métodos del body y solo tendría que verificar si se cumple
     // la condición o no
@@ -84,6 +92,7 @@ struct UploadView: View {
             let actualFiles = uploadDocumentsViewModel.listAllDocumentsInLocalStorage()
             print("📁 Archivos en disco: \(actualFiles)")
             coordinator.pushIfNeeded(.upload(deviceName: deviceName))
+            permissionsViewModel.requestLocalNetworkPermission(host: ipSelected, port: portSelected)
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active {
@@ -127,6 +136,13 @@ struct UploadView: View {
             Button("cancel_button".localized, role: .cancel) {}
         } message: {
             Text("permission_location".localized)
+        }
+        .alert(isPresented: $permissionsViewModel.showLocalNetworkAlert) {
+            Alert(
+                title: Text("Permiso de red local requerido"),
+                message: Text(permissionsViewModel.localNetworkError ?? "No se pudo acceder a la red local"),
+                dismissButton: .default(Text("Aceptar"))
+            )
         }
     }
 
@@ -178,8 +194,9 @@ struct UploadView: View {
                     .padding(.top)
             }
 
-            Spacer()
             WifiSettingsButton()
+
+            Spacer()
         }
         .toast(message: "password_copied".localized, icon: "checkmark.circle", isShowing: $showToast)
         .padding()

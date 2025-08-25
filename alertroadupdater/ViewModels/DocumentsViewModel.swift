@@ -179,6 +179,25 @@ class DocumentsViewModel: ObservableObject {
         return ssid
     }
 
+    /// Obtiene la IP asociada a un nombre de dispositivo.
+    func getIPForDeviceName(_ deviceName: String) -> String {
+        let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
+        guard let ip = documents.first(where: { $0.deviceName.trimmingCharacters(in: .whitespaces) == trimmedDevice })?.ip else {
+            fatalError("❌ No se encontró IP para el deviceName '\(deviceName)'")
+        }
+        return ip
+    }
+
+    /// Obtiene el puerto asociado a un nombre de dispositivo.
+    func getPortForDeviceName(_ deviceName: String) -> UInt16 {
+        let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
+        guard let port = documents.first(where: { $0.deviceName.trimmingCharacters(in: .whitespaces) == trimmedDevice })?.port else {
+            fatalError("❌ No se encontró puerto para el deviceName '\(deviceName)'")
+        }
+        return UInt16(port)
+    }
+
+
     /// Elimina todos los archivos locales almacenados.
     func deleteAllLocalFiles() -> String {
         switch localRepository.deleteAllDocuments() {
