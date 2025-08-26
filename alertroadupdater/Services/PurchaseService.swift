@@ -10,7 +10,7 @@ class PurchaseService: ObservableObject {
     
     private init() {}
     
-    private let productID = "comprar_servicio_v2"
+    private let productID = AppConstants.productID
     private let firestore = Firestore.firestore()
     
     @Published var product: Product?
@@ -36,7 +36,7 @@ class PurchaseService: ObservableObject {
         }
         
         do {
-            let doc = try await firestore.collection("users").document(user.uid).getDocument()
+            let doc = try await firestore.collection(AppConstants.firebaseUsersCollectionName).document(user.uid).getDocument()
             if let data = doc.data(),
                let expirationTimestamp = data["expirationDate"] as? Timestamp {
                 let expirationDate = expirationTimestamp.dateValue()
@@ -108,7 +108,7 @@ class PurchaseService: ObservableObject {
         ]
         
         do {
-            try await firestore.collection("users")
+            try await firestore.collection(AppConstants.firebaseUsersCollectionName)
                 .document(user.uid)
                 .updateData(updates)
             print("*** Firestore actualizado correctamente.")

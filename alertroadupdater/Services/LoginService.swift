@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 class LoginService {
     private let db = Firestore.firestore()
-    private let usersCollection = "users"
+    private let usersCollection = AppConstants.firebaseUsersCollectionName
 
     /// Verifica si un número ya existe en Firestore
     func checkPhoneInFirebase(fullPhoneNumber: String, completion: @escaping (Bool) -> Void) {
@@ -66,19 +66,19 @@ class LoginService {
 
     func createUser(uid: String, phoneNumber: String, completion: @escaping (Error?) -> Void) {
         let now = Date()
-        let expiration = Calendar.current.date(byAdding: .day, value: 365, to: now)!
+        let expiration = Calendar.current.date(byAdding: .day, value: AppConstants.trialPeriodDays, to: now)!
 
         let data: [String: Any] = [
             "fullPhoneNumber": phoneNumber,
             "creationDate": now,
             "expirationDate": expiration,
-            "trialPeriodDays": 365,
+            "trialPeriodDays": AppConstants.trialPeriodDays,
             "purchaseDate": NSNull(),
             "purchaseToken": "",
             "forcePurchase": false
         ]
 
-        db.collection("users").document(uid).setData(data) { error in
+        db.collection(AppConstants.firebaseUsersCollectionName).document(uid).setData(data) { error in
             if let error = error {
                 print("❌ Error al crear usuario: \(error.localizedDescription)")
                 completion(error)
