@@ -100,7 +100,7 @@
 /* Connection Screen */
 "connection_title" = "Ligação";
 "step_one" = "Passo 1: ligar o Wi-Fi do dispositivo Alert Road";
-"step_two" = "Passo 2: ligar o Wi-Fi do telemóvel. Indica qual das seguintes redes aparece como disponível (não te ligues ainda)";
+"step_two" = "Passo 2: vai às definições de Wi-Fi para verificar as redes e indica qual das seguintes está disponível (não te ligues ainda)";
 "step_three" = "Passo 3: detetar dispositivo";
 "help_button" = "Ver como fazer";
 "wifi_enabled" = "Wi-Fi ligado";
@@ -169,7 +169,7 @@
 "finish_and_close" = "Finalizar e fechar";
 "no_internet_warning" = "Lembre-se que está SEM INTERNET! Desligue-se da rede %@";
 "version_text" = "Versão: %@";
-"socket_error" = "Não foi possível enviar o documento, tente novamente mais tarde";
+"socket_error" = "Não foi possível enviar o documento. Verifica em Definições > alertroadupdater > Rede Local se a opção está ativada e tenta novamente mais tarde";
 "socket_error_timeout" = "Ocorreu um erro inesperado, não foi possível enviar o documento, tente novamente mais tarde";
 "download_status_available" = "Disponível para descarregar";
 "download_status_downloaded" = "Descarregado";

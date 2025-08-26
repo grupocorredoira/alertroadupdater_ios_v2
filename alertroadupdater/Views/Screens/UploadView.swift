@@ -285,9 +285,20 @@ struct UploadDocumentRowView: View {
         documentCard
             .background(Color.gray.opacity(0.1))
             .cornerRadius(8)
-            .alert("Error", isPresented: .constant(errorMessage != nil), actions: { Button("OK") { errorMessage = nil } }, message: {
+            .alert("Error", isPresented: .constant(errorMessage != nil)) {
+                Button("Ir a Ajustes") {
+                    if let url = URL(string: "App-Prefs:root=WIFI"),
+                       UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
+                    errorMessage = nil
+                }
+                Button("Cancelar", role: .cancel) {
+                    errorMessage = nil
+                }
+            } message: {
                 Text(errorMessage ?? "")
-            })
+            }
             .onReceive(uploadDocumentsViewModel.$uploadStates) { handleUploadState($0) }
     }
 
