@@ -3,7 +3,7 @@ import SwiftUI
 struct ToastView: View {
     var message: String
     var icon: String? = nil
-
+    
     var body: some View {
         HStack(spacing: 10) {
             if let icon = icon {

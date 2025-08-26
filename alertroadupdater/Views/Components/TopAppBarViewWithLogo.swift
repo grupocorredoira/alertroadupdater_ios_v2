@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct TopAppBarViewWithLogo: View {
-
+    
     var body: some View {
         HStack {
             Color.clear
                 .frame(width: 44, height: 44)
             Spacer()
-
-
-
+            
+            
+            
             Image("logo_cabecera")
                 .resizable()
                 .scaledToFit()

@@ -7,7 +7,7 @@ class Utils {
     /// Muestra un `Toast` con el mensaje y duración especificados.
     static func showToast(message: String, duration: ToastLength) {
         guard let windowScene = UIApplication.shared.connectedScenes
-                .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
               let window = windowScene.windows.first else { return }
         
         let toastLabel = UILabel(frame: CGRect(x: window.frame.width / 2 - 100,

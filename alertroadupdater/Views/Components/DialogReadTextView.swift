@@ -5,7 +5,7 @@ struct DialogReadTextView: View {
     var title: String
     var text: String
     var onDismiss: () -> Void
-
+    
     var body: some View {
         if showDialog {
             VStack {
@@ -18,7 +18,7 @@ struct DialogReadTextView: View {
                         .padding()
                 }
                 .frame(height: 300)
-
+                
                 Button("Aceptar", action: onDismiss)
                     .padding()
             }

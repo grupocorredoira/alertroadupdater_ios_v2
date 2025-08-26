@@ -3,9 +3,9 @@ import SwiftUI
 struct CountryCodeDropdownMenu: View {
     var selectedPrefix: String
     var onPrefixSelected: (String) -> Void
-
+    
     @State private var isExpanded = false
-
+    
     var body: some View {
         Menu {
             ForEach(CountryUtils.countryOptions, id: \.code) { country in

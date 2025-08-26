@@ -121,7 +121,7 @@ class LoginViewModel: ObservableObject {
     // Dentro de mapFirebaseError(_:)
     private func mapFirebaseError(_ error: Error) -> String {
         let nsError = error as NSError
-
+        
         switch nsError.code {
         case AuthErrorCode.networkError.rawValue:
             return "network_error".localized // 🔁 Localizado
@@ -144,7 +144,7 @@ class LoginViewModel: ObservableObject {
             case "+351", "+33":
                 let valid = sanitized.count == 9
                 return (valid, valid ? nil : "number_must_have_9_digits".localized)
-
+                
             case "+34":
                 let valid = sanitized.count == 9 && (sanitized.hasPrefix("6") || sanitized.hasPrefix("7"))
                 if !valid {
@@ -185,7 +185,7 @@ class LoginViewModel: ObservableObject {
         self.verificationCode = sanitized
         self.isCodeValid = isValid
         self.codeErrorMessage = isValid ? nil : "code_must_have_6_digits".localized
-
+        
         self.codeBorderColor = {
             if sanitized.isEmpty {
                 return UIColor.gray
@@ -196,7 +196,7 @@ class LoginViewModel: ObservableObject {
             }
         }()
     }
-
+    
     func reset() {
         isCodeSent = false
         errorMessage = nil
@@ -204,6 +204,6 @@ class LoginViewModel: ObservableObject {
         codeErrorMessage = nil
         isCodeValid = false
     }
-
-
+    
+    
 }

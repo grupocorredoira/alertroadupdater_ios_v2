@@ -11,12 +11,12 @@ struct SettingsView: View {
     @State private var toastMessageDeleteLocalFiles = ""
     @EnvironmentObject var coordinator: NavigationCoordinator
     @State private var showPermissionBottomSheet = false
-
+    
     let versionName = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
     let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
-
+    
     var body: some View {
-
+        
         ZStack {
             Color.gray.opacity(0.1)
                 .ignoresSafeArea()
@@ -27,7 +27,7 @@ struct SettingsView: View {
                 ) {
                     coordinator.pop()
                 }
-
+                
                 Section(header: Text("user_preferences".localized).font(.headline)) {
                     ToggleOptionView(
                         title: "Notificaciones".localized,
@@ -49,9 +49,9 @@ struct SettingsView: View {
                         showDialogSafeDisconnect = true
                     }
                 }
-
+                
                 Spacer()
-
+                
                 Text(String(format: "version_code_text".localized, versionName, versionCode))
                     .font(.footnote)
                     .padding()
@@ -78,7 +78,7 @@ struct SettingsView: View {
             .onReceive(settingsViewModel.$showPermissionBottomSheet) { value in
                 showPermissionBottomSheet = value
             }
-
+            
             NotificationsPermissionBottomSheet(
                 isVisible: showPermissionBottomSheet,
                 onDismiss: {
@@ -94,24 +94,24 @@ struct SettingsView: View {
             )
         }
     }
-
+    
     private func deleteLocalFiles() {
         let message = documentsViewModel.deleteAllLocalFiles()
         toastMessageDeleteLocalFiles = message
         showToastDeleteLocalFiles = true
     }
-
+    
     @ViewBuilder
     private func disconnectDialog() -> some View {
         VStack() {
             Text("disconnect_title".localized)
                 .font(.headline)
                 .padding()
-
+            
             Text("disconnect_message".localized)
                 .font(.subheadline)
                 .padding()
-
+            
             HStack(spacing: 12) {
                 Button(action: {
                     signOut()
@@ -127,7 +127,7 @@ struct SettingsView: View {
                         .background(Color.gray.opacity(0.3))
                         .cornerRadius(10)
                 }
-
+                
                 Button(action: {
                     showDialogSafeDisconnect = false
                 }) {
@@ -142,14 +142,14 @@ struct SettingsView: View {
                 }
             }
             .padding()
-
+            
         }
         .frame(maxWidth: 300)
         .background(Color.white)
         .cornerRadius(12)
         .shadow(radius: 5)
     }
-
+    
     func signOut() {
         do {
             try Auth.auth().signOut()
@@ -164,7 +164,7 @@ struct SettingsView: View {
 struct SettingsOption: View {
     var title: String
     var onClick: () -> Void
-
+    
     var body: some View {
         Button(action: onClick) {
             HStack {

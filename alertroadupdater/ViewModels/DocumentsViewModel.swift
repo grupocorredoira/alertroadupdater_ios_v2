@@ -6,26 +6,26 @@ import SwiftUI
 /// Se encarga de obtener documentos desde Firestore y sincronizarlos con almacenamiento local.
 
 class DocumentsViewModel: ObservableObject {
-
+    
     private let firestoreRepository: FirestoreRepository
     private let localRepository: LocalRepository
-
+    
     @Published var documentDownloadStates: [String: DocumentDownloadStatus] = [:]
     @Published var downloadError: String? = nil // ✅ Se define explícitamente como opcional
     @Published var documents: [Document] = []
-
+    
     private var cancellables = Set<AnyCancellable>()
-
+    
     init(firestoreRepository: FirestoreRepository, localRepository: LocalRepository) {
         self.firestoreRepository = firestoreRepository
         self.localRepository = localRepository
         loadDocumentsFromExternalDatabase()
     }
-
+    
     func refreshDocuments () {
         loadDocumentsFromExternalDatabase()
     }
-
+    
     /// Carga documentos desde Firestore y sincroniza con almacenamiento local.
     private func loadDocumentsFromExternalDatabase() {
         firestoreRepository.loadDocumentsFromFirestore()
@@ -40,7 +40,7 @@ class DocumentsViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
+    
     /// Inicializa el estado de descarga de los documentos.
     private func initializeDocumentDownloadStates(_ documents: [Document]) {
         let updatedStates = documents.reduce(into: [String: DocumentDownloadStatus]()) { result, document in
@@ -51,12 +51,12 @@ class DocumentsViewModel: ObservableObject {
             self.documentDownloadStates = updatedStates
         }
     }
-
+    
     /// Obtiene una lista de SSIDs únicos, manteniendo el orden original.
     func getAllSSIDs() -> [String] {
         var seen = Set<String>()
         var uniqueSSIDs: [String] = []
-
+        
         for document in documents {
             let ssid = document.ssid
             if !seen.contains(ssid) {
@@ -64,15 +64,15 @@ class DocumentsViewModel: ObservableObject {
                 uniqueSSIDs.append(ssid)
             }
         }
-
+        
         return uniqueSSIDs
     }
-
+    
     /// Obtiene una lista de SSIDs únicos sin barra baja, manteniendo el orden original.
     func getAllSSIDsWithoutUnderscore() -> [String] {
         var seen = Set<String>()
         var filteredSSIDs: [String] = []
-
+        
         for document in documents {
             let ssid = document.ssid
             if !ssid.contains("_") && !seen.contains(ssid) {
@@ -80,19 +80,19 @@ class DocumentsViewModel: ObservableObject {
                 filteredSSIDs.append(ssid)
             }
         }
-
+        
         return filteredSSIDs
     }
-
+    
     /// Busca la contraseña asociada a un SSID.
     func getPasswordForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.password
     }
-
+    
     /// Descarga un archivo desde Firestore y lo guarda localmente.
     func downloadFileAndWait(documentId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         updateDownloadState(documentId, newState: .downloading(progress: 0))
-
+        
         FileDownloadManager.downloadFileFromFirebaseStorage(
             fileName: documentId,
             onSuccess: { fileURL in
@@ -105,13 +105,13 @@ class DocumentsViewModel: ObservableObject {
                         case .success:
                             self.updateDownloadState(documentId, newState: .downloaded)
                             print("Documento \(documentId) descargado exitosamente.")
-
+                            
                             // 📦 Ruta esperada de almacenamiento local
                             let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
                             // TODO - WARNING: solved, es por los prints
                             let destinationURL = documentsDir.appendingPathComponent(AppConstants.deviceStorageDocumentsFolder).appendingPathComponent(documentId)
                             //print("✅ [downloadFileAndWait] Documento '\(documentId)' guardado en: \(destinationURL.path)")
-
+                            
                             completion(.success(()))
                         case .failure(let error):
                             print("Error al descargar \(documentId): \(error.localizedDescription)")
@@ -130,13 +130,13 @@ class DocumentsViewModel: ObservableObject {
             }
         )
     }
-
+    
     /// Descarga todos los documentos asociados a un SSID.
     func downloadAllDocumentsBySSID(ssid: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let documentsToDownload = documents.filter { $0.ssid == ssid }
         let dispatchGroup = DispatchGroup()
         var errors: [Error] = []
-
+        
         for document in documentsToDownload {
             dispatchGroup.enter()
             downloadFileAndWait(documentId: document.id) { result in
@@ -146,7 +146,7 @@ class DocumentsViewModel: ObservableObject {
                 dispatchGroup.leave()
             }
         }
-
+        
         dispatchGroup.notify(queue: .main) {
             if errors.isEmpty {
                 self.downloadError = nil
@@ -157,19 +157,19 @@ class DocumentsViewModel: ObservableObject {
             }
         }
     }
-
+    
     /// Actualiza el estado de descarga de un documento.
     private func updateDownloadState(_ documentId: String, newState: DocumentDownloadStatus) {
         DispatchQueue.main.async { // ✅ Corrección del uso de DispatchQueue
             self.documentDownloadStates[documentId] = newState
         }
     }
-
+    
     /// Obtiene el nombre del dispositivo asociado a un SSID.
     func getDeviceNameForSSID(_ ssid: String) -> String? {
         return documents.first(where: { $0.ssid == ssid })?.deviceName
     }
-
+    
     /// Obtiene el SSID asociado a un nombre de dispositivo.
     func getSSIDForDeviceName(_ deviceName: String) -> String {
         let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
@@ -178,7 +178,7 @@ class DocumentsViewModel: ObservableObject {
         }
         return ssid
     }
-
+    
     /// Obtiene la IP asociada a un nombre de dispositivo.
     func getIPForDeviceName(_ deviceName: String) -> String {
         let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
@@ -187,7 +187,7 @@ class DocumentsViewModel: ObservableObject {
         }
         return ip
     }
-
+    
     /// Obtiene el puerto asociado a un nombre de dispositivo.
     func getPortForDeviceName(_ deviceName: String) -> UInt16 {
         let trimmedDevice = deviceName.trimmingCharacters(in: .whitespaces)
@@ -196,8 +196,8 @@ class DocumentsViewModel: ObservableObject {
         }
         return UInt16(port)
     }
-
-
+    
+    
     /// Elimina todos los archivos locales almacenados.
     func deleteAllLocalFiles() -> String {
         switch localRepository.deleteAllDocuments() {
@@ -217,7 +217,7 @@ enum DocumentDownloadStatus {
     case available
     case downloaded
     case downloading(progress: Int)
-
+    
     /// Convierte el estado en una cadena legible.
     func toReadableString() -> String {
         switch self {

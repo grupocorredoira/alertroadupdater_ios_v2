@@ -14,7 +14,7 @@ struct WelcomeView: View {
     @StateObject private var purchaseViewModel = PurchaseViewModel()
     @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
     @State private var showNetworkAlert = false
-
+    
     var body: some View {
         VStack(spacing: 16) {
             TopAppBarViewWithLogoAndMenu(
@@ -27,25 +27,25 @@ struct WelcomeView: View {
                     }
                 }
             )
-
+            
             Spacer()
-
+            
             Text("welcome_title".localized)
                 .font(.largeTitle)
                 .bold()
-
+            
             Text(String(format: "registered_phone".localized, PreferencesManager.shared.getPhoneNumberWithPrefix()))
                 .font(.footnote)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 16)
-
+            
             if purchaseViewModel.needsToPay {
                 Text("Periodo finalizado. Para continuar necesitas realizar el pago del servicio")
                     .font(.callout)
                     .foregroundColor(.red)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
-
+                
                 Button(action: {
                     if networkMonitorViewModel.hasInternet {
                         Task {
@@ -64,7 +64,7 @@ struct WelcomeView: View {
                 }
                 .padding(.horizontal, 16)
                 .disabled(purchaseViewModel.isPurchasing)
-
+                
             } else {
                 Button(action: {
                     if networkMonitorViewModel.hasInternet {
@@ -83,7 +83,7 @@ struct WelcomeView: View {
                 }
                 .padding(.horizontal, 16)
             }
-
+            
             Spacer()
             Spacer()
         }
@@ -131,7 +131,7 @@ struct WelcomeView: View {
             }
         }
         // ✅ Alertas centralizadas desde PermissionsViewModel
-        .alert("Loocalización deshabilitada", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
+        .alert("Localización deshabilitada", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
             Button("Abrir Ajustes") {
                 permissionsViewModel.openAppSettings()
             }
@@ -139,11 +139,11 @@ struct WelcomeView: View {
             Text("Es necesario habilitar el servicio para poder conectarte con tu Alert Road. Puedes hacerlo en Ajustes > Privacidad y Seguridad > Localización")
         }
     }
-
+    
     private func handleStartButtonTap() {
         // ✅ Llamar siempre a la función que actualiza el estado de localización
         permissionsViewModel.checkLocationServicesEnabled()
-
+        
         if permissionsViewModel.isLocationServicesEnabled {
             // ✅ Localización activada → continuar
             coordinator.navigate(to: .connection)
@@ -153,5 +153,5 @@ struct WelcomeView: View {
             permissionsViewModel.showLocationServicesEnabledAlert = true
         }
     }
-
+    
 }

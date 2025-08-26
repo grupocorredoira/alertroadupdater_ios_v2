@@ -5,34 +5,34 @@ import UserNotifications
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var notificationsEnabled: Bool = false
-
+    
     private let notificationsRepository: NotificationsRepository
     @Published var showPermissionBottomSheet = false
-
+    
     init(notificationsRepository: NotificationsRepository = NotificationsRepository()) {
         self.notificationsRepository = notificationsRepository
         self.notificationsEnabled = notificationsRepository.isNotificationsEnabled()
         print("🔔 Notificaciones activadas al iniciar SettingsViewModel: \(self.notificationsEnabled)")
         UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
-                DispatchQueue.main.async {
-                    switch settings.authorizationStatus {
-                    case .authorized, .provisional:
-                        self?.notificationsEnabled = notificationsRepository.isNotificationsEnabled()
-                        print("🔔 Permiso concedido. Estado guardado: \(self?.notificationsEnabled ?? false)")
-                    case .notDetermined, .denied:
-                        self?.notificationsEnabled = false
-                        print("🔕 Permiso NO concedido. Notificaciones desactivadas.")
-                    @unknown default:
-                        self?.notificationsEnabled = false
-                        print("⚠️ Estado desconocido del permiso. Asumimos desactivado.")
-                    }
+            DispatchQueue.main.async {
+                switch settings.authorizationStatus {
+                case .authorized, .provisional:
+                    self?.notificationsEnabled = notificationsRepository.isNotificationsEnabled()
+                    print("🔔 Permiso concedido. Estado guardado: \(self?.notificationsEnabled ?? false)")
+                case .notDetermined, .denied:
+                    self?.notificationsEnabled = false
+                    print("🔕 Permiso NO concedido. Notificaciones desactivadas.")
+                @unknown default:
+                    self?.notificationsEnabled = false
+                    print("⚠️ Estado desconocido del permiso. Asumimos desactivado.")
                 }
             }
+        }
     }
-
+    
     func toggleNotifications(_ enable: Bool) {
         print("🟡 Intentando \(enable ? "activar" : "desactivar") notificaciones...")
-
+        
         if enable {
             // ⚠️ Comprobamos el estado actual del sistema
             UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
@@ -47,7 +47,7 @@ final class SettingsViewModel: ObservableObject {
                             print("❌ Error solicitando permiso: \(error.localizedDescription)")
                             return
                         }
-
+                        
                         if granted {
                             print("🔐 Permiso concedido tras solicitud")
                             self?.subscribeToNotifications()
@@ -58,8 +58,8 @@ final class SettingsViewModel: ObservableObject {
                 case .denied:
                     print("⛔️ Permiso denegado previamente. No se puede activar.")
                     DispatchQueue.main.async {
-                            self?.showPermissionBottomSheet = true
-                        }
+                        self?.showPermissionBottomSheet = true
+                    }
                 @unknown default:
                     print("⚠️ Estado de permiso desconocido")
                 }
@@ -78,7 +78,7 @@ final class SettingsViewModel: ObservableObject {
             }
         }
     }
-
+    
     private func subscribeToNotifications() {
         notificationsRepository.setNotificationsEnabled(true) { [weak self] success in
             if success {

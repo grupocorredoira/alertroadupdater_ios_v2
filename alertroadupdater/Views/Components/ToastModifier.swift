@@ -5,11 +5,11 @@ struct ToastModifier: ViewModifier {
     let icon: String?
     @Binding var isShowing: Bool
     let duration: Double
-
+    
     func body(content: Content) -> some View {
         ZStack {
             content
-
+            
             if isShowing {
                 VStack {
                     Spacer()

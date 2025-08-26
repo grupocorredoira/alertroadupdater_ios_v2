@@ -13,7 +13,7 @@ struct Document: Identifiable, Codable {
     var url: String
     var createdAt: Date?
     var updatedAt: Date?
-
+    
     /// Crea una copia del documento con un nuevo ID.
     func copy(withID newID: String) -> Document {
         return Document(
@@ -30,11 +30,11 @@ struct Document: Identifiable, Codable {
             updatedAt: self.updatedAt
         )
     }
-
+    
     /// Inicializa un documento desde un DocumentSnapshot de Firestore.
     init?(from snapshot: DocumentSnapshot) {
         guard let data = snapshot.data() else { return nil }
-
+        
         guard
             let type = data["type"] as? String,
             let deviceName = data["deviceName"] as? String,
@@ -47,10 +47,10 @@ struct Document: Identifiable, Codable {
         else {
             return nil
         }
-
+        
         let createdAt = (data["createdAt"] as? Timestamp)?.dateValue()
         let updatedAt = (data["updatedAt"] as? Timestamp)?.dateValue()
-
+        
         self.init(
             id: snapshot.documentID,
             type: type,
@@ -65,7 +65,7 @@ struct Document: Identifiable, Codable {
             updatedAt: updatedAt
         )
     }
-
+    
     /// Inicializador completo necesario al definir un init manual
     init(id: String, type: String, deviceName: String, version: String, ssid: String, password: String, ip: String, port: Int, url: String, createdAt: Date?, updatedAt: Date?) {
         self.id = id

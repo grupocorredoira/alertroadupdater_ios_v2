@@ -5,7 +5,7 @@ struct NumericTextFieldView: UIViewRepresentable {
     @Binding var text: String
     var placeholder: String
     var borderColor: UIColor
-
+    
     func makeUIView(context: Context) -> UITextField {
         let textField = UITextField()
         textField.placeholder = placeholder
@@ -24,10 +24,10 @@ struct NumericTextFieldView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextField, context: Context) {
-            uiView.text = text
-            uiView.layer.borderColor = borderColor.cgColor
-        }
-
+        uiView.text = text
+        uiView.layer.borderColor = borderColor.cgColor
+    }
+    
     func makeCoordinator() -> Coordinator {
         Coordinator(text: $text)
     }

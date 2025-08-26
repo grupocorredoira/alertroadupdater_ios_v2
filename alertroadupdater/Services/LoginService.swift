@@ -4,7 +4,7 @@ import FirebaseFirestore
 class LoginService {
     private let db = Firestore.firestore()
     private let usersCollection = AppConstants.firebaseUsersCollectionName
-
+    
     /// Verifica si un número ya existe en Firestore
     func checkPhoneInFirebase(fullPhoneNumber: String, completion: @escaping (Bool) -> Void) {
         db.collection(usersCollection)
@@ -17,7 +17,7 @@ class LoginService {
                 }
             }
     }
-
+    
     /// Envía código de verificación vía Firebase Auth
     func sendVerificationCode(to phoneNumber: String, completion: @escaping (Result<Void, Error>) -> Void) {
         PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
@@ -36,7 +36,7 @@ class LoginService {
             }
         }
     }
-
+    
     func verifyCode(code: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let verificationID = UserDefaults.standard.string(forKey: "authVerificationID") else {
             let error = NSError(
@@ -49,12 +49,12 @@ class LoginService {
             completion(.failure(error))
             return
         }
-
+        
         let credential = PhoneAuthProvider.provider().credential(
             withVerificationID: verificationID,
             verificationCode: code
         )
-
+        
         Auth.auth().signIn(with: credential) { result, error in
             if let error = error {
                 completion(.failure(error))
@@ -63,11 +63,11 @@ class LoginService {
             }
         }
     }
-
+    
     func createUser(uid: String, phoneNumber: String, completion: @escaping (Error?) -> Void) {
         let now = Date()
         let expiration = Calendar.current.date(byAdding: .day, value: AppConstants.trialPeriodDays, to: now)!
-
+        
         let data: [String: Any] = [
             "fullPhoneNumber": phoneNumber,
             "creationDate": now,
@@ -77,7 +77,7 @@ class LoginService {
             "purchaseToken": "",
             "forcePurchase": false
         ]
-
+        
         db.collection(AppConstants.firebaseUsersCollectionName).document(uid).setData(data) { error in
             if let error = error {
                 print("❌ Error al crear usuario: \(error.localizedDescription)")
@@ -88,5 +88,5 @@ class LoginService {
             }
         }
     }
-
+    
 }

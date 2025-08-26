@@ -6,24 +6,24 @@ struct ConnectionView: View {
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @ObservedObject var connectionViewModel: ConnectionViewModel
     @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
-
+    
     var onNetworkSelected: (String) -> Void
-
+    
     @State private var selectedNetwork: String? = nil
     @State private var showDialog = false
     @State private var showLoadingDialog = false
-
+    
     @State private var showNetworkAlert = false
-
+    
     @EnvironmentObject var coordinator: NavigationCoordinator
-
+    
     var deviceName: String? {
         if let ssid = selectedNetwork {
             return documentsViewModel.getDeviceNameForSSID(ssid)
         }
         return nil
     }
-
+    
     var body: some View {
         VStack(spacing: 16) {
             CustomNavigationBar(
@@ -32,20 +32,20 @@ struct ConnectionView: View {
             ) {
                 coordinator.pop()
             }
-
+            
             //Spacer()
-
+            
             Text("step_one".localized)
                 .font(.headline)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading) // fuerza el ancho
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
-
+            
             HelpButton()
-
+            
             Spacer()
-
+            
             Text("step_two".localized)
                 .font(.headline)
                 .multilineTextAlignment(.leading)
@@ -53,16 +53,16 @@ struct ConnectionView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 4)
-
+            
             WifiNetworksView(documentsViewModel: documentsViewModel, selectedNetwork: $selectedNetwork, showDialog: $showDialog)
-
+            
             WifiSettingsButton()
-
+            
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.yellow)
                     .font(.title2)
-
+                
                 Text("device_not_found".localized)
                     .font(.headline)
                     .foregroundColor(.black)
@@ -76,7 +76,7 @@ struct ConnectionView: View {
             .cornerRadius(12)
             .padding(.horizontal)
             .padding(.bottom, 4)
-
+            
             Spacer()
         }
         .onAppear {
@@ -99,13 +99,13 @@ struct ConnectionView: View {
                     ZStack {
                         Color.black.opacity(0.4)
                             .edgesIgnoringSafeArea(.all)
-
+                        
                         VStack(spacing: 20) {
                             ProgressView()
                                 .scaleEffect(2) // 🔍 Más grande para mayor visibilidad
                                 .tint(.white)   // ✅ Estilo blanco, más moderno
                                 .padding()
-
+                            
                             Text("updating_documents".localized)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.white)
@@ -119,11 +119,11 @@ struct ConnectionView: View {
             }
         )
     }
-
+    
     private func startLoading() {
         showLoadingDialog = true
         showDialog = false
-
+        
         guard networkMonitorViewModel.hasInternet else {
             showLoadingDialog = false
             // Muestra una alerta si no hay conexión
@@ -132,21 +132,21 @@ struct ConnectionView: View {
             }
             return
         }
-
+        
         guard let ssid = selectedNetwork,
               let deviceName = documentsViewModel.getDeviceNameForSSID(ssid) else {
             showLoadingDialog = false
             showDownloadErrorAlert()
             return
         }
-
+        
         let deleteMessage = documentsViewModel.deleteAllLocalFiles()
         print(deleteMessage)
-
+        
         documentsViewModel.downloadAllDocumentsBySSID(ssid: ssid) { result in
             DispatchQueue.main.async {
                 showLoadingDialog = false
-
+                
                 switch result {
                 case .success:
                     onNetworkSelected(deviceName)
@@ -155,21 +155,21 @@ struct ConnectionView: View {
                 }
             }
         }
-
+        
     }
-
+    
     private func showNetworkErrorAlert() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = windowScene.windows.first?.rootViewController else {
             return
         }
-
+        
         let alert = UIAlertController(
             title: "no_internet_title".localized,
             message: "no_internet_message".localized,
             preferredStyle: .alert
         )
-
+        
         alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
         alert.addAction(UIAlertAction(title: "go_to_wifi_settings".localized, style: .cancel) { _ in
             if let settingsURL = URL(string: UIApplication.openSettingsURLString),
@@ -177,24 +177,24 @@ struct ConnectionView: View {
                 UIApplication.shared.open(settingsURL)
             }
         })
-
+        
         rootVC.present(alert, animated: true)
     }
-
+    
     private func showDownloadErrorAlert() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootVC = windowScene.windows.first?.rootViewController else {
             print("❌ No se pudo obtener la ventana principal para mostrar el alert")
             return
         }
-
+        
         let alert = UIAlertController(
             title: "error_dialog_title".localized,
             message: "error_loading_documents".localized,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
-
+        
         rootVC.present(alert, animated: true)
     }
 }
@@ -203,7 +203,7 @@ struct ConnectionView: View {
 struct HelpButton: View {
     var body: some View {
         Button(action: {
-            if let url = URL(string: "https://help.url") {
+            if let url = URL(string: AppConstants.linkHelpSwitchOnWiFiDevice) {
                 UIApplication.shared.open(url)
             }
         }) {
@@ -214,7 +214,7 @@ struct HelpButton: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
         }
-        .padding(.horizontal, 16) // Márgenes laterales
+        .padding(.horizontal, 16)
     }
 }
 
@@ -222,7 +222,7 @@ struct WifiNetworksView: View {
     @ObservedObject var documentsViewModel: DocumentsViewModel
     @Binding var selectedNetwork: String?
     @Binding var showDialog: Bool
-
+    
     var body: some View {
         let wifiNetworks = documentsViewModel.getAllSSIDsWithoutUnderscore()
         ScrollViewReader { proxy in
@@ -232,11 +232,11 @@ struct WifiNetworksView: View {
                         HStack {
                             Image(systemName: "wifi")
                                 .foregroundColor(.blue)
-
+                            
                             Text(network)
                                 .font(.headline)
                                 .foregroundColor(.black)
-
+                            
                             Spacer()
                         }
                         .padding()
@@ -270,9 +270,9 @@ struct WifiSettingsButton: View {
         }
         .padding(.horizontal, 16)
     }
-
+    
     private func openWifiSettings() {
-        if let url = URL(string: "App-Prefs:WIFI") {
+        if let url = URL(string: AppConstants.deviceSettingsWifiRoute) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
@@ -283,7 +283,7 @@ struct WifiSettingsButton: View {
 /*
  struct WifiSettingsButton: View {
  @EnvironmentObject var coordinator: NavigationCoordinator // ✅ Esto sí se puede usar
-
+ 
  var body: some View {
  Button(action: {
  coordinator.navigate(to: .upload(deviceName:"alertroadV6")) // ✅ TEST directo sin descargas

@@ -9,11 +9,11 @@ class ConnectionManager: ObservableObject {
     static let shared = ConnectionManager()
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global(qos: .background)
-
+    
     init() {
         monitor.start(queue: queue)
     }
-
+    
     /// Obtiene el SSID de la red Wi-Fi actual.
     func getCurrentSSID() -> String? {
         guard let interfaces = CNCopySupportedInterfaces() as? [String] else { return nil }
@@ -24,18 +24,18 @@ class ConnectionManager: ObservableObject {
         }
         return nil
     }
-
+    
     /// Verifica si está conectado a Wi-Fi.
     func isConnectedToWiFi() -> Bool {
         return monitor.currentPath.usesInterfaceType(.wifi)
     }
-
+    
     /// Obtiene las redes Wi-Fi disponibles.
     func getAvailableSSIDs() -> [String] {
         // En iOS, no se puede obtener la lista de redes Wi-Fi disponibles por restricciones de seguridad.
         return []
     }
-
+    
     /// Abre la configuración de Wi-Fi en iOS.
     func openWiFiSettings() {
         guard let url = URL(string: "App-Prefs:root=WIFI") else { return }
@@ -43,7 +43,7 @@ class ConnectionManager: ObservableObject {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
-
+    
     /// Simula la conexión a un SSID en iOS (solo apertura de ajustes).
     func connectToSSID(ssid: String, completion: @escaping (Bool) -> Void) {
         openWiFiSettings()

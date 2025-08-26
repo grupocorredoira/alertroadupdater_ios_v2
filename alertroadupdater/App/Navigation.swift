@@ -8,17 +8,17 @@ class NavigationCoordinator: ObservableObject {
             //print("🧭 Stack actual:", path)
         }
     }
-
+    
     func navigate(to screen: Screen) {
         path.append(screen)
         //print("➡️ navigate(to: \(screen))")
     }
-
+    
     func pop() {
         let removed = path.popLast()
         print("⬅️ pop() → \(removed ?? .login)")
     }
-
+    
     func popTo(_ screen: Screen) {
         if let index = path.firstIndex(of: screen) {
             path = Array(path.prefix(upTo: index + 1))
@@ -27,21 +27,19 @@ class NavigationCoordinator: ObservableObject {
             print("⚠️ popTo(\(screen)) falló: no está en el stack")
         }
     }
-
+    
     func reset() {
         print("🔄 reset()")
         path = []
     }
-
+    
     func pushIfNeeded(_ screen: Screen) {
         if !path.contains(screen) {
             print("🆕 pushIfNeeded(\(screen)) desde: \(Thread.callStackSymbols.joined(separator: "\n"))")
             path.append(screen)
-        } else {
-            //print("⏩ pushIfNeeded ignorado, ya estaba en el stack: \(screen)")
         }
     }
-
+    
     var current: Screen? {
         path.last
     }
@@ -49,29 +47,29 @@ class NavigationCoordinator: ObservableObject {
 
 struct NavGraph: View {
     @StateObject private var coordinator = NavigationCoordinator()
-
+    
     // ✅ Instancia única y compartida
     private let sharedLocalRepository = LocalRepository()
-
+    
     @StateObject private var prefs = PreferencesManager()
-
+    
     @StateObject private var connectionManager = ConnectionManager()
-
+    
     @StateObject private var documentsViewModel: DocumentsViewModel
     @StateObject private var uploadDocumentsViewModel: UploadDocumentsViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
-
+    
     @State private var connectionViewModel: ConnectionViewModel?
-
+    
     @StateObject private var wifiSSIDManager = WiFiSSIDManager()
     @StateObject private var permissionsViewModel = PermissionsViewModel()
-
-
-
+    
+    
+    
     private var isLoggedIn: Bool {
         Auth.auth().currentUser != nil
     }
-
+    
     init() {
         let firestoreRepo = FirestoreRepository()
         let documentsVM = DocumentsViewModel(firestoreRepository: firestoreRepo, localRepository: sharedLocalRepository)
@@ -80,12 +78,12 @@ struct NavGraph: View {
             documentsViewModel: documentsVM
         )
         let settingsVM = SettingsViewModel()
-
+        
         _documentsViewModel = StateObject(wrappedValue: documentsVM)
         _uploadDocumentsViewModel = StateObject(wrappedValue: uploadVM)
         _settingsViewModel = StateObject(wrappedValue: settingsVM)
     }
-
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -105,21 +103,21 @@ struct NavGraph: View {
                 if connectionViewModel == nil {
                     connectionViewModel = ConnectionViewModel(connectionManager: connectionManager)
                 }
-
+                
                 guard prefs.getIsTermsAccepted(), prefs.getIsPrivacyAccepted() else {
                     print("⛔️ No se han aceptado términos o privacidad, no se navega")
                     return
                 }
-
+                
                 try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
-
+                
                 if isLoggedIn && coordinator.current == nil {
                     if prefs.getPhoneNumberWithPrefix().isEmpty,
                        let phone = Auth.auth().currentUser?.phoneNumber {
                         print("📲 Guardando número de teléfono: \(phone)")
                         prefs.savePhoneNumberWithPrefix(phone)
                     }
-
+                    
                     coordinator.navigate(to: .welcome)
                 }
             }
@@ -127,7 +125,7 @@ struct NavGraph: View {
         .environmentObject(coordinator)
         .navigationViewStyle(StackNavigationViewStyle())
     }
-
+    
     @ViewBuilder
     private func getStartView() -> some View {
         if !prefs.getIsTermsAccepted() {
@@ -144,33 +142,33 @@ struct NavGraph: View {
             LoginView()
         }
     }
-
-
+    
+    
     // MARK: - Destinos
     @ViewBuilder
     private func getDestinationView(for screen: Screen) -> some View {
         switch screen {
         case .terms:
             TermsView(prefs: prefs)
-
+            
         case .privacyPolicy:
             PrivacyPolicyView(prefs: prefs)
-
+            
         case .login:
             LoginView()
-
+            
         case .welcome:
             WelcomeView(
                 wifiSSIDManager: wifiSSIDManager,
                 permissionsViewModel: permissionsViewModel,
                 documentsViewModel: documentsViewModel
             )
-
+            
         case .settings:
             SettingsView(
                 documentsViewModel: documentsViewModel,
                 settingsViewModel: settingsViewModel)
-
+            
         case .connection:
             if let connectionViewModel = connectionViewModel {
                 ConnectionView(
@@ -181,7 +179,7 @@ struct NavGraph: View {
                     coordinator.navigate(to: .upload(deviceName: deviceName))
                 }
             }
-
+            
         case .upload(let deviceName):
             UploadView(
                 deviceName: deviceName,

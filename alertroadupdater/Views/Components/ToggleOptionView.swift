@@ -5,7 +5,7 @@ struct ToggleOptionView: View {
     let description: String
     @Binding var isOn: Bool
     let onToggle: (Bool) -> Void
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
@@ -23,7 +23,7 @@ struct ToggleOptionView: View {
                 ))
                 .labelsHidden()
             }
-
+            
             if !description.isEmpty {
                 Text(description)
                     .font(.footnote)

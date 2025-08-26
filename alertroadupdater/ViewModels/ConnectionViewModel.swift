@@ -6,16 +6,16 @@ import Network
 class ConnectionViewModel: ObservableObject {
     private let connectionManager: ConnectionManager
     private var cancellables = Set<AnyCancellable>()
-
+    
     @Published var matchedSSID: String? = nil
     @Published var isConnectedToDevice: Bool = false
     @Published var availableSSIDs: [String] = []
-
+    
     // Inicializador público que toma ConnectionManager como parámetro
     public init(connectionManager: ConnectionManager) {
         self.connectionManager = connectionManager
     }
-
+    
     /// Inicia la monitorización de la conexión a un SSID específico.
     func startMonitoringConnection(ssid: String?) {
         Timer.publish(every: 1.0, on: .main, in: .common)
@@ -27,12 +27,12 @@ class ConnectionViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-
+    
     /// Abre la configuración de Wi-Fi en iOS.
     func openWifiSettings() {
         connectionManager.openWiFiSettings()
     }
-
+    
     /// Conecta al dispositivo detectado.
     func connectToDevice(ssid: String) {
         connectionManager.connectToSSID(ssid: ssid) { [weak self] isConnected in
@@ -41,7 +41,7 @@ class ConnectionViewModel: ObservableObject {
             }
         }
     }
-
+    
     /// Resetea el estado de detección.
     func resetDetectionState() {
         matchedSSID = nil

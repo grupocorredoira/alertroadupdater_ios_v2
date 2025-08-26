@@ -100,7 +100,7 @@
 /* Connection Screen */
 "connection_title" = "Ligação";
 "step_one" = "Passo 1: ligar o Wi-Fi do dispositivo Alert Road";
-"step_two" = "Passo 2: vai às definições de Wi-Fi para verificar as redes e indica qual das seguintes está disponível (não te ligues ainda)";
+"step_two" = "Passo 2: abre as definições de Wi-Fi, verifica as redes e indica qual das seguintes aparece disponível (não te ligues ainda)";
 "step_three" = "Passo 3: detetar dispositivo";
 "help_button" = "Ver como fazer";
 "wifi_enabled" = "Wi-Fi ligado";

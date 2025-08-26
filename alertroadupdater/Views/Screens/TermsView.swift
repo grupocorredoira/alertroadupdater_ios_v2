@@ -3,24 +3,24 @@ import SwiftUI
 struct TermsView: View {
     @EnvironmentObject var coordinator: NavigationCoordinator
     @ObservedObject var prefs: PreferencesManager
-
+    
     var body: some View {
         VStack(spacing: 0) {
             TopAppBarViewWithLogo()
-
+            
             Spacer()
-
+            
             VStack(spacing: 16) {
-
+                
                 Text("terms_title".localized)
                     .font(.title)
                     .bold()
                     .padding(.top)
-
+                
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("terms_content".localized)
-
+                        
                         Button("accept_terms_button".localized) {
                             prefs.saveTermsAccepted(true)
                             coordinator.navigate(to: .privacyPolicy)
@@ -41,19 +41,19 @@ struct TermsView: View {
 
 struct TermsDialogView: View {
     var onDismiss: () -> Void
-
+    
     var body: some View {
         VStack(spacing: 16) {
             Text("terms_title".localized)
                 .font(.headline)
                 .padding(.top)
-
+            
             ScrollView {
                 Text("terms_content".localized)
                     .font(.body)
                     .padding()
             }
-
+            
             Button("close_button".localized){
                 onDismiss()
             }

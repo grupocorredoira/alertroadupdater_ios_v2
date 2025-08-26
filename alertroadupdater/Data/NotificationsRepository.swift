@@ -4,16 +4,15 @@ import FirebaseMessaging
 final class NotificationsRepository {
     private let topic = "alert_road_updates"
     private let userDefaultsKey = "notificationsEnabled"
-
+    
     func isNotificationsEnabled() -> Bool {
         let enabled = UserDefaults.standard.bool(forKey: userDefaultsKey)
         print("🔍 isNotificationsEnabled -> \(enabled)")
         return enabled
     }
-
+    
     func setNotificationsEnabled(_ enabled: Bool, completion: @escaping (Bool) -> Void) {
         if enabled {
-            print("📡 Intentando suscribirse al topic '\(topic)'...")
             Messaging.messaging().subscribe(toTopic: topic) { error in
                 if let error = error {
                     print("❌ Error al suscribirse al topic: \(error.localizedDescription)")
@@ -25,7 +24,6 @@ final class NotificationsRepository {
                 }
             }
         } else {
-            print("📴 Intentando cancelar la suscripción al topic '\(topic)'...")
             Messaging.messaging().unsubscribe(fromTopic: topic) { error in
                 if let error = error {
                     print("❌ Error al cancelar la suscripción: \(error.localizedDescription)")
@@ -38,7 +36,7 @@ final class NotificationsRepository {
             }
         }
     }
-
+    
     func updatePermissionStatus(granted: Bool) {
         UserDefaults.standard.set(granted, forKey: userDefaultsKey)
         print("💾 Estado de permiso notificaciones actualizado desde AppDelegate: \(granted)")

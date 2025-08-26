@@ -3,7 +3,7 @@ import SwiftUI
 struct TopAppBarViewWithLogoAndMenu: View {
     var showMenu: Bool = true
     var onMenuClick: () -> Void = {}
-
+    
     var body: some View {
         HStack {
             // 🟩 Espacio invisible para compensar el botón de la derecha
@@ -11,17 +11,17 @@ struct TopAppBarViewWithLogoAndMenu: View {
                 Color.clear
                     .frame(width: 44, height: 44)
             }
-
+            
             Spacer()
-
+            
             Image("logo_cabecera")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 250, height: 50) // Ajusta esto al tamaño de tu banner
-                //.clipped()
-
+            //.clipped()
+            
             Spacer()
-
+            
             if showMenu {
                 Button(action: {
                     print("✅ Botón de menú pulsado")

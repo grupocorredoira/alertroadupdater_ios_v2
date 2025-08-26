@@ -7,7 +7,7 @@ struct AlertRoadUpdaterApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var purchaseService = PurchaseService.shared
     @StateObject var networkMonitor = NetworkMonitorViewModel()
-
+    
     var body: some Scene {
         WindowGroup {
             NavGraph()

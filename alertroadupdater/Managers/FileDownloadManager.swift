@@ -4,9 +4,9 @@ import FirebaseStorage
 /// `FileDownloadManager` gestiona la descarga de archivos desde Firebase Storage
 /// y su almacenamiento local en el dispositivo.
 class FileDownloadManager {
-
+    
     private static let storage = Storage.storage()
-
+    
     /// Descarga la URL de un archivo almacenado en Firebase Storage.
     ///
     /// - Parameters:
@@ -29,7 +29,7 @@ class FileDownloadManager {
             }
         }
     }
-
+    
     /// Descarga un archivo desde una URL y lo guarda localmente en el almacenamiento de la aplicación.
     ///
     /// - Parameters:
@@ -45,10 +45,10 @@ class FileDownloadManager {
             completion(.failure(NSError(domain: "Invalid URL", code: -1, userInfo: nil)))
             return
         }
-
+        
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-
+        
         // Si el archivo ya existe, eliminarlo antes de descargarlo nuevamente
         if FileManager.default.fileExists(atPath: destinationURL.path) {
             do {
@@ -60,7 +60,7 @@ class FileDownloadManager {
                 return
             }
         }
-
+        
         let session = URLSession.shared
         let task = session.downloadTask(with: url) { tempURL, response, error in
             if let error = error {
@@ -68,12 +68,12 @@ class FileDownloadManager {
                 completion(.failure(error))
                 return
             }
-
+            
             guard let tempURL = tempURL else {
                 completion(.failure(NSError(domain: "Error: tempURL is nil", code: -1, userInfo: nil)))
                 return
             }
-
+            
             do {
                 try FileManager.default.moveItem(at: tempURL, to: destinationURL)
                 completion(.success(destinationURL))
@@ -82,7 +82,7 @@ class FileDownloadManager {
                 completion(.failure(error))
             }
         }
-
+        
         task.resume()
     }
 }

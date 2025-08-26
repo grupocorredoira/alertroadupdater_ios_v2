@@ -7,31 +7,27 @@ struct LoginView: View {
     @State var selectedPrefix: String = "+34"
     @EnvironmentObject var networkMonitorViewModel: NetworkMonitorViewModel
     @Environment(\.scenePhase) var scenePhase
-
-    // Estado para el mensaje de error
-    //@State private var errorMessage: String? = nil
-
-    // 🔔 NUEVO: control del alert de “sin Internet”
+    
     @State private var showNoInternetAlert: Bool = false
-
+    
     var isPhoneNumberValid: Bool {
         return loginViewModel.phoneNumber.count == 9
     }
-
+    
     var shouldShowLengthError: Bool {
         return !loginViewModel.phoneNumber.isEmpty && loginViewModel.phoneNumber.count < 9
     }
-
+    
     var body: some View {
         VStack(spacing: 0) {
             TopAppBarViewWithLogo()
-
+            
             Spacer()
-
+            
             VStack(spacing: 24) {
-
+                
                 if !loginViewModel.isCodeSent {
-
+                    
                     Text("login_title".localized)
                         .font(.largeTitle)
                         .bold()
@@ -39,24 +35,24 @@ struct LoginView: View {
                         .lineLimit(nil)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .center)
-
+                    
                     Text("login_instructions".localized)
                         .font(.headline)
                         .bold()
-
+                    
                     CountryCodeDropdownMenu(
                         selectedPrefix: selectedPrefix,
                         onPrefixSelected: { newPrefix in
                             selectedPrefix = newPrefix
                         }
                     )
-
+                    
                     NumericTextFieldView(text: $loginViewModel.phoneNumber, placeholder: "phone_placeholder".localized, borderColor: loginViewModel.phoneBorderColor)
                         .frame(maxWidth: .infinity, minHeight: 48, maxHeight: 48)
                         .onChange(of: loginViewModel.phoneNumber) { _ in
                             loginViewModel.validatePhoneNumber(prefix: selectedPrefix)
                         }
-
+                    
                     if let phoneError = loginViewModel.phoneErrorMessage {
                         Text(phoneError)
                             .font(.caption)
@@ -64,15 +60,15 @@ struct LoginView: View {
                             .padding(.top, 4)
                             .padding(.horizontal)
                     }
-
+                    
                     Button(action: {
                         guard networkMonitorViewModel.hasInternet else {
                             NetworkAlertManager.showNoInternetDialog()
                             return
                         }
-
+                        
                         let fullNumber = "\(selectedPrefix)\(loginViewModel.phoneNumber)"
-
+                        
                         if Auth.auth().currentUser != nil {
                             print("✅ Usuario ya autenticado, navegando directamente")
                             coordinator.navigate(to: .welcome)
@@ -91,13 +87,13 @@ struct LoginView: View {
                         .cornerRadius(8)
                     }
                     .disabled(!isPhoneNumberValid || loginViewModel.isLoading)
-
+                    
                 } else {
                     Text("verification_instructions".localized)
                         .font(.headline)
                         .bold()
-
-
+                    
+                    
                     NumericCodeTextFieldView(
                         text: $loginViewModel.verificationCode,
                         placeholder: "sms_code_placeholder".localized,
@@ -107,7 +103,7 @@ struct LoginView: View {
                     .onChange(of: loginViewModel.verificationCode) { _ in
                         loginViewModel.validateVerificationCode()
                     }
-
+                    
                     if let codeError = loginViewModel.codeErrorMessage {
                         Text(codeError)
                             .font(.caption)
@@ -115,7 +111,7 @@ struct LoginView: View {
                             .padding(.top, 4)
                             .padding(.horizontal)
                     }
-
+                    
                     Button(action: {
                         loginViewModel.verifyCode {
                             coordinator.navigate(to: .welcome)
@@ -130,11 +126,11 @@ struct LoginView: View {
                         .background(loginViewModel.verifyButtonColor)
                         .foregroundColor(.white)
                         .cornerRadius(8)
-
+                        
                     }
                     .disabled(!loginViewModel.canVerify)
                 }
-
+                
                 if let errorMessage = loginViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
@@ -162,7 +158,7 @@ struct LoginView: View {
         .alert("no_internet_title".localized, isPresented: $showNoInternetAlert) {
             Button("accept_button".localized, role: .cancel) { }
         } message: {
-            Text("no_internet_message".localized) // crea este string si no lo tienes
+            Text("no_internet_message".localized)
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .background {

@@ -7,11 +7,11 @@ class FirestoreRepository: ObservableObject {
     private let db = Firestore.firestore()
     private let collectionName = AppConstants.firebaseDocumentsInfoCollectionName
     private var cancellables = Set<AnyCancellable>()
-
+    
     static var allDocuments: [Document]? {
         return _allDocuments
     }
-
+    
     func loadDocumentsFromFirestore() -> AnyPublisher<[Document], Error> {
         return Future { promise in
             self.db.collection(self.collectionName).getDocuments { snapshot, error in
@@ -22,7 +22,7 @@ class FirestoreRepository: ObservableObject {
                     let documents = snapshot?.documents.compactMap { doc in
                         Document(from: doc)
                     } ?? []
-
+                    
                     FirestoreRepository._allDocuments = documents
                     promise(.success(documents))
                 }

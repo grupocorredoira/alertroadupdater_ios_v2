@@ -5,13 +5,13 @@ import Combine
 class NetworkMonitorViewModel: ObservableObject {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")
-
+    
     @Published var hasInternet: Bool = true
-
+    
     init() {
         monitor.pathUpdateHandler = { [weak self] path in
             guard let self = self else { return }
-
+            
             if path.status == .satisfied {
                 // 🔍 Aquí hacemos una petición real a Internet
                 self.testInternetConnection { success in
@@ -27,15 +27,15 @@ class NetworkMonitorViewModel: ObservableObject {
         }
         monitor.start(queue: queue)
     }
-
+    
     private func testInternetConnection(completion: @escaping (Bool) -> Void) {
-        guard let url = URL(string: "https://www.apple.com/library/test/success.html") else {
+        guard let url = URL(string: AppConstants.linkToTestInternet) else {
             completion(false)
             return
         }
         var request = URLRequest(url: url)
         request.timeoutInterval = 5
-
+        
         URLSession.shared.dataTask(with: request) { _, response, error in
             if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
                 completion(true)  // ✅ Internet OK
@@ -44,7 +44,7 @@ class NetworkMonitorViewModel: ObservableObject {
             }
         }.resume()
     }
-
+    
     deinit {
         monitor.cancel()
     }

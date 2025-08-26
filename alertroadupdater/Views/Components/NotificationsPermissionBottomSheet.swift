@@ -5,19 +5,19 @@ struct NotificationsPermissionBottomSheet: View {
     var onDismiss: () -> Void
     var onGrantPermission: () -> Void
     var permissionMessage: String
-
+    
     var body: some View {
         if isVisible {
             VStack {
                 Text("notifications_permission_title".localized)
                     .font(.headline)
                     .padding()
-
+                
                 Text(permissionMessage)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
                     .padding()
-
+                
                 Button(action: {
                     onGrantPermission()
                     onDismiss()
@@ -30,7 +30,7 @@ struct NotificationsPermissionBottomSheet: View {
                         .cornerRadius(10)
                 }
                 .padding(.horizontal)
-
+                
                 Button(action: onDismiss) {
                     Text("cancel_button".localized)
                         .foregroundColor(.black)
