@@ -40,7 +40,7 @@ struct WelcomeView: View {
                 .padding(.bottom, 16)
             
             if purchaseViewModel.needsToPay {
-                Text("Periodo finalizado. Para continuar necesitas realizar el pago del servicio")
+                Text("payment_required_message".localized)
                     .font(.callout)
                     .foregroundColor(.red)
                     .multilineTextAlignment(.center)
@@ -55,7 +55,7 @@ struct WelcomeView: View {
                         showNetworkAlert = true
                     }
                 }) {
-                    Text(purchaseViewModel.isPurchasing ? "Comprando..." : "Comprar servicio")
+                    Text(purchaseViewModel.isPurchasing ? "purchasing_message".localized : "purchase_service_button".localized)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(purchaseViewModel.purchaseButtonColor)
@@ -130,13 +130,12 @@ struct WelcomeView: View {
                 showNetworkAlert = false
             }
         }
-        // ✅ Alertas centralizadas desde PermissionsViewModel
-        .alert("Localización deshabilitada", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
-            Button("Abrir Ajustes") {
-                permissionsViewModel.openAppSettings()
+        .alert("location_disabled_title".localized, isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
+            Button("open_settings".localized) {
+                DeviceSystemSettingsManager.openGeneralSettings()
             }
         } message: {
-            Text("Es necesario habilitar el servicio para poder conectarte con tu Alert Road. Puedes hacerlo en Ajustes > Privacidad y Seguridad > Localización")
+            Text("location_disabled_message".localized)
         }
     }
     
@@ -149,7 +148,7 @@ struct WelcomeView: View {
             coordinator.navigate(to: .connection)
         } else {
             // ❌ Localización desactivada → mostrar alerta/mensaje
-            snackbarMessage = "Los servicios de localización están deshabilitados"
+            snackbarMessage = "location_disabled_snackbar".localized
             permissionsViewModel.showLocationServicesEnabledAlert = true
         }
     }

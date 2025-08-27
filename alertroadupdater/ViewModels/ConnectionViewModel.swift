@@ -28,11 +28,6 @@ class ConnectionViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Abre la configuración de Wi-Fi en iOS.
-    func openWifiSettings() {
-        connectionManager.openWiFiSettings()
-    }
-    
     /// Conecta al dispositivo detectado.
     func connectToDevice(ssid: String) {
         connectionManager.connectToSSID(ssid: ssid) { [weak self] isConnected in

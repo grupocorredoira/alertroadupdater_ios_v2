@@ -10,5 +10,5 @@ enum AppConstants {
     static let firebaseUsersCollectionName = "users"
     static let passwordAlertRoadDefault = "5T073245"
     static let linkToTestInternet = "https://www.apple.com/library/test/success.html"
-    static let deviceSettingsWifiRoute = "App-Prefs:WIFI"
+    static let deviceSettingsWifiRoute = "App-Prefs:root=WIFI"
 }

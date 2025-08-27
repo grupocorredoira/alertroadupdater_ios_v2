@@ -64,6 +64,13 @@
 "user_error_message" = "Error al buscar el usuario, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
 "auth_error_message" = "Error de autenticación, por favor, revisa tu conexión a internet o cierra y vuelve a abrir la aplicación";
 "billing_connection_error_message" = "Error al conectar con el servicio de facturación";
+"payment_required_message" = "Periodo finalizado. Para continuar necesitas realizar el pago del servicio";
+"purchasing_message" = "Comprando...";
+"purchase_service_button" = "Comprar servicio";
+"location_disabled_title" = "Localización deshabilitada";
+"open_settings" = "Abrir Ajustes";
+"location_disabled_message" = "Es necesario habilitar el servicio para poder conectarte con tu Alert Road. Puedes hacerlo en Ajustes > Privacidad y Seguridad > Localización";
+"location_disabled_snackbar" = "Los servicios de localización están deshabilitados";
 //Permisos
 "notifications_permission_title" = "Permiso de notificaciones";
 "notifications_permission_body" = "Se necesita este permiso para poder informarte cuando haya actualizaciones de los documentos";
@@ -176,3 +183,12 @@
 "download_status_available" = "Disponible para descargar";
 "download_status_downloaded" = "Descargado";
 "download_status_downloading" = "Descargando... %d%%";
+"upload_title" = "Cargar archivos";
+"location_services_disabled_title" = "Servicios de localización deshabilitados";
+"location_services_disabled_message" = "Para obtener información de la red WiFi, necesitas habilitar los servicios de localización en Configuración > Privacidad y Seguridad > Servicios de Localización";
+"open_settings" = "Abrir Configuración";
+"local_network_permission_title" = "Permiso de red local requerido";
+"local_network_permission_message" = "No se pudo acceder a la red local";
+"error_title" = "Error";
+"send_button" = "Enviar";
+"latest_version" = "última";

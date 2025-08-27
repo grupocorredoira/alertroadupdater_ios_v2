@@ -62,6 +62,13 @@
 "user_error_message" = "Erro ao procurar o utilizador, por favor, verifique a sua ligação à internet ou feche e volte a abrir a aplicação";
 "auth_error_message" = "Erro de autenticação, por favor, verifique a sua ligação à internet ou feche e volte a abrir a aplicação";
 "billing_connection_error_message" = "Erro ao ligar ao serviço de faturação";
+"payment_required_message" = "Período de teste terminado. Para continuar é necessário efetuar o pagamento do serviço";
+"purchasing_message" = "A comprar...";
+"purchase_service_button" = "Comprar serviço";
+"location_disabled_title" = "Localização desativada";
+"open_settings" = "Abrir Definições";
+"location_disabled_message" = "É necessário ativar o serviço para te ligares ao teu Alert Road. Podes fazê-lo em Definições > Privacidade e Segurança > Localização";
+"location_disabled_snackbar" = "Os serviços de localização estão desativados";
 //Permissões
 "notifications_permission_title" = "Permissão de Notificações";
 "notifications_permission_body" = "É necessária esta permissão para poder informá-lo quando houver atualizações dos documentos";
@@ -174,3 +181,12 @@
 "download_status_available" = "Disponível para descarregar";
 "download_status_downloaded" = "Descarregado";
 "download_status_downloading" = "A descarregar... %d%%";
+"upload_title" = "Carregar ficheiros";
+"location_services_disabled_title" = "Serviços de localização desativados";
+"location_services_disabled_message" = "Para obter informações da rede Wi-Fi, é necessário ativar os serviços de localização em Definições > Privacidade e Segurança > Serviços de Localização";
+"open_settings" = "Abrir Definições";
+"local_network_permission_title" = "Permissão de rede local necessária";
+"local_network_permission_message" = "Não foi possível aceder à rede local";
+"error_title" = "Erro";
+"send_button" = "Enviar";
+"latest_version" = "última";

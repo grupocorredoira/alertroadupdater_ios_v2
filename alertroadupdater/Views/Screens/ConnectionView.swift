@@ -172,10 +172,7 @@ struct ConnectionView: View {
         
         alert.addAction(UIAlertAction(title: "accept_button".localized, style: .default))
         alert.addAction(UIAlertAction(title: "go_to_wifi_settings".localized, style: .cancel) { _ in
-            if let settingsURL = URL(string: UIApplication.openSettingsURLString),
-               UIApplication.shared.canOpenURL(settingsURL) {
-                UIApplication.shared.open(settingsURL)
-            }
+            DeviceSystemSettingsManager.openWifiSettings()
         })
         
         rootVC.present(alert, animated: true)
@@ -260,7 +257,7 @@ struct WifiNetworksView: View {
 
 struct WifiSettingsButton: View {
     var body: some View {
-        Button(action: openWifiSettings) {
+        Button(action: DeviceSystemSettingsManager.openWifiSettings) {
             Text("go_to_wifi_settings".localized)
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -269,12 +266,6 @@ struct WifiSettingsButton: View {
                 .cornerRadius(10)
         }
         .padding(.horizontal, 16)
-    }
-    
-    private func openWifiSettings() {
-        if let url = URL(string: AppConstants.deviceSettingsWifiRoute) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
     }
 }
 

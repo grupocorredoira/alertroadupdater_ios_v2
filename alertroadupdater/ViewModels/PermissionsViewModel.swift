@@ -63,13 +63,6 @@ class PermissionsViewModel: NSObject, ObservableObject, CLLocationManagerDelegat
         }
     }
     
-    func openAppSettings() {
-        if let url = URL(string: UIApplication.openSettingsURLString),
-           UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
-    
     // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         DispatchQueue.main.async {

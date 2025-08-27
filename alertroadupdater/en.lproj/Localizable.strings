@@ -62,6 +62,13 @@
 "user_error_message" = "Error finding user, please check your internet connection or close and reopen the application";
 "auth_error_message" = "Authentication error, please check your internet connection or close and reopen the application";
 "billing_connection_error_message" = "Error connecting to billing service";
+"payment_required_message" = "Trial period has ended. To continue you need to purchase the service";
+"purchasing_message" = "Purchasing...";
+"purchase_service_button" = "Buy service";
+"location_disabled_title" = "Location disabled";
+"open_settings" = "Open Settings";
+"location_disabled_message" = "It is necessary to enable the service to connect with your Alert Road. You can do this in Settings > Privacy & Security > Location";
+"location_disabled_snackbar" = "Location services are disabled";
 //Permissions
 "notifications_permission_title" = "Notifications Permission";
 "notifications_permission_body" = "This permission is needed to inform you when there are document updates";
@@ -174,3 +181,13 @@
 "download_status_available" = "Available for download";
 "download_status_downloaded" = "Downloaded";
 "download_status_downloading" = "Downloading... %d%%";
+"upload_title" = "Upload files";
+"location_services_disabled_title" = "Location services disabled";
+"location_services_disabled_message" = "To obtain Wi-Fi network information, you need to enable location services in Settings > Privacy & Security > Location Services";
+"open_settings" = "Open Settings";
+"local_network_permission_title" = "Local network permission required";
+"local_network_permission_message" = "Could not access the local network";
+"error_title" = "Error";
+"send_button" = "Send";
+"latest_version" = "latest";
+

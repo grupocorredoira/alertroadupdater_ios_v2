@@ -4,7 +4,6 @@ import CoreLocation
 
 struct UploadView: View {
     // MARK: - Constantes públicas
-    var title: String = "Cargar archivos"
     var deviceName: String
     
     // MARK: - Dependencias externas (observed, environment)
@@ -53,7 +52,7 @@ struct UploadView: View {
         ZStack {
             VStack(alignment: .leading, spacing: 16) {
                 CustomNavigationBar(
-                    title: "upload_available".localized,
+                    title: "upload_title".localized,
                     showBackButton: true
                 ) {
                     coordinator.pop()
@@ -121,17 +120,17 @@ struct UploadView: View {
             }
         }
         // ✅ Alertas centralizadas desde PermissionsViewModel (eliminar la anterior)
-        .alert("Servicios de localización deshabilitados", isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
-            Button("Abrir Configuración") {
-                permissionsViewModel.openAppSettings()
+        .alert("location_services_disabled_title".localized, isPresented: $permissionsViewModel.showLocationServicesEnabledAlert) {
+            Button("open_settings".localized) {
+                DeviceSystemSettingsManager.openAppSettings()
             }
             Button("cancel_button".localized, role: .cancel) {}
         } message: {
-            Text("Para obtener información de la red WiFi, necesitas habilitar los servicios de localización en Configuración > Privacidad y Seguridad > Servicios de Localización")
+            Text("location_services_disabled_message".localized)
         }
         .alert("permission_required".localized, isPresented: $permissionsViewModel.showLocationPermissionAlert) {
             Button("go_to_settings".localized) {
-                permissionsViewModel.openAppSettings()
+                DeviceSystemSettingsManager.openAppSettings()
             }
             Button("cancel_button".localized, role: .cancel) {}
         } message: {
@@ -139,9 +138,9 @@ struct UploadView: View {
         }
         .alert(isPresented: $permissionsViewModel.showLocalNetworkAlert) {
             Alert(
-                title: Text("Permiso de red local requerido"),
-                message: Text(permissionsViewModel.localNetworkError ?? "No se pudo acceder a la red local"),
-                dismissButton: .default(Text("Aceptar"))
+                title: Text("local_network_permission_title".localized),
+                message: Text(permissionsViewModel.localNetworkError ?? "local_network_permission_message".localized),
+                dismissButton: .default(Text("accept_button".localized))
             )
         }
     }
@@ -285,15 +284,12 @@ struct UploadDocumentRowView: View {
         documentCard
             .background(Color.gray.opacity(0.1))
             .cornerRadius(8)
-            .alert("Error", isPresented: .constant(errorMessage != nil)) {
-                Button("Ir a Ajustes") {
-                    if let url = URL(string: "App-Prefs:root=WIFI"),
-                       UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url)
-                    }
+            .alert("error_title".localized, isPresented: .constant(errorMessage != nil)) {
+                Button("go_to_wifi_settings".localized) {
+                    DeviceSystemSettingsManager.openWifiSettings()
                     errorMessage = nil
                 }
-                Button("Cancelar", role: .cancel) {
+                Button("cancel_button".localized, role: .cancel) {
                     errorMessage = nil
                 }
             } message: {
@@ -319,7 +315,7 @@ struct UploadDocumentRowView: View {
         VStack(alignment: .leading) {
             Text(document.type).font(.headline)
             Text(document.deviceName).font(.subheadline)
-            Text("\("document_version".localized): \(document.version.isEmpty ? "última" : document.version)")
+            Text("\("document_version".localized): \(document.version.isEmpty ? "latest_version".localized : document.version)")
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
@@ -328,7 +324,7 @@ struct UploadDocumentRowView: View {
     
     /// Botón de envío con estilo
     private var uploadButton: some View {
-        Button("Enviar") {
+        Button("send_button".localized) {
             startUpload()
         }
         .padding(.horizontal, 12)

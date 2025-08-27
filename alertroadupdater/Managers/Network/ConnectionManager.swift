@@ -36,17 +36,9 @@ class ConnectionManager: ObservableObject {
         return []
     }
     
-    /// Abre la configuración de Wi-Fi en iOS.
-    func openWiFiSettings() {
-        guard let url = URL(string: "App-Prefs:root=WIFI") else { return }
-        DispatchQueue.main.async {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-    }
-    
     /// Simula la conexión a un SSID en iOS (solo apertura de ajustes).
     func connectToSSID(ssid: String, completion: @escaping (Bool) -> Void) {
-        openWiFiSettings()
+        DeviceSystemSettingsManager.openWifiSettings()
         completion(false) // No hay forma de conectar automáticamente en iOS sin abrir ajustes.
     }
 }

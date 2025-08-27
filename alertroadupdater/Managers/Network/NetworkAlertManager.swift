@@ -16,7 +16,7 @@ struct NetworkAlertManager {
         )
         
         alert.addAction(UIAlertAction(title: "go_to_settings".localized, style: .default) { _ in
-            ConnectionManager.shared.openWiFiSettings()
+            DeviceSystemSettingsManager.openGeneralSettings()
         })
         
         alert.addAction(UIAlertAction(title: "accept_button".localized, style: .cancel))
